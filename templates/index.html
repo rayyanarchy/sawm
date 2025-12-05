@@ -2,97 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
-    <meta name="apple-mobile-web-app-capable" content="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Sawm" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Sawm - Prayer times and hydration recommendations for fasting" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" />
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
     <title>Sawm</title>
-    <style>
-        @font-face {
-            font-family: '0xProto';
-            src: url('https://cdn.jsdelivr.net/npm/0xproto@1.0.0/fonts/0xProto-Regular.woff2') format('woff2');
-            font-weight: 400;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: '0xProto';
-            src: url('https://cdn.jsdelivr.net/npm/0xproto@1.0.0/fonts/0xProto-Bold.woff2') format('woff2');
-            font-weight: 600;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: '0xProto';
-            src: url('https://cdn.jsdelivr.net/npm/0xproto@1.0.0/fonts/0xProto-ExtraBold.woff2') format('woff2');
-            font-weight: 700;
-            font-display: swap;
-        }
-    </style>
 </head>
 <body>
     <header>
         <h1>Sawm</h1>
-        <div class="header-controls">
-            <button class="settings-btn" id="settingsBtn">
-                <i class="bx bxs-cog"></i>
+        <nav class="header-controls" aria-label="Site controls">
+            <button class="settings-btn" id="settingsBtn" aria-label="Open settings" title="Settings">
+                <i class="bx bxs-cog" aria-hidden="true"></i>
             </button>
-            <button class="theme-toggle" id="themeToggle">
-                <i class="bx bxs-sun"></i>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
+                <i class="bx bxs-sun" aria-hidden="true"></i>
             </button>
-        </div>
+        </nav>
     </header>
 
     <main>
-        <section class="hero">
+        <section class="hero" aria-label="Prayer times">
             <div class="hero-times-container">
-                <div class="hero-time-block">
-                    <div class="hero-label">Suhoor</div>
-                    <div class="hero-time">{{ suhoor }}</div>
-                </div>
-                <div class="hero-divider-vertical"></div>
-                <div class="hero-time-block">
-                    <div class="hero-label">Iftar</div>
-                    <div class="hero-time">{{ iftar }}</div>
-                </div>
+                <article class="hero-time-block">
+                    <p class="hero-label">Suhoor</p>
+                    <time class="hero-time">{{ suhoor }}</time>
+                </article>
+                <div class="hero-divider-vertical" aria-hidden="true"></div>
+                <article class="hero-time-block">
+                    <p class="hero-label">Iftar</p>
+                    <time class="hero-time">{{ iftar }}</time>
+                </article>
             </div>
         </section>
 
-        <div class="hydration-callout">
-            <div class="hydration-label">Recommended Water Intake</div>
-            <div class="hydration-value">{{ hydration }}L</div>
+        <section class="hydration-callout" aria-label="Hydration recommendation">
+            <p class="hydration-label">Recommended Water Intake</p>
+            <p class="hydration-value">{{ hydration }}L</p>
             <div class="hydration-meta">
                 <span class="meta-item">{{ temp }}°C</span>
-                <span class="meta-separator">•</span>
+                <span class="meta-separator" aria-hidden="true">•</span>
                 <span class="meta-item">{{ humidity }}%</span>
             </div>
-        </div>
+        </section>
     </main>
 
     <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
+    <div class="modal" id="settingsModal" role="dialog" aria-labelledby="settingsTitle" aria-modal="true">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="close-btn" id="closeSettings">
-                    <i class="bx bxs-x-circle"></i>
+            <header class="modal-header">
+                <h2 id="settingsTitle">Settings</h2>
+                <button class="close-btn" id="closeSettings" aria-label="Close settings">
+                    <i class="bx bx-x" aria-hidden="true"></i>
                 </button>
-            </div>
+            </header>
             <div class="modal-body">
                 <div class="settings-group">
-                    <label class="settings-label">Location</label>
+                    <label class="settings-label" for="settingsLocation">Location</label>
                     <div class="location-input-wrapper">
-                        <input type="text" id="settingsLocation" class="method-select" placeholder="City, Country" />
-                        <button class="gps-btn" id="geolocateBtn" title="Use current location">
-                            <i class="bx bxs-map"></i>
+                        <input type="text" id="settingsLocation" class="method-select" placeholder="City, Country" autocomplete="off" />
+                        <button class="gps-btn" id="geolocateBtn" aria-label="Use current location" title="Use GPS">
+                            <i class="bx bxs-map" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
                 <div class="settings-group">
-                    <label class="settings-label">Calculation Method</label>
+                    <label class="settings-label" for="settingsMethod">Calculation Method</label>
                     <select id="settingsMethod" class="method-select">
                         <option value="2">Islamic Society of North America</option>
                         <option value="3">University of Islamic Sciences, Karachi</option>
@@ -128,7 +112,7 @@
     </div>
 
     <footer>
-        <p>&copy; <span id="year"></span> Sawm by <a href="https://github.com/iamrayyaann" target="_blank">@iamrayyaann</a></p>
+        <p>&copy; <span id="year"></span> Sawm by <a href="https://github.com/iamrayyaann" target="_blank" rel="noopener noreferrer">@iamrayyaann</a></p>
     </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

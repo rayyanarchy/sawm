@@ -1,10 +1,16 @@
+/**
+ * Sawm - Prayer times and hydration app
+ * Minimal, modern JavaScript with accessible theme and modal handling
+ */
+
+// Storage keys
 const THEME_KEY = 'sawm-theme';
 const LOCATION_KEY = 'sawm-location';
 const LOCATION_EXPIRY_KEY = 'sawm-location-expiry';
 const METHOD_KEY = 'sawm-method';
 const LOCATION_EXPIRY_DAYS = 30;
 
-// DOM Element References
+// DOM Element References (lazy loaded)
 const elements = {
     get html() { return document.documentElement; },
     get themeToggle() { return document.getElementById('themeToggle'); },
@@ -18,162 +24,307 @@ const elements = {
     get yearEl() { return document.getElementById('year'); }
 };
 
-// Utility Functions
-const toggleModal = (show) => {
-    if (elements.settingsModal) {
-        elements.settingsModal.classList.toggle('show', show);
-    }
-};
+// ========================
+// Theme Management
+// ========================
 
-const updateThemeIcon = (isDark) => {
+function getPreferredTheme() {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    elements.html.classList.toggle('dark-mode', isDark);
+    updateThemeIcon(isDark);
+    
+    // Update meta theme-color for mobile browsers
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#111111' : '#ffffff');
+    }
+}
+
+function updateThemeIcon(isDark) {
     const icon = elements.themeToggle?.querySelector('i');
     if (icon) {
         icon.className = isDark ? 'bx bxs-moon' : 'bx bxs-sun';
     }
-};
+}
 
-const parseLocation = (input) => {
-    const [city, country] = input.split(',').map(s => s.trim());
-    return city && country ? { city, country } : null;
-};
+function toggleTheme() {
+    const isDark = elements.html.classList.toggle('dark-mode');
+    const newTheme = isDark ? 'dark' : 'light';
+    localStorage.setItem(THEME_KEY, newTheme);
+    updateThemeIcon(isDark);
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#111111' : '#ffffff');
+    }
+}
 
-const encodeLocation = (city, country) => {
-    return `/?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=${localStorage.getItem(METHOD_KEY) || '2'}`;
-};
+// ========================
+// Modal Management
+// ========================
 
-// Storage Functions
-const saveLocation = (city, country) => {
+let previousActiveElement = null;
+
+function openModal() {
+    const modal = elements.settingsModal;
+    if (!modal) return;
+    
+    previousActiveElement = document.activeElement;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    // Load cached location into input
+    const cached = getCachedLocation();
+    if (cached && elements.settingsLocation) {
+        elements.settingsLocation.value = `${cached.city}, ${cached.country}`;
+    }
+    
+    // Focus first focusable element
+    const firstFocusable = modal.querySelector('input, button, select');
+    if (firstFocusable) {
+        setTimeout(() => firstFocusable.focus(), 50);
+    }
+}
+
+function closeModal() {
+    const modal = elements.settingsModal;
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    
+    // Restore focus
+    if (previousActiveElement) {
+        previousActiveElement.focus();
+        previousActiveElement = null;
+    }
+}
+
+function handleModalKeydown(e) {
+    if (!elements.settingsModal?.classList.contains('show')) return;
+    
+    if (e.key === 'Escape') {
+        closeModal();
+        return;
+    }
+    
+    // Trap focus within modal
+    if (e.key === 'Tab') {
+        const modal = elements.settingsModal;
+        const focusableElements = modal.querySelectorAll(
+            'button, input, select, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        
+        if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+        }
+    }
+}
+
+// ========================
+// Location Management
+// ========================
+
+function parseLocation(input) {
+    const parts = input.split(',').map(s => s.trim());
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+        return { city: parts[0], country: parts[1] };
+    }
+    return null;
+}
+
+function encodeLocation(city, country) {
+    const method = localStorage.getItem(METHOD_KEY) || '2';
+    return `/?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=${method}`;
+}
+
+function saveLocation(city, country) {
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + LOCATION_EXPIRY_DAYS);
     localStorage.setItem(LOCATION_KEY, JSON.stringify({ city, country }));
-    localStorage.setItem(LOCATION_EXPIRY_KEY, expiry.getTime());
-};
+    localStorage.setItem(LOCATION_EXPIRY_KEY, expiry.getTime().toString());
+}
 
-const getCachedLocation = () => {
+function getCachedLocation() {
     const cached = localStorage.getItem(LOCATION_KEY);
     const expiry = localStorage.getItem(LOCATION_EXPIRY_KEY);
     
-    if (!cached || !expiry || new Date().getTime() > parseInt(expiry)) {
+    if (!cached || !expiry) return null;
+    
+    if (Date.now() > parseInt(expiry, 10)) {
         localStorage.removeItem(LOCATION_KEY);
         localStorage.removeItem(LOCATION_EXPIRY_KEY);
         return null;
     }
     
-    return JSON.parse(cached);
-};
+    try {
+        return JSON.parse(cached);
+    } catch {
+        return null;
+    }
+}
 
-// Location Functions
-const updateLocation = (city, country) => {
+function updateLocation(city, country) {
     saveLocation(city, country);
     window.location.href = encodeLocation(city, country);
-};
+}
 
-const requestGeolocation = () => {
+function requestGeolocation() {
     if (!navigator.geolocation) {
-        alert('Geolocation not supported');
+        alert('Geolocation is not supported by your browser');
         return;
+    }
+    
+    const gpsBtn = elements.geolocateBtn;
+    if (gpsBtn) {
+        gpsBtn.disabled = true;
     }
     
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             try {
-                const { latitude: lat, longitude: lon } = position.coords;
+                const { latitude, longitude } = position.coords;
                 const response = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+                    { headers: { 'Accept': 'application/json' } }
                 );
-                const { address } = await response.json();
-                const city = address.city || address.town || address.village || 'Unknown';
+                
+                if (!response.ok) throw new Error('Geocoding failed');
+                
+                const data = await response.json();
+                const { address } = data;
+                const city = address.city || address.town || address.village || address.municipality || 'Unknown';
                 const country = address.country || 'Unknown';
+                
+                closeModal();
                 updateLocation(city, country);
             } catch (error) {
                 console.error('Geolocation error:', error);
-                alert('Error determining location. Please enter manually.');
+                alert('Could not determine your location. Please enter it manually.');
+            } finally {
+                if (gpsBtn) {
+                    gpsBtn.disabled = false;
+                }
             }
         },
-        () => alert('Location permission denied. Please enter manually.')
+        (error) => {
+            console.error('Geolocation error:', error);
+            alert('Location access denied. Please enter your location manually.');
+            if (gpsBtn) {
+                gpsBtn.disabled = false;
+            }
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
-};
+}
 
-// Initialization Functions
-const initializeTheme = () => {
-    const isDark = localStorage.getItem(THEME_KEY) === 'dark';
-    elements.html.classList.toggle('dark-mode', isDark);
-    updateThemeIcon(isDark);
+// ========================
+// Settings Management
+// ========================
+
+function saveSettings() {
+    const locationInput = elements.settingsLocation?.value.trim();
     
-    elements.themeToggle?.addEventListener('click', () => {
-        const newDark = elements.html.classList.toggle('dark-mode');
-        localStorage.setItem(THEME_KEY, newDark ? 'dark' : 'light');
-        updateThemeIcon(newDark);
-    });
-};
+    if (!locationInput) {
+        alert('Please enter a location');
+        elements.settingsLocation?.focus();
+        return;
+    }
+    
+    const parsed = parseLocation(locationInput);
+    if (!parsed) {
+        alert('Please enter location in format: City, Country');
+        elements.settingsLocation?.focus();
+        return;
+    }
+    
+    // Save method
+    if (elements.settingsMethod) {
+        localStorage.setItem(METHOD_KEY, elements.settingsMethod.value);
+    }
+    
+    updateLocation(parsed.city, parsed.country);
+}
 
-const initializeMethod = () => {
+// ========================
+// Initialization
+// ========================
+
+function initializeTheme() {
+    applyTheme(getPreferredTheme());
+    elements.themeToggle?.addEventListener('click', toggleTheme);
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem(THEME_KEY)) {
+            applyTheme(e.matches ? 'dark' : 'light');
+        }
+    });
+}
+
+function initializeMethod() {
     const method = localStorage.getItem(METHOD_KEY) || '2';
     if (elements.settingsMethod) {
         elements.settingsMethod.value = method;
     }
-};
+}
 
-const initializeModal = () => {
+function initializeModal() {
     // Open modal
-    elements.settingsBtn?.addEventListener('click', () => {
-        toggleModal(true);
-        const cached = getCachedLocation();
-        if (cached && elements.settingsLocation) {
-            elements.settingsLocation.value = `${cached.city}, ${cached.country}`;
-        }
-    });
+    elements.settingsBtn?.addEventListener('click', openModal);
     
     // Close modal
-    elements.closeSettingsBtn?.addEventListener('click', () => toggleModal(false));
+    elements.closeSettingsBtn?.addEventListener('click', closeModal);
     
-    // Close on outside click
+    // Close on backdrop click
     elements.settingsModal?.addEventListener('click', (e) => {
         if (e.target === elements.settingsModal) {
-            toggleModal(false);
+            closeModal();
         }
     });
     
-    // Geolocation button
-    elements.geolocateBtn?.addEventListener('click', () => {
-        requestGeolocation();
-        toggleModal(false);
-    });
+    // Keyboard handling
+    document.addEventListener('keydown', handleModalKeydown);
+    
+    // Geolocation
+    elements.geolocateBtn?.addEventListener('click', requestGeolocation);
     
     // Save settings
-    elements.updateSettingsBtn?.addEventListener('click', () => {
-        const location = elements.settingsLocation?.value.trim();
-        
-        if (!location) {
-            alert('Please enter a location');
-            return;
-        }
-        
-        const parsed = parseLocation(location);
-        if (!parsed) {
-            alert('Please use format: City, Country');
-            return;
-        }
-        
-        if (elements.settingsMethod) {
-            localStorage.setItem(METHOD_KEY, elements.settingsMethod.value);
-        }
-        updateLocation(parsed.city, parsed.country);
-    });
+    elements.updateSettingsBtn?.addEventListener('click', saveSettings);
     
     // Save method on change
     elements.settingsMethod?.addEventListener('change', () => {
         localStorage.setItem(METHOD_KEY, elements.settingsMethod.value);
     });
-};
+    
+    // Allow Enter key to submit in location input
+    elements.settingsLocation?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveSettings();
+        }
+    });
+}
 
-const initializeFooter = () => {
+function initializeFooter() {
     if (elements.yearEl) {
-        elements.yearEl.textContent = new Date().getFullYear();
+        elements.yearEl.textContent = new Date().getFullYear().toString();
     }
-};
+}
 
-// Initialize App
+// Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     initializeMethod();
