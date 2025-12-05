@@ -154,7 +154,7 @@ function saveLocation(city, country) {
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + LOCATION_EXPIRY_DAYS);
     localStorage.setItem(LOCATION_KEY, JSON.stringify({ city, country }));
-    localStorage.setItem(LOCATION_EXPIRY_KEY, expiry.getTime().toString());
+    localStorage.setItem(LOCATION_EXPIRY_KEY, expiry.getTime());
 }
 
 function getCachedLocation() {
