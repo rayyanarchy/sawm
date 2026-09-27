@@ -27,13 +27,13 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 - Fonts: 0xProto
 - Icons: Box Icons
 
+
 ## Upcoming Features
 
 - [ ] Prettier, more polished UI/visual design
 - [ ] Fully responsive, dynamic layout across devices
 - [ ] PWA version (installable, offline-capable)
 
----
 
 ## License
 
