@@ -35,6 +35,12 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 - [ ] PWA version (installable, offline-capable)
 
 
+## Contributors
+
+- [@rayyanarchy](https://github.com/rayyanarchy)
+- [@Saad-SYEDK](https://github.com/Saad-SYEDK)
+
+
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
