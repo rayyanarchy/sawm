@@ -4,15 +4,15 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 
 ## Features
 
+- ML-based hydration recommendations
 - Dark/Light mode with persistent storage
 - 30-day location caching
 - Prayer times (Suhoor & Iftar) with 28 calculation methods
-- ML-based hydration recommendations
 - Temperature and humidity data
 - GPS location detection
 - Responsive design
 
-## Usage
+## How To Use
 
 1. Set location: Enter "City, Country" or use the GPS icon
 2. Choose calculation method (saved automatically)
@@ -21,8 +21,20 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 
 ## Tech Stack
 
-- Backend: Flask, scikit-learn, numpy
+- Backend: scikit-learn, numpy, Flask
 - Frontend: Vanilla JavaScript, CSS
 - APIs: Aladhan (prayer times), wttr.in (weather), Nominatim (geocoding)
 - Fonts: 0xProto
 - Icons: Box Icons
+
+## Upcoming Features
+
+- [ ] Prettier, more polished UI/visual design
+- [ ] Fully responsive, dynamic layout across devices
+- [ ] PWA version (installable, offline-capable)
+
+---
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
