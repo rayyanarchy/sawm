@@ -1,15 +1,6 @@
 # Sawm
 
-Fasting times and hydration recommendation. Dark/light mode, location caching, and ML-based hydration predictions.
-
-## Quick Start
-
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-Open http://localhost:5000
+Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 
 ## Features
 
