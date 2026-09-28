@@ -30,15 +30,9 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 
 ## Upcoming Features
 
-- [ ] Prettier, more polished UI/visual design
-- [ ] Fully responsive, dynamic layout across devices
-- [ ] PWA version (installable, offline-capable)
-
-
-## Contributors
-
-- [@rayyanarchy](https://github.com/rayyanarchy)
-- [@Saad-SYEDK](https://github.com/Saad-SYEDK)
+- [X] Fully responsive, dynamic layout across devices --beta
+- [X] PWA version (installable, offline-capable) --beta
+- [X] Prettier, more polished UI/visual design --beta
 
 
 ## License
