@@ -1,48 +1,65 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 import joblib
 import requests
 import numpy as np
 from datetime import datetime
 
-
 app = Flask(__name__)
 
-# Load trained hydration model
 hydration_model = joblib.load('assets/hydration_model.pkl')
+
+CLOUDY = {116, 119, 122, 143, 248, 260}
+SNOW = {179, 227, 230, 323, 326, 329, 332, 335, 338, 350, 368, 371, 374, 377, 392, 395}
+
+
+def weather_kind(code):
+    """Collapse wttr.in weather codes into sunny / cloudy / rain / snow."""
+    if code == 113:
+        return 'sunny'
+    if code in CLOUDY:
+        return 'cloudy'
+    if code in SNOW:
+        return 'snow'
+    return 'rain'
+
 
 @app.route('/')
 def index():
     city = request.args.get('city', 'Riyadh')
     country = request.args.get('country', 'Saudi Arabia')
-    method = request.args.get('method', '1')
+    method = request.args.get('method', '2')
     today = datetime.now().strftime('%d-%m-%Y')
-    
-    # Fetch prayer times
-    prayer_url = f"http://api.aladhan.com/v1/timingsByCity?city={city}&country={country}&method={method}&date={today}"
-    prayer_response = requests.get(prayer_url)
-    prayer_data = prayer_response.json()
-    
-    timings = prayer_data['data']['timings']
-    suhoor = timings['Fajr']
-    iftar = timings['Maghrib']
-    
-    # Fetch weather
-    weather_url = f"http://wttr.in/{city}?format=j1"
-    weather_response = requests.get(weather_url)
-    weather_data = weather_response.json()
-    
-    temp_c = int(weather_data['current_condition'][0]['temp_C'])
-    humidity = int(weather_data['current_condition'][0]['humidity'])
-    
-    # Predict hydration using trained model
+
+    prayer_url = (
+        f"http://api.aladhan.com/v1/timingsByCity"
+        f"?city={city}&country={country}&method={method}&date={today}"
+    )
+    prayer_data = requests.get(prayer_url, timeout=10).json()['data']
+    suhoor = prayer_data['timings']['Fajr'].split(' ')[0]
+    iftar = prayer_data['timings']['Maghrib'].split(' ')[0]
+    timezone = prayer_data['meta']['timezone']
+
+    weather = requests.get(f"http://wttr.in/{city}?format=j1", timeout=10).json()
+    current = weather['current_condition'][0]
+    temp_c = int(current['temp_C'])
+    humidity = int(current['humidity'])
+    condition = weather_kind(int(current['weatherCode']))
+    condition_text = current['weatherDesc'][0]['value']
+
     try:
-        features = np.array([[temp_c, humidity]])
-        hydration = hydration_model.predict(features)[0]
+        hydration = hydration_model.predict(np.array([[temp_c, humidity]]))[0]
     except Exception as e:
         print(f"Error predicting hydration: {e}")
-        hydration = 2.5  # Default fallback
-    
-    return render_template('index.html', suhoor=suhoor, iftar=iftar, temp=temp_c, humidity=humidity, hydration=round(hydration, 2), method=method)
+        hydration = 2.5
+
+    return render_template(
+        'index.html',
+        suhoor=suhoor, iftar=iftar, timezone=timezone,
+        temp=temp_c, humidity=humidity,
+        condition=condition, condition_text=condition_text,
+        hydration=round(hydration, 1), method=method,
+        city=city, country=country,
+    )
 
 
 if __name__ == '__main__':
