@@ -30,15 +30,11 @@ Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
 
 ## Upcoming Features
 
-- [ ] Prettier, more polished UI/visual design
-- [ ] Fully responsive, dynamic layout across devices
-- [ ] PWA version (installable, offline-capable)
+- [X] Prettier, more polished UI/visual design
+- [X] Fully responsive, dynamic layout across devices
+- [X] PWA version (installable, offline-capable)
+- [ ] Sawm logo, favicon, and branding
 
-
-## Contributors
-
-- [@rayyanarchy](https://github.com/rayyanarchy)
-- [@Saad-SYEDK](https://github.com/Saad-SYEDK)
 
 
 ## License
