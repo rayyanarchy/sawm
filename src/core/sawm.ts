@@ -1,7 +1,21 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
 import { addDays, daysBetween, localDate, monthAfter, wallClockTime, weekdayOf } from './dates'
 import type { Device } from './device'
-import { DEFAULT_FOLLOWED, DEFAULT_OPTIONS, FAST_TYPES, planDay, type DayPlan, type FastOptions, type FastType, type FastTypeId, type FollowedFastTypes } from './fasts'
+import {
+  DEFAULT_FOLLOWED,
+  DEFAULT_OPTIONS,
+  FAST_TYPES,
+  forbiddenDay,
+  isSkipped,
+  planDay,
+  withoutDate,
+  type DayPlan,
+  type FastOptions,
+  type FastType,
+  type FastTypeId,
+  type FollowedFastTypes,
+  type Skip,
+} from './fasts'
 import { baseMonths, hijriCalendar, HIJRI_MONTHS, type HijriCalendar, type HijriDate } from './hijri'
 import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
 import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
@@ -68,7 +82,7 @@ export interface CalendarMonth {
   year: number
   /** 1 for January through 12 for December. */
   month: number
-  days: (Day & { isToday: boolean })[]
+  days: (Day & { isToday: boolean; isPast: boolean })[]
   /** The Hijri months this Gregorian month overlaps, in order. */
   hijriMonths: { name: string; year: number }[]
 }
@@ -82,6 +96,10 @@ export interface Settings {
   calculationMethod?: number
   followed: FollowedFastTypes
   fastOptions: FastOptions
+  /** Runs of dates the user isn't fasting. */
+  skips: Skip[]
+  /** Dates the user added as Planned Fasts themselves. */
+  oneOffs: string[]
   /** Which setup steps the user has finished or skipped. */
   setup: { fasts: boolean }
   theme: ThemePreference
@@ -90,6 +108,8 @@ export interface Settings {
 const DEFAULT_SETTINGS: Settings = {
   followed: DEFAULT_FOLLOWED,
   fastOptions: DEFAULT_OPTIONS,
+  skips: [],
+  oneOffs: [],
   setup: { fasts: false },
   theme: 'system',
 }
@@ -123,6 +143,13 @@ export interface Sawm {
   setFastOptions(changes: Partial<FastOptions>): Promise<void>
   /** Moves one of the Six of Shawwal from one day of Shawwal to another. */
   moveShawwalDay(from: number, to: number): Promise<void>
+  /** Marks a date, or a run of dates, as not fasting. Sawm never asks why. */
+  skip(from: string, to?: string): Promise<void>
+  /** Undoes the Skip covering a date. */
+  unskip(date: string): Promise<void>
+  /** Adds a date as a One-off Fast; refused on a Forbidden Day. On a Skipped date, it undoes the Skip instead. */
+  addOneOff(date: string): Promise<'added' | 'unskipped' | 'forbidden'>
+  removeOneOff(date: string): Promise<void>
   /** Marks a setup step finished (or skipped). */
   completeSetup(step: keyof Settings['setup']): Promise<void>
   /** Cities, towns and villages matching what the user typed. */
@@ -266,7 +293,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
       iftar: time(times.maghrib),
       imsak: time(times.imsak),
       plan: userHijri
-        ? planDay({ date, hijri: userHijri, makkah: times.hijri, weekday: weekdayOf(date) }, settings.followed, settings.fastOptions)
+        ? planDay({ date, hijri: userHijri, makkah: times.hijri, weekday: weekdayOf(date) }, settings.followed, settings.fastOptions, settings)
         : { status: 'none' },
     }
     plans.set(date, day)
@@ -365,7 +392,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
       for (let date = first; date.startsWith(first.slice(0, 8)); date = addDays(date, 1)) {
         const day = dayAt(date)
         if (!day) return undefined
-        days.push({ ...day, isToday: date === today })
+        days.push({ ...day, isToday: date === today, isPast: date < today })
       }
       const hijriMonths: CalendarMonth['hijriMonths'] = []
       for (const { hijri } of days) {
@@ -415,6 +442,35 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
     async setFastOptions(changes) {
       await saveSettings({ fastOptions: { ...settings.fastOptions, ...changes } })
+      notify()
+    },
+
+    async skip(from, to = from) {
+      const [start, end] = from <= to ? [from, to] : [to, from]
+      await saveSettings({ skips: [...settings.skips, { from: start, to: end }] })
+      notify()
+    },
+
+    async unskip(date) {
+      await saveSettings({ skips: withoutDate(settings.skips, date, addDays) })
+      notify()
+    },
+
+    async addOneOff(date) {
+      const hijri = dayAt(date)?.hijri
+      if (hijri && forbiddenDay(hijri)) return 'forbidden'
+      if (isSkipped(date, settings.skips)) {
+        await saveSettings({ skips: withoutDate(settings.skips, date, addDays) })
+        notify()
+        return 'unskipped'
+      }
+      if (!settings.oneOffs.includes(date)) await saveSettings({ oneOffs: [...settings.oneOffs, date].sort() })
+      notify()
+      return 'added'
+    },
+
+    async removeOneOff(date) {
+      await saveSettings({ oneOffs: settings.oneOffs.filter((d) => d !== date) })
       notify()
     },
 
