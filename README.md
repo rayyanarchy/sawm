@@ -1,40 +1,41 @@
 # Sawm
 
-Minimal daily Suhoor and Iftar timings with daily hydration recommendations.
+A fasting companion. Sawm shows when today's fast begins and ends where you are, plans the fasts you keep, and reminds you before Suhoor and at Iftar. It's an installable web app: free, with no account, and your data stays on your phone.
 
-## Features
+Sawm is being rebuilt. The plan is the spec in [#36](https://github.com/rayyanarchy/sawm/issues/36) and its tickets. The previous Flask app lives on the `archive/flask-main` branch.
 
-- ML-based hydration recommendations
-- Dark/Light mode with persistent storage
-- 30-day location caching
-- Prayer times (Suhoor & Iftar) with 28 calculation methods
-- Temperature and humidity data
-- GPS location detection
-- Responsive design
+## Running it
 
-## How To Use
+You need Node 22 and pnpm.
 
-1. Set location: Enter "City, Country" or use the GPS icon
-2. Choose calculation method (saved automatically)
-3. View prayer times and hydration recommendations
-4. Toggle dark/light mode from header
+```sh
+pnpm install
+pnpm dev
+```
 
-## Tech Stack
+Then open http://localhost:5173.
 
-- Backend: scikit-learn, numpy, Flask
-- Frontend: Vanilla JavaScript, CSS
-- APIs: Aladhan (prayer times), wttr.in (weather), Nominatim (geocoding)
-- Fonts: 0xProto
-- Icons: Box Icons
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Runs the app and its Cloudflare Worker locally, with hot reload |
+| `pnpm test` | Runs the tests |
+| `pnpm typecheck` | Type-checks the app, the Worker and the tooling |
+| `pnpm lint` | Lints everything |
+| `pnpm build` | Builds the app and the Worker into `dist/` |
+| `pnpm preview` | Serves the production build locally |
+| `pnpm fixtures:record` | Re-records the real responses the tests are served |
 
+## How it's built
 
-## Upcoming Features
+- **`src/core`** is Sawm without its screens: every rule and every piece of data, behind one interface. It talks to the outside world only through the device it's given (network, storage, clock), so tests can hand it recorded responses and a clock they control.
+- **`src/ui`** holds the React screens. They render what the core says and hold no logic of their own.
+- **`src/device`** is the real device: `fetch`, IndexedDB and the system clock.
+- **`worker`** is the Cloudflare Worker that serves the app and, later, delivers Reminders.
 
-- [X] Fully responsive, dynamic layout across devices --beta
-- [X] PWA version (installable, offline-capable) --beta
-- [X] Prettier, more polished UI/visual design --beta
+Times and Hijri dates come from [AlAdhan](https://aladhan.com/prayer-times-api); place search comes from [Photon](https://photon.komoot.io) (OpenStreetMap data).
 
+The project's vocabulary is defined in [`CONTEXT.md`](CONTEXT.md), and the decisions behind its shape are in [`docs/adr`](docs/adr).
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+[MIT](LICENSE)
