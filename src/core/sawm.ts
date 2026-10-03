@@ -1,6 +1,8 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
-import { localDate, wallClockTime } from './dates'
+import { addDays, daysBetween, localDate, monthAfter, wallClockTime } from './dates'
 import type { Device } from './device'
+import { DEFAULT_FOLLOWED, FAST_TYPES, planDay, type DayPlan, type FastType, type FastTypeId, type FollowedFastTypes } from './fasts'
+import { baseMonths, hijriCalendar, HIJRI_MONTHS, type HijriCalendar, type HijriDate } from './hijri'
 import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
 import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
 
@@ -19,11 +21,47 @@ export interface TimeOfDay {
 /** Where the Saved Location is in its day: before Suhoor, between Suhoor and Iftar, or after Iftar. */
 export type Phase = 'predawn' | 'day' | 'night'
 
+export interface HijriLabel extends HijriDate {
+  monthName: string
+}
+
+/** Everything Sawm knows about one date at the Saved Location. */
+export interface Day {
+  date: string
+  hijri?: HijriLabel
+  suhoor: TimeOfDay
+  iftar: TimeOfDay
+  imsak: TimeOfDay
+  plan: DayPlan
+}
+
+export interface NextFast {
+  date: string
+  /** Calendar days from today: 1 is tomorrow. */
+  inDays: number
+  label: string
+}
+
 export type Today =
   | { status: 'no-location' }
-  | { status: 'ready'; location: SavedLocation; date: string; phase: Phase; suhoor: TimeOfDay; iftar: TimeOfDay }
   /** There's a Saved Location, but no times for today: offline with nothing saved, or the data source failed. */
   | { status: 'unavailable'; location: SavedLocation }
+  | {
+      status: 'ready'
+      location: SavedLocation
+      phase: Phase
+      /** The day the screen is about: today until today's Iftar, then tomorrow. */
+      focus: Day & { isTomorrow: boolean }
+      state: 'before-suhoor' | 'fasting' | 'not-fasting'
+      /** Until Suhoor ends (before Suhoor) or until Iftar (fasting), rounded up to the minute. */
+      countdown?: { hours: number; minutes: number }
+      /** 0 to 1 through the Current Fast. */
+      progress?: number
+      /** Today's fast, from its Iftar until midnight. */
+      fastComplete?: { label: string }
+      /** The first Planned Fast after the focus day, within the months loaded. */
+      nextFast: NextFast | null
+    }
 
 export type ThemePreference = 'system' | 'light' | 'dark'
 
@@ -32,15 +70,20 @@ export interface Settings {
   savedLocation?: SavedLocation
   /** AlAdhan's id for the Calculation Method the user picked; unset means the default for their country. */
   calculationMethod?: number
+  followed: FollowedFastTypes
+  /** Which setup steps the user has finished or skipped. */
+  setup: { fasts: boolean }
   theme: ThemePreference
 }
 
-const DEFAULT_SETTINGS: Settings = { theme: 'system' }
+const DEFAULT_SETTINGS: Settings = { followed: DEFAULT_FOLLOWED, setup: { fasts: false }, theme: 'system' }
 
 /** Sawm without its screens: everything the app does, behind one interface. */
 export interface Sawm {
-  /** What the Today screen shows right now. */
+  /** What the Today screen shows right now. The same object comes back until something on it changes. */
   today(): Today
+  /** A date at the Saved Location, if its month is loaded. */
+  day(date: string): Day | undefined
   /** The user's current choices. The same object comes back until one changes. */
   settings(): Settings
   setTheme(theme: ThemePreference): Promise<void>
@@ -52,19 +95,28 @@ export interface Sawm {
   defaultCalculationMethod(countryCode: string): number
   /** Picks a Calculation Method, or goes back to the country's default when given undefined. */
   setCalculationMethod(id: number | undefined): Promise<void>
-  /** Sets the Saved Location from the device's own position. */
-  useCurrentLocation(): Promise<'ok' | 'denied' | 'unavailable'>
+  /** Every Fast Type, and whether the user follows it. */
+  fastTypes(): (FastType & { followed: boolean })[]
+  setFollowing(id: FastTypeId, followed: boolean): Promise<void>
+  /** Marks a setup step finished (or skipped). */
+  completeSetup(step: keyof Settings['setup']): Promise<void>
   /** Cities, towns and villages matching what the user typed. */
   searchPlaces(query: string): Promise<Place[]>
   /** Makes a place the Saved Location and loads its times. */
   setSavedLocation(place: Place): Promise<void>
-  /** Loads whatever today needs that isn't on the device yet. Safe to call often. */
+  /** Sets the Saved Location from the device's own position. */
+  useCurrentLocation(): Promise<'ok' | 'denied' | 'unavailable'>
+  /** Loads whatever the next 12 months need that isn't on the device yet. Safe to call often. */
   refresh(): Promise<void>
+  /** Re-reads the clock, and tells subscribers if what Today shows has changed. Call it every second or so. */
+  tick(): void
   /** Calls the listener whenever what the app shows may have changed. Returns an unsubscribe function. */
   subscribe(listener: () => void): () => void
 }
 
 const SETTINGS = 'settings'
+/** The current month and the next 12. */
+const MONTHS_AHEAD = 13
 
 export async function createSawm(device: Device): Promise<Sawm> {
   let settings: Settings = DEFAULT_SETTINGS
@@ -73,10 +125,15 @@ export async function createSawm(device: Device): Promise<Sawm> {
   const listeners = new Set<() => void>()
   let lastToday: { value: Today; json: string } | undefined
 
+  // Everything derived from the loaded months and the settings is rebuilt only when either changes.
+  let version = 0
+  let derived: { version: number; days: Map<string, DayTimes>; hijri: HijriCalendar; plans: Map<string, Day> } | undefined
+
   const notify = () => listeners.forEach((listener) => listener())
 
   async function saveSettings(changes: Partial<Settings>) {
     settings = { ...settings, ...changes }
+    version++
     await device.storage.set(SETTINGS, settings)
   }
 
@@ -88,27 +145,14 @@ export async function createSawm(device: Device): Promise<Sawm> {
     method: methodFor(place),
   })
 
-  /** The Gregorian month a date (YYYY-MM-DD) falls in at a place, and the key its times are kept under. */
-  const monthOf = (place: Place, date: string) => {
-    const [year, month] = date.split('-').map(Number) as [number, number]
+  const keyOf = (place: Place, year: number, month: number) => {
     const { latitude, longitude, method } = query(place)
-    return { year, month, key: `times:${latitude},${longitude}:${method}:${year}-${month}` }
+    return `times:${latitude},${longitude}:${method}:${year}-${month}`
   }
 
-  const dayAt = (place: SavedLocation, date: string): DayTimes | undefined =>
-    months.get(monthOf(place, date).key)?.days.find((day) => day.date === date)
-
-  /** Brings the month containing the place's date at an instant into memory, if it's saved on the device. */
-  async function restoreMonthFor(place: SavedLocation, instant: number) {
-    if (!place.timeZone) return
-    const { key } = monthOf(place, localDate(instant, place.timeZone))
-    const saved = await device.storage.get<MonthTimes>(key)
-    if (saved) months.set(key, saved)
-  }
-
-  /** Brings the month containing the place's date at an instant into memory: from the device if saved, else the network. */
-  function loadMonthFor(place: SavedLocation, instant: number): Promise<MonthTimes> {
-    const { year, month, key } = monthOf(place, localDate(instant, place.timeZone ?? 'UTC'))
+  /** Brings a Gregorian month of times into memory: from the device if saved, else the network. */
+  function loadMonth(place: Place, { year, month }: { year: number; month: number }): Promise<MonthTimes> {
+    const key = keyOf(place, year, month)
     const loaded = months.get(key)
     if (loaded) return Promise.resolve(loaded)
 
@@ -121,11 +165,22 @@ export async function createSawm(device: Device): Promise<Sawm> {
           await device.storage.set(key, times)
         }
         months.set(key, times)
+        version++
         return times
       })().finally(() => loadingMonths.delete(key))
       loadingMonths.set(key, loading)
     }
     return loading
+  }
+
+  /** Brings a month into memory only if it's already saved on the device. */
+  async function restoreMonth(place: Place, at: { year: number; month: number }) {
+    const key = keyOf(place, at.year, at.month)
+    const saved = await device.storage.get<MonthTimes>(key)
+    if (saved) {
+      months.set(key, saved)
+      version++
+    }
   }
 
   async function refresh() {
@@ -134,34 +189,108 @@ export async function createSawm(device: Device): Promise<Sawm> {
     try {
       if (!place.timeZone) {
         // The time zone only arrives with the first month of times, so that month is chosen by UTC.
-        const first = await loadMonthFor(place, device.clock.now())
+        const first = await loadMonth(place, monthAfter(localDate(device.clock.now(), 'UTC'), 0))
         // The user may have chosen another place while this one was loading; that refresh takes over.
         if (settings.savedLocation !== place) return
         place = { ...place, timeZone: first.timeZone }
         await saveSettings({ savedLocation: place })
       }
-      await loadMonthFor(place, device.clock.now())
+      const today = localDate(device.clock.now(), place.timeZone!)
+      // This month and next come first, so Today works as soon as possible.
+      await Promise.all([0, 1].map((i) => loadMonth(place!, monthAfter(today, i))))
+      notify()
+      for (let i = 2; i < MONTHS_AHEAD; i += 3) {
+        await Promise.allSettled([i, i + 1, i + 2].filter((m) => m < MONTHS_AHEAD).map((m) => loadMonth(place!, monthAfter(today, m))))
+      }
     } catch {
       // Offline, or the data source failed: Today says its times are unavailable until the next refresh.
     }
     notify()
   }
 
+  function derive() {
+    if (derived?.version === version) return derived
+    const place = settings.savedLocation
+    const days = new Map<string, DayTimes>()
+    if (place) {
+      const prefix = keyOf(place, 0, 0).replace(/0-0$/, '')
+      for (const [key, month] of months) {
+        if (key.startsWith(prefix)) for (const day of month.days) days.set(day.date, day)
+      }
+    }
+    const hijriDays = new Map([...days].map(([date, day]) => [date, day.hijri]))
+    derived = { version, days, hijri: hijriCalendar(baseMonths(hijriDays), () => 0), plans: new Map() }
+    return derived
+  }
+
+  const time = (iso: string): TimeOfDay => ({ at: iso, local: wallClockTime(iso) })
+
+  function dayAt(date: string): Day | undefined {
+    const { days, hijri, plans } = derive()
+    const cached = plans.get(date)
+    if (cached) return cached
+    const times = days.get(date)
+    if (!times) return undefined
+    const userHijri = hijri.dateOf(date)
+    const day: Day = {
+      date,
+      ...(userHijri ? { hijri: { ...userHijri, monthName: HIJRI_MONTHS[userHijri.month - 1]! } } : {}),
+      suhoor: time(times.fajr),
+      iftar: time(times.maghrib),
+      imsak: time(times.imsak),
+      plan: userHijri ? planDay(userHijri, settings.followed) : { status: 'none' },
+    }
+    plans.set(date, day)
+    return day
+  }
+
   function computeToday(): Today {
     const location = settings.savedLocation
     if (!location) return { status: 'no-location' }
-    const date = location.timeZone && localDate(device.clock.now(), location.timeZone)
-    const day = date && dayAt(location, date)
-    if (!date || !day) return { status: 'unavailable', location }
+    if (!location.timeZone) return { status: 'unavailable', location }
+
     const now = device.clock.now()
-    return {
-      status: 'ready',
-      location,
-      date,
-      phase: now < Date.parse(day.fajr) ? 'predawn' : now < Date.parse(day.maghrib) ? 'day' : 'night',
-      suhoor: { at: day.fajr, local: wallClockTime(day.fajr) },
-      iftar: { at: day.maghrib, local: wallClockTime(day.maghrib) },
+    const date = localDate(now, location.timeZone)
+    const today = dayAt(date)
+    if (!today) return { status: 'unavailable', location }
+
+    const suhoorToday = Date.parse(today.suhoor.at)
+    const iftarToday = Date.parse(today.iftar.at)
+    const isTomorrow = now >= iftarToday
+    const focus = isTomorrow ? dayAt(addDays(date, 1)) : today
+    if (!focus) return { status: 'unavailable', location }
+
+    const phase: Phase = now < suhoorToday ? 'predawn' : now < iftarToday ? 'day' : 'night'
+    const fastComplete = isTomorrow && today.plan.status === 'planned' ? { label: today.plan.label } : undefined
+
+    let nextFast: NextFast | null = null
+    for (let next = addDays(focus.date, 1), day = dayAt(next); day; next = addDays(next, 1), day = dayAt(next)) {
+      if (day.plan.status === 'planned') {
+        nextFast = { date: next, inDays: daysBetween(date, next), label: day.plan.label }
+        break
+      }
     }
+
+    const common = { status: 'ready' as const, location, phase, focus: { ...focus, isTomorrow }, nextFast, ...(fastComplete ? { fastComplete } : {}) }
+    if (focus.plan.status !== 'planned') return { ...common, state: 'not-fasting' }
+
+    const suhoor = Date.parse(focus.suhoor.at)
+    const iftar = Date.parse(focus.iftar.at)
+    if (now < suhoor) return { ...common, state: 'before-suhoor', countdown: roundUpToMinute(suhoor - now) }
+    return {
+      ...common,
+      state: 'fasting',
+      countdown: roundUpToMinute(iftar - now),
+      progress: Math.round(((now - suhoor) / (iftar - suhoor)) * 1000) / 1000,
+    }
+  }
+
+  function today(): Today {
+    // The same object comes back until something on it changes, which is what React's external stores expect.
+    const value = computeToday()
+    const json = JSON.stringify(value)
+    if (lastToday?.json !== json) lastToday = { value, json }
+    return lastToday.value
   }
 
   async function setSavedLocation(place: Place) {
@@ -172,19 +301,23 @@ export async function createSawm(device: Device): Promise<Sawm> {
   }
 
   // Start from what's on the device so the first screen never waits on the network; refresh() does the rest.
-  settings = { ...DEFAULT_SETTINGS, ...(await device.storage.get<Settings>(SETTINGS)) }
-  if (settings.savedLocation) await restoreMonthFor(settings.savedLocation, device.clock.now())
+  const stored = await device.storage.get<Partial<Settings>>(SETTINGS)
+  settings = {
+    ...DEFAULT_SETTINGS,
+    ...stored,
+    followed: { ...DEFAULT_SETTINGS.followed, ...stored?.followed },
+    setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
+  }
+  const saved = settings.savedLocation
+  if (saved?.timeZone) {
+    const date = localDate(device.clock.now(), saved.timeZone)
+    for (let i = 0; i < MONTHS_AHEAD; i++) await restoreMonth(saved, monthAfter(date, i))
+  }
 
   return {
-    today() {
-      // The same object comes back until something on it changes, which is what React's external stores expect.
-      const value = computeToday()
-      const json = JSON.stringify(value)
-      if (lastToday?.json !== json) lastToday = { value, json }
-      return lastToday.value
-    },
+    today,
 
-    searchPlaces: (text) => searchPlaces(device.fetch, text),
+    day: dayAt,
 
     settings: () => settings,
 
@@ -207,9 +340,21 @@ export async function createSawm(device: Device): Promise<Sawm> {
       await refresh()
     },
 
-    async setSavedLocation(place) {
-      await setSavedLocation(place)
+    fastTypes: () => FAST_TYPES.map((type) => ({ ...type, followed: settings.followed[type.id] })),
+
+    async setFollowing(id, followed) {
+      await saveSettings({ followed: { ...settings.followed, [id]: followed } })
+      notify()
     },
+
+    async completeSetup(step) {
+      await saveSettings({ setup: { ...settings.setup, [step]: true } })
+      notify()
+    },
+
+    searchPlaces: (text) => searchPlaces(device.fetch, text),
+
+    setSavedLocation,
 
     async useCurrentLocation() {
       const position = await device.geolocation.current()
@@ -226,6 +371,12 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
     refresh,
 
+    tick() {
+      const before = lastToday?.json
+      today()
+      if (before !== undefined && lastToday?.json !== before) notify()
+    },
+
     subscribe(listener) {
       listeners.add(listener)
       return () => {
@@ -233,4 +384,9 @@ export async function createSawm(device: Device): Promise<Sawm> {
       }
     },
   }
+}
+
+function roundUpToMinute(ms: number) {
+  const total = Math.max(0, Math.ceil(ms / 60_000))
+  return { hours: Math.floor(total / 60), minutes: total % 60 }
 }

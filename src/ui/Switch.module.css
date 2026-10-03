@@ -1,0 +1,59 @@
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.text {
+  display: grid;
+  gap: 2px;
+}
+
+.label {
+  font-size: 19px;
+  font-weight: 300;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.track {
+  flex: none;
+  position: relative;
+  width: 46px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--line);
+  transition: background 200ms var(--ease);
+}
+
+.thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+  transition: translate 200ms var(--ease);
+}
+
+.row[aria-checked='true'] .track {
+  background: var(--text);
+}
+
+.row[aria-checked='true'] .thumb {
+  translate: 18px 0;
+  background: var(--sky-bottom);
+}

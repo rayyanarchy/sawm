@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import type { Sawm } from '../core'
+import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
 import { navigate, usePath } from './router'
 import { SettingsScreen } from './SettingsScreen'
@@ -25,6 +26,12 @@ export function App({ sawm }: { sawm: Sawm }) {
     }
   }, [sawm])
 
+  // The countdown moves on by the minute; the core only tells us when something on screen changes.
+  useEffect(() => {
+    const timer = setInterval(() => sawm.tick(), 1000)
+    return () => clearInterval(timer)
+  }, [sawm])
+
   if (today.status === 'no-location') {
     return (
       <Shell sky="neutral" theme={theme} showNav={false}>
@@ -34,6 +41,15 @@ export function App({ sawm }: { sawm: Sawm }) {
   }
 
   const sky = today.status === 'ready' ? today.phase : 'neutral'
+
+  if (!settings.setup.fasts) {
+    return (
+      <Shell sky={sky} theme={theme} showNav={false}>
+        <FastsSetup sawm={sawm} settings={settings} />
+      </Shell>
+    )
+  }
+
   return (
     <Shell sky={sky} theme={theme}>
       {path === '/settings/location' ? (

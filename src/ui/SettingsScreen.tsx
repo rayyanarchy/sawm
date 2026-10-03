@@ -2,6 +2,7 @@ import type { Sawm, Settings, ThemePreference } from '../core'
 import { placeName } from './placeName'
 import { Link } from './Link'
 import s from './SettingsScreen.module.css'
+import { Switch } from './Switch'
 
 const THEMES: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -25,6 +26,23 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
           <span>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
           <span className={s.action}>Change</span>
         </Link>
+      </section>
+
+      <section className={s.group} aria-labelledby="settings-fasts">
+        <h2 id="settings-fasts" className={s.heading}>
+          Fasts
+        </h2>
+        <div className={s.switches}>
+          {sawm.fastTypes().map((type) => (
+            <Switch
+              key={type.id}
+              label={type.label}
+              description={type.description}
+              checked={type.followed}
+              onChange={(followed) => void sawm.setFollowing(type.id, followed)}
+            />
+          ))}
+        </div>
       </section>
 
       <section className={s.group} aria-labelledby="settings-times">
