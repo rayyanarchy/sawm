@@ -1,7 +1,7 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
-import { addDays, daysBetween, localDate, monthAfter, wallClockTime } from './dates'
+import { addDays, daysBetween, localDate, monthAfter, wallClockTime, weekdayOf } from './dates'
 import type { Device } from './device'
-import { DEFAULT_FOLLOWED, FAST_TYPES, planDay, type DayPlan, type FastType, type FastTypeId, type FollowedFastTypes } from './fasts'
+import { DEFAULT_FOLLOWED, DEFAULT_OPTIONS, FAST_TYPES, planDay, type DayPlan, type FastOptions, type FastType, type FastTypeId, type FollowedFastTypes } from './fasts'
 import { baseMonths, hijriCalendar, HIJRI_MONTHS, type HijriCalendar, type HijriDate } from './hijri'
 import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
 import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
@@ -81,12 +81,18 @@ export interface Settings {
   /** AlAdhan's id for the Calculation Method the user picked; unset means the default for their country. */
   calculationMethod?: number
   followed: FollowedFastTypes
+  fastOptions: FastOptions
   /** Which setup steps the user has finished or skipped. */
   setup: { fasts: boolean }
   theme: ThemePreference
 }
 
-const DEFAULT_SETTINGS: Settings = { followed: DEFAULT_FOLLOWED, setup: { fasts: false }, theme: 'system' }
+const DEFAULT_SETTINGS: Settings = {
+  followed: DEFAULT_FOLLOWED,
+  fastOptions: DEFAULT_OPTIONS,
+  setup: { fasts: false },
+  theme: 'system',
+}
 
 /** Sawm without its screens: everything the app does, behind one interface. */
 export interface Sawm {
@@ -111,7 +117,12 @@ export interface Sawm {
   setCalculationMethod(id: number | undefined): Promise<void>
   /** Every Fast Type, and whether the user follows it. */
   fastTypes(): (FastType & { followed: boolean })[]
+  /** Follows or stops following a Fast Type. The Fast of Dawud and Mondays & Thursdays exclude each other. */
   setFollowing(id: FastTypeId, followed: boolean): Promise<void>
+  /** Changes the choices that shape some Fast Types. */
+  setFastOptions(changes: Partial<FastOptions>): Promise<void>
+  /** Moves one of the Six of Shawwal from one day of Shawwal to another. */
+  moveShawwalDay(from: number, to: number): Promise<void>
   /** Marks a setup step finished (or skipped). */
   completeSetup(step: keyof Settings['setup']): Promise<void>
   /** Cities, towns and villages matching what the user typed. */
@@ -254,7 +265,9 @@ export async function createSawm(device: Device): Promise<Sawm> {
       suhoor: time(times.fajr),
       iftar: time(times.maghrib),
       imsak: time(times.imsak),
-      plan: userHijri ? planDay(userHijri, settings.followed) : { status: 'none' },
+      plan: userHijri
+        ? planDay({ date, hijri: userHijri, makkah: times.hijri, weekday: weekdayOf(date) }, settings.followed, settings.fastOptions)
+        : { status: 'none' },
     }
     plans.set(date, day)
     return day
@@ -322,6 +335,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
     ...DEFAULT_SETTINGS,
     ...stored,
     followed: { ...DEFAULT_SETTINGS.followed, ...stored?.followed },
+    fastOptions: { ...DEFAULT_SETTINGS.fastOptions, ...stored?.fastOptions },
     setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
   }
   const saved = settings.savedLocation
@@ -386,7 +400,30 @@ export async function createSawm(device: Device): Promise<Sawm> {
     fastTypes: () => FAST_TYPES.map((type) => ({ ...type, followed: settings.followed[type.id] })),
 
     async setFollowing(id, followed) {
-      await saveSettings({ followed: { ...settings.followed, [id]: followed } })
+      const changes: Partial<FollowedFastTypes> = { [id]: followed }
+      // The Fast of Dawud already covers more than every Monday and Thursday; following both would overlap.
+      if (followed && id === 'dawud') changes.mondaysThursdays = false
+      if (followed && id === 'mondaysThursdays') changes.dawud = false
+      const zone = settings.savedLocation?.timeZone
+      const fastOptions =
+        followed && id === 'dawud' && !settings.fastOptions.dawudStart && zone
+          ? { ...settings.fastOptions, dawudStart: localDate(device.clock.now(), zone) }
+          : settings.fastOptions
+      await saveSettings({ followed: { ...settings.followed, ...changes }, fastOptions })
+      notify()
+    },
+
+    async setFastOptions(changes) {
+      await saveSettings({ fastOptions: { ...settings.fastOptions, ...changes } })
+      notify()
+    },
+
+    async moveShawwalDay(from, to) {
+      const days = settings.fastOptions.shawwalDays
+      if (!days.includes(from) || days.includes(to) || to < 2 || to > 30) return
+      await saveSettings({
+        fastOptions: { ...settings.fastOptions, shawwalDays: days.map((day) => (day === from ? to : day)).sort((a, b) => a - b) },
+      })
       notify()
     },
 

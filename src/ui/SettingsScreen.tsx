@@ -2,7 +2,7 @@ import type { Sawm, Settings, ThemePreference } from '../core'
 import { placeName } from './placeName'
 import { Link } from './Link'
 import s from './SettingsScreen.module.css'
-import { Switch } from './Switch'
+import { FastTypeList } from './FastTypeList'
 
 const THEMES: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -32,17 +32,7 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
         <h2 id="settings-fasts" className={s.heading}>
           Fasts
         </h2>
-        <div className={s.switches}>
-          {sawm.fastTypes().map((type) => (
-            <Switch
-              key={type.id}
-              label={type.label}
-              description={type.description}
-              checked={type.followed}
-              onChange={(followed) => void sawm.setFollowing(type.id, followed)}
-            />
-          ))}
-        </div>
+        <FastTypeList sawm={sawm} settings={settings} />
       </section>
 
       <section className={s.group} aria-labelledby="settings-times">

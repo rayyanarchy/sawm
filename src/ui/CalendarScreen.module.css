@@ -228,3 +228,26 @@
     gap: 40px;
   }
 }
+
+.move {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--soft);
+}
+
+.moveChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.moveChoice {
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px;
+  cursor: pointer;
+}

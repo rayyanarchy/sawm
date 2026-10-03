@@ -29,10 +29,6 @@
   color: var(--soft);
 }
 
-.list {
-  border-top: 1px solid var(--line);
-}
-
 .primary {
   justify-self: start;
   margin-top: 8px;

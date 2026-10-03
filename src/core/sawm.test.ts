@@ -371,7 +371,7 @@ describe('Planned Fasts', () => {
     await sawm.setFollowing('ramadan', false)
 
     expect(sawm.today()).toMatchObject({ state: 'not-fasting', nextFast: null })
-    expect(sawm.fastTypes()).toEqual([expect.objectContaining({ id: 'ramadan', followed: false })])
+    expect(sawm.fastTypes().filter((type) => type.followed)).toEqual([])
   })
 })
 
@@ -480,5 +480,113 @@ describe('Calendar', () => {
       date: '2027-03-09',
       plan: { reason: 'Eid al-Fitr' },
     })
+  })
+})
+
+describe('Fast Types', () => {
+  /** The labels of the Planned Fasts between two dates. */
+  function planned(sawm: Awaited<ReturnType<typeof karachiAt>>['sawm'], from: string, to: string) {
+    const result: Record<string, string> = {}
+    for (let date = from; date <= to; date = new Date(Date.parse(`${date}T12:00:00Z`) + 86_400_000).toISOString().slice(0, 10)) {
+      const plan = sawm.day(date)?.plan
+      if (plan?.status === 'planned') result[date] = plan.label
+    }
+    return result
+  }
+
+  it('plans the White Days on the 13th to 15th of each Hijri month', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('ramadan', false)
+    await sawm.setFollowing('whiteDays', true)
+
+    expect(planned(sawm, '2026-10-20', '2026-10-30')).toEqual({
+      '2026-10-24': 'White Days',
+      '2026-10-25': 'White Days',
+      '2026-10-26': 'White Days',
+    })
+  })
+
+  it('plans only the 14th and 15th of Dhul Hijjah, because the 13th is a Day of Tashreeq', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('ramadan', false)
+    await sawm.setFollowing('whiteDays', true)
+
+    expect(planned(sawm, '2027-05-18', '2027-05-22')).toEqual({ '2027-05-20': 'White Days', '2027-05-21': 'White Days' })
+    expect(sawm.day('2027-05-19')?.plan).toEqual({ status: 'forbidden', reason: 'Day of Tashreeq' })
+  })
+
+  it('plans every Monday and Thursday', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z') // a Sunday
+    await sawm.setFollowing('mondaysThursdays', true)
+
+    expect(sawm.today()).toMatchObject({ nextFast: { date: '2026-10-05', inDays: 1, label: 'Mondays & Thursdays' } })
+    expect(Object.keys(planned(sawm, '2026-10-05', '2026-10-11'))).toEqual(['2026-10-05', '2026-10-08'])
+  })
+
+  it('names a date matching several Fast Types after the rarer one', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    for (const id of ['whiteDays', 'mondaysThursdays', 'arafah', 'firstNine'] as const) await sawm.setFollowing(id, true)
+
+    expect(sawm.day('2026-10-26')?.plan).toEqual({ status: 'planned', label: 'White Days', types: ['whiteDays', 'mondaysThursdays'] })
+    expect(sawm.day('2027-05-15')?.plan).toMatchObject({ status: 'planned', label: 'Day of Arafah', types: ['arafah', 'firstNine'] })
+  })
+
+  it('plans the Fast of Dawud every other day from its start, dropping Forbidden Days without shifting', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('ramadan', false)
+    await sawm.setFollowing('dawud', true)
+
+    expect(sawm.settings().fastOptions.dawudStart).toBe('2026-10-04')
+    expect(Object.keys(planned(sawm, '2026-10-04', '2026-10-09'))).toEqual(['2026-10-04', '2026-10-06', '2026-10-08'])
+    expect(sawm.day('2027-05-16')?.plan).toEqual({ status: 'forbidden', reason: 'Eid al-Adha' })
+    expect(sawm.day('2027-05-18')?.plan).toEqual({ status: 'forbidden', reason: 'Day of Tashreeq' })
+    expect(Object.keys(planned(sawm, '2027-05-19', '2027-05-23'))).toEqual(['2027-05-20', '2027-05-22'])
+  })
+
+  it('switches Mondays & Thursdays off when the user follows the Fast of Dawud, and back', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('mondaysThursdays', true)
+
+    await sawm.setFollowing('dawud', true)
+    expect(sawm.settings().followed).toMatchObject({ dawud: true, mondaysThursdays: false })
+
+    await sawm.setFollowing('mondaysThursdays', true)
+    expect(sawm.settings().followed).toMatchObject({ dawud: false, mondaysThursdays: true })
+  })
+
+  it('plans the Six of Shawwal on 2–7 Shawwal, and lets the user move them', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('sixOfShawwal', true)
+
+    expect(Object.keys(planned(sawm, '2027-03-09', '2027-03-20'))).toEqual([
+      '2027-03-10', '2027-03-11', '2027-03-12', '2027-03-13', '2027-03-14', '2027-03-15',
+    ])
+
+    await sawm.moveShawwalDay(2, 10)
+    expect(Object.keys(planned(sawm, '2027-03-09', '2027-03-20'))).toEqual([
+      '2027-03-11', '2027-03-12', '2027-03-13', '2027-03-14', '2027-03-15', '2027-03-18',
+    ])
+  })
+
+  it('plans the Day of Arafah, the First Nine of Dhul Hijjah and Ashura', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('ramadan', false)
+    for (const id of ['arafah', 'firstNine', 'ashura'] as const) await sawm.setFollowing(id, true)
+
+    expect(planned(sawm, '2027-05-06', '2027-05-17')).toEqual({
+      '2027-05-07': 'First Nine of Dhul Hijjah',
+      '2027-05-08': 'First Nine of Dhul Hijjah',
+      '2027-05-09': 'First Nine of Dhul Hijjah',
+      '2027-05-10': 'First Nine of Dhul Hijjah',
+      '2027-05-11': 'First Nine of Dhul Hijjah',
+      '2027-05-12': 'First Nine of Dhul Hijjah',
+      '2027-05-13': 'First Nine of Dhul Hijjah',
+      '2027-05-14': 'First Nine of Dhul Hijjah',
+      '2027-05-15': 'Day of Arafah',
+    })
+    expect(planned(sawm, '2027-06-13', '2027-06-17')).toEqual({ '2027-06-14': 'Ashura', '2027-06-15': 'Ashura' })
+
+    await sawm.setFastOptions({ ashuraPairing: '10-11' })
+    expect(planned(sawm, '2027-06-13', '2027-06-17')).toEqual({ '2027-06-15': 'Ashura', '2027-06-16': 'Ashura' })
   })
 })
