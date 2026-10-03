@@ -58,6 +58,23 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
   return (
     <>
       <div className={s.center}>
+        {today.monthEndCheck && (
+          <section className={s.check} aria-labelledby="month-end-check">
+            <p id="month-end-check" className={s.checkQuestion}>
+              {today.monthEndCheck.question}
+            </p>
+            <div className={s.checkAnswers}>
+              <button type="button" className={s.checkAnswer} onClick={() => void sawm.answerMonthEndCheck('yes')}>
+                Yes
+              </button>
+              <button type="button" className={s.checkAnswer} onClick={() => void sawm.answerMonthEndCheck('no')}>
+                No
+              </button>
+            </div>
+            <p className={s.checkNote}>Until you answer, Sawm follows the calculated calendar.</p>
+          </section>
+        )}
+
         {fastComplete && (
           <p className={s.complete}>
             <span className={s.completeDot} aria-hidden="true" />

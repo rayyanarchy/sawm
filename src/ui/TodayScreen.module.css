@@ -216,3 +216,41 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
+
+.check {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.checkQuestion {
+  font-size: 20px;
+  font-weight: 350;
+}
+
+.checkAnswers {
+  display: flex;
+  gap: 10px;
+}
+
+.checkAnswer {
+  min-width: 92px;
+  padding: 10px 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.checkNote {
+  font-size: 13px;
+  color: var(--soft);
+}
