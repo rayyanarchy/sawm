@@ -8,6 +8,7 @@
   "packageManager": "pnpm@12.3.4",
   "scripts": {
     "dev": "vite",
+    "prototype": "vite --host --open '/?variant=A'",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",

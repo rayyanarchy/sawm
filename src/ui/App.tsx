@@ -2,6 +2,10 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { Sawm } from '../core'
 import { LocationSearch } from './LocationSearch'
 import { placeName } from './placeName'
+import { TodayPrototype } from './today-prototype/TodayPrototype'
+
+// PROTOTYPE (#38): the Today variants only exist in development, behind ?variant=.
+const showPrototype = import.meta.env.DEV && new URLSearchParams(window.location.search).has('variant')
 
 export function App({ sawm }: { sawm: Sawm }) {
   const today = useSyncExternalStore(sawm.subscribe, sawm.today)
@@ -18,6 +22,17 @@ export function App({ sawm }: { sawm: Sawm }) {
       document.removeEventListener('visibilitychange', refresh)
     }
   }, [sawm])
+
+  // PROTOTYPE (#38): ?place=Karachi picks the first search result, so the variants can be opened straight away.
+  useEffect(() => {
+    const place = new URLSearchParams(window.location.search).get('place')
+    if (!import.meta.env.DEV || !place || sawm.today().status !== 'no-location') return
+    void sawm.searchPlaces(place).then(([first]) => first && sawm.setSavedLocation(first))
+  }, [sawm])
+
+  if (showPrototype && today.status === 'ready' && !changingLocation) {
+    return <TodayPrototype today={today} />
+  }
 
   if (today.status === 'no-location') {
     return <LocationSearch sawm={sawm} onDone={() => setChangingLocation(false)} />

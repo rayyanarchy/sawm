@@ -1,0 +1,248 @@
+/* PROTOTYPE (#38), variant C: Grid. */
+.page {
+  --bg: #f2f2ee;
+  --text: #161616;
+  --muted: #7a7a72;
+  --line: #d6d6cf;
+  --signal: #2a45d6;
+  --signal-soft: rgb(42 69 214 / 0.12);
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: max(env(safe-area-inset-top), 16px) 18px 150px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+}
+
+:global([data-theme='dark']) .page {
+  --bg: #0e0f10;
+  --text: #ebebe6;
+  --muted: #84868a;
+  --line: #2a2c2f;
+  --signal: #8796ff;
+  --signal-soft: rgb(135 150 255 / 0.16);
+}
+
+.page * {
+  margin: 0;
+}
+
+.bar,
+.status,
+.label,
+.cellLabel,
+.nextMeta,
+.week {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--text);
+  font-size: 11px;
+}
+
+.bar span:nth-child(2) {
+  text-align: center;
+}
+
+.bar span:last-child {
+  text-align: right;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.hijri {
+  margin-left: auto;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.page[data-state='fasting'] .dot {
+  background: var(--signal);
+  box-shadow: 0 0 0 4px var(--signal-soft);
+}
+
+.times {
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 14px 0 6px;
+}
+
+.row + .row {
+  border-top: 1px solid var(--line);
+}
+
+.row[data-dim] .big {
+  color: var(--muted);
+}
+
+.label {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.big {
+  font-size: clamp(92px, 29vw, 210px);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  margin-left: -0.04em;
+}
+
+.side {
+  display: grid;
+  align-content: start;
+}
+
+.hours {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
+  gap: 3px;
+  padding: 16px 0 10px;
+}
+
+.cell {
+  position: relative;
+  height: 34px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--signal);
+}
+
+.cellLabel {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  font-size: 8.5px;
+  letter-spacing: 0;
+  color: var(--muted);
+  mix-blend-mode: normal;
+}
+
+.side > :first-child {
+  border-top: 0;
+}
+
+.remaining,
+.next {
+  display: grid;
+  gap: 2px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.mid {
+  font-size: 54px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.nextDate {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.nextMeta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+}
+
+.weekDay {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 10px 0;
+  color: var(--muted);
+}
+
+.weekDay span:last-child {
+  font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.weekDay[data-fast] span:last-child {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--signal-soft);
+  color: var(--signal);
+}
+
+.weekDay[data-today] span:first-child {
+  color: var(--text);
+}
+
+@media (min-width: 900px) {
+  .page {
+    padding: 36px max(48px, calc((100% - 1104px) / 2)) 130px;
+    grid-template-columns: 7fr 5fr;
+    column-gap: 48px;
+  }
+
+  .bar,
+  .status {
+    grid-column: 1 / -1;
+  }
+
+  .times {
+    border-bottom: 0;
+    border-right: 1px solid var(--line);
+    padding-right: 48px;
+  }
+
+  .big {
+    font-size: 200px;
+  }
+
+  .side {
+    padding-top: 6px;
+  }
+}

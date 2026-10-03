@@ -1,0 +1,217 @@
+/* PROTOTYPE (#38), variant B: Horizon. */
+.sky {
+  --text: #1d2431;
+  --soft: rgb(29 36 49 / 0.58);
+  --line: rgb(29 36 49 / 0.28);
+  --sun: #f2a65a;
+  --glow: rgb(242 166 90 / 0.45);
+  --top: #cfdfeb;
+  --bottom: #f6efe3;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: max(env(safe-area-inset-top), 22px) 24px 150px;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  background: linear-gradient(180deg, var(--top) 0%, var(--bottom) 100%);
+  color: var(--text);
+  overflow-x: hidden;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  transition: background 600ms ease;
+}
+
+.sky * {
+  margin: 0;
+}
+
+.sky[data-state='before-suhoor'] {
+  --top: #dcdcec;
+  --bottom: #f2e2d8;
+  --sun: #e88b6a;
+  --glow: rgb(232 139 106 / 0.35);
+}
+
+.sky[data-state='not-fasting'] {
+  --top: #ebeae5;
+  --bottom: #f6f4ef;
+}
+
+:global([data-theme='dark']) .sky {
+  --text: #e8ecf3;
+  --soft: rgb(232 236 243 / 0.6);
+  --line: rgb(232 236 243 / 0.25);
+  --top: #0e1824;
+  --bottom: #273341;
+  --sun: #f4b26c;
+  --glow: rgb(244 178 108 / 0.35);
+}
+
+:global([data-theme='dark']) .sky[data-state='before-suhoor'] {
+  --top: #05070f;
+  --bottom: #1a1e3a;
+  --sun: #d98a72;
+  --glow: rgb(217 138 114 / 0.3);
+}
+
+:global([data-theme='dark']) .sky[data-state='not-fasting'] {
+  --top: #101113;
+  --bottom: #1b1c1f;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--soft);
+}
+
+.place {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.center {
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  display: grid;
+  gap: 6px;
+  padding: 24px 0;
+}
+
+.count {
+  font-size: clamp(110px, 34vw, 240px);
+  font-weight: 200;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.unit {
+  font-size: 0.28em;
+  font-weight: 300;
+  letter-spacing: 0;
+  margin: 0 0.18em 0 0.06em;
+  color: var(--soft);
+}
+
+.unit:last-child {
+  margin-right: 0;
+}
+
+.word {
+  font-size: clamp(64px, 19vw, 150px);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.caption {
+  font-size: 17px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--soft);
+}
+
+.sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--soft);
+}
+
+.horizon {
+  width: 100%;
+  max-width: 1100px;
+  justify-self: center;
+}
+
+.arcBox {
+  position: relative;
+  height: clamp(90px, 22vw, 170px);
+  margin: 0 6px;
+}
+
+.arc {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.arc path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+
+.sun {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  translate: -50% 50%;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 7px var(--glow), 0 0 42px 10px var(--glow);
+}
+
+/* Before Suhoor ends the sun is still below the horizon: only its glow shows, at the eastern end. */
+.dawn {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 90%;
+  height: 130%;
+  translate: -50% 0;
+  background: radial-gradient(ellipse at 50% 100%, var(--glow) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.line {
+  height: 1px;
+  background: var(--line);
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.endLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.ends > span:last-child {
+  text-align: right;
+}
+
+.next {
+  padding-top: 26px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--soft);
+}
+
+@media (min-width: 900px) {
+  .sky {
+    padding: 36px 64px 130px;
+  }
+
+  .top {
+    font-size: 15px;
+  }
+
+  .ends {
+    font-size: 26px;
+  }
+}
