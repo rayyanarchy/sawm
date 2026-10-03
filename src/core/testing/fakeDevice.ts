@@ -1,4 +1,4 @@
-import type { Device } from '../device'
+import type { Device, PositionResult } from '../device'
 import { fixtureName } from './fixtureName'
 
 const fixtures = import.meta.glob<unknown>('./fixtures/*.json', { eager: true, import: 'default' })
@@ -7,7 +7,11 @@ const fixtures = import.meta.glob<unknown>('./fixtures/*.json', { eager: true, i
  * A device whose network serves recorded responses, whose storage lives in memory,
  * and whose clock only moves when a test moves it.
  */
-export function createFakeDevice(options: { now: string }) {
+export function createFakeDevice(options: {
+  now: string
+  /** Where the device says it is, or why it won't say. */
+  position?: { latitude: number; longitude: number } | 'denied' | 'unavailable'
+}) {
   let now = Date.parse(options.now)
   let online = true
   let held: (() => void)[] | undefined
@@ -35,6 +39,12 @@ export function createFakeDevice(options: { now: string }) {
       },
     },
     clock: { now: () => now },
+    geolocation: {
+      async current(): Promise<PositionResult> {
+        const position = options.position ?? 'unavailable'
+        return typeof position === 'string' ? { status: position } : { status: 'ok', ...position }
+      },
+    },
   }
 
   return {

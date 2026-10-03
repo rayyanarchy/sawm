@@ -48,6 +48,76 @@ describe('Saved Location', () => {
       iftar: { local: '18:22' },
     })
   })
+
+  it("uses the device's position, named after its town and rounded before it leaves the device", async () => {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z', position: { latitude: 24.8607, longitude: 67.0011 } })
+    const sawm = await createSawm(fake.device)
+
+    expect(await sawm.useCurrentLocation()).toBe('ok')
+
+    expect(sawm.today()).toMatchObject({
+      status: 'ready',
+      location: { name: 'Karachi', region: 'Sindh', country: 'Pakistan', countryCode: 'PK', latitude: 24.86, longitude: 67 },
+      suhoor: { local: '05:09' },
+      iftar: { local: '18:16' },
+    })
+    expect(fake.requests).toContain('https://photon.komoot.io/reverse?lat=24.86&lon=67&lang=en')
+  })
+
+  it('says so when location access is denied, so the user can search instead', async () => {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z', position: 'denied' })
+    const sawm = await createSawm(fake.device)
+
+    expect(await sawm.useCurrentLocation()).toBe('denied')
+    expect(sawm.today()).toEqual({ status: 'no-location' })
+  })
+})
+
+describe('Calculation Method', () => {
+  it("defaults to the Saved Location's country, and to Muslim World League elsewhere", async () => {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z' })
+    fake.goOffline()
+    const sawm = await createSawm(fake.device)
+    const defaults: Record<string, string> = {}
+
+    for (const countryCode of ['PK', 'IN', 'SA', 'US', 'CA', 'GB', 'EG', 'TR', 'MY', 'ID', 'SG', 'AE', 'FR', 'NG']) {
+      await sawm.setSavedLocation({ name: 'Somewhere', country: 'Somewhere', countryCode, latitude: 1, longitude: 1 })
+      defaults[countryCode] = sawm.calculationMethod().name
+    }
+
+    expect(defaults).toEqual({
+      PK: 'Karachi',
+      IN: 'Karachi',
+      SA: 'Umm al-Qura',
+      US: 'ISNA',
+      CA: 'ISNA',
+      GB: 'Muslim World League',
+      EG: 'Egypt',
+      TR: 'Turkey',
+      MY: 'Malaysia',
+      ID: 'Indonesia',
+      SG: 'Singapore',
+      AE: 'Gulf Region',
+      FR: 'France',
+      NG: 'Muslim World League',
+    })
+    expect(sawm.calculationMethod().isDefault).toBe(true)
+  })
+
+  it('loads times again when the user picks another Calculation Method', async () => {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z' })
+    const sawm = await createSawm(fake.device)
+    const [karachi] = await sawm.searchPlaces('Karachi')
+    await sawm.setSavedLocation(karachi!)
+
+    await sawm.setCalculationMethod(3)
+
+    expect(sawm.calculationMethod()).toMatchObject({ id: 3, name: 'Muslim World League', isDefault: false })
+    expect(fake.requests.at(-1)).toBe(
+      'https://api.aladhan.com/v1/calendar/2026/10?latitude=24.85&longitude=67.02&method=3&iso8601=true',
+    )
+    expect(sawm.today()).toMatchObject({ status: 'ready', suhoor: { local: '05:09' } })
+  })
 })
 
 describe('Today', () => {

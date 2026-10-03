@@ -1,7 +1,8 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
 import { localDate, wallClockTime } from './dates'
 import type { Device } from './device'
-import { roundCoordinate, searchPlaces, type Place } from './places'
+import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
+import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
 
 /** The one place whose times Sawm shows. Its time zone is learnt from the data source. */
 export interface SavedLocation extends Place {
@@ -29,6 +30,8 @@ export type ThemePreference = 'system' | 'light' | 'dark'
 /** Everything the user has chosen. Lives only on the device (ADR 0003). */
 export interface Settings {
   savedLocation?: SavedLocation
+  /** AlAdhan's id for the Calculation Method the user picked; unset means the default for their country. */
+  calculationMethod?: number
   theme: ThemePreference
 }
 
@@ -41,6 +44,16 @@ export interface Sawm {
   /** The user's current choices. The same object comes back until one changes. */
   settings(): Settings
   setTheme(theme: ThemePreference): Promise<void>
+  /** The Calculation Method in use, and whether it's the default for the Saved Location's country. */
+  calculationMethod(): CalculationMethod & { isDefault: boolean }
+  /** Every Calculation Method the user can pick from. */
+  calculationMethods(): readonly CalculationMethod[]
+  /** The Calculation Method most people in a country follow. */
+  defaultCalculationMethod(countryCode: string): number
+  /** Picks a Calculation Method, or goes back to the country's default when given undefined. */
+  setCalculationMethod(id: number | undefined): Promise<void>
+  /** Sets the Saved Location from the device's own position. */
+  useCurrentLocation(): Promise<'ok' | 'denied' | 'unavailable'>
   /** Cities, towns and villages matching what the user typed. */
   searchPlaces(query: string): Promise<Place[]>
   /** Makes a place the Saved Location and loads its times. */
@@ -50,9 +63,6 @@ export interface Sawm {
   /** Calls the listener whenever what the app shows may have changed. Returns an unsubscribe function. */
   subscribe(listener: () => void): () => void
 }
-
-/** Used until Calculation Methods are chosen per country: Muslim World League. */
-const DEFAULT_METHOD = 3
 
 const SETTINGS = 'settings'
 
@@ -70,10 +80,12 @@ export async function createSawm(device: Device): Promise<Sawm> {
     await device.storage.set(SETTINGS, settings)
   }
 
+  const methodFor = (place: Place) => settings.calculationMethod ?? defaultMethodFor(place.countryCode)
+
   const query = (place: Place): TimesQuery => ({
     latitude: place.latitude,
     longitude: place.longitude,
-    method: DEFAULT_METHOD,
+    method: methodFor(place),
   })
 
   /** The Gregorian month a date (YYYY-MM-DD) falls in at a place, and the key its times are kept under. */
@@ -152,6 +164,13 @@ export async function createSawm(device: Device): Promise<Sawm> {
     }
   }
 
+  async function setSavedLocation(place: Place) {
+    await saveSettings({
+      savedLocation: { ...place, latitude: roundCoordinate(place.latitude), longitude: roundCoordinate(place.longitude) },
+    })
+    await refresh()
+  }
+
   // Start from what's on the device so the first screen never waits on the network; refresh() does the rest.
   settings = { ...DEFAULT_SETTINGS, ...(await device.storage.get<Settings>(SETTINGS)) }
   if (settings.savedLocation) await restoreMonthFor(settings.savedLocation, device.clock.now())
@@ -174,11 +193,35 @@ export async function createSawm(device: Device): Promise<Sawm> {
       notify()
     },
 
-    async setSavedLocation(place) {
-      await saveSettings({
-        savedLocation: { ...place, latitude: roundCoordinate(place.latitude), longitude: roundCoordinate(place.longitude) },
-      })
+    calculationMethod() {
+      const id = settings.calculationMethod ?? defaultMethodFor(settings.savedLocation?.countryCode ?? '')
+      return { ...methodById(id), isDefault: settings.calculationMethod === undefined }
+    },
+
+    calculationMethods: () => CALCULATION_METHODS,
+
+    defaultCalculationMethod: defaultMethodFor,
+
+    async setCalculationMethod(id) {
+      await saveSettings({ calculationMethod: id })
       await refresh()
+    },
+
+    async setSavedLocation(place) {
+      await setSavedLocation(place)
+    },
+
+    async useCurrentLocation() {
+      const position = await device.geolocation.current()
+      if (position.status !== 'ok') return position.status
+      try {
+        const place = await placeAt(device.fetch, position.latitude, position.longitude)
+        if (!place) return 'unavailable'
+        await setSavedLocation(place)
+        return 'ok'
+      } catch {
+        return 'unavailable'
+      }
     },
 
     refresh,

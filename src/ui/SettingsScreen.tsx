@@ -10,6 +10,9 @@ const THEMES: { value: ThemePreference; label: string }[] = [
 ]
 
 export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  // What "Default" means for the Saved Location's country, whichever method is picked right now.
+  const countryDefault = sawm.defaultCalculationMethod(settings.savedLocation?.countryCode ?? '')
+  const defaultMethodName = sawm.calculationMethods().find((method) => method.id === countryDefault)?.name
   return (
     <section className={s.settings}>
       <h1 className={s.title}>Settings</h1>
@@ -22,6 +25,27 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
           <span>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
           <span className={s.action}>Change</span>
         </Link>
+      </section>
+
+      <section className={s.group} aria-labelledby="settings-times">
+        <h2 id="settings-times" className={s.heading}>
+          Times
+        </h2>
+        <label className={s.row}>
+          <span>Calculation method</span>
+          <select
+            className={s.select}
+            value={settings.calculationMethod ?? 'default'}
+            onChange={(event) => void sawm.setCalculationMethod(event.target.value === 'default' ? undefined : Number(event.target.value))}
+          >
+            <option value="default">Default · {defaultMethodName}</option>
+            {sawm.calculationMethods().map((method) => (
+              <option key={method.id} value={method.id}>
+                {method.authority ? `${method.name} · ${method.authority}` : method.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </section>
 
       <section className={s.group} aria-labelledby="settings-appearance">

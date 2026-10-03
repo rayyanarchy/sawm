@@ -4,6 +4,19 @@ export interface Device {
   fetch(url: string): Promise<Response>
   storage: KeyValueStore
   clock: Clock
+  geolocation: Geolocation
+}
+
+export type PositionResult =
+  | { status: 'ok'; latitude: number; longitude: number }
+  /** The user, or the browser, said no. */
+  | { status: 'denied' }
+  /** No position could be found, or the device can't tell. */
+  | { status: 'unavailable' }
+
+export interface Geolocation {
+  /** Asks for the device's current position, prompting the user if needed. */
+  current(): Promise<PositionResult>
 }
 
 /** Durable on-device storage for small JSON values. */
