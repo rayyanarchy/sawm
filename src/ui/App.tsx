@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import type { Sawm } from '../core'
+import { CalendarScreen } from './CalendarScreen'
 import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
 import { navigate, usePath } from './router'
@@ -56,6 +57,8 @@ export function App({ sawm }: { sawm: Sawm }) {
         <LocationSearch sawm={sawm} canCancel onDone={() => navigate('/')} />
       ) : path.startsWith('/settings') ? (
         <SettingsScreen sawm={sawm} settings={settings} />
+      ) : path.startsWith('/calendar') ? (
+        <CalendarScreen sawm={sawm} />
       ) : (
         <TodayScreen today={today} />
       )}
