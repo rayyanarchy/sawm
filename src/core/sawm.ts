@@ -63,6 +63,16 @@ export type Today =
       nextFast: NextFast | null
     }
 
+/** One Gregorian month of the Calendar. */
+export interface CalendarMonth {
+  year: number
+  /** 1 for January through 12 for December. */
+  month: number
+  days: (Day & { isToday: boolean })[]
+  /** The Hijri months this Gregorian month overlaps, in order. */
+  hijriMonths: { name: string; year: number }[]
+}
+
 export type ThemePreference = 'system' | 'light' | 'dark'
 
 /** Everything the user has chosen. Lives only on the device (ADR 0003). */
@@ -84,6 +94,10 @@ export interface Sawm {
   today(): Today
   /** A date at the Saved Location, if its month is loaded. */
   day(date: string): Day | undefined
+  /** The months the Calendar can show: this one and the next 12. */
+  calendarMonths(): { year: number; month: number }[]
+  /** A month of the Calendar, if its times are loaded. */
+  calendarMonth(year: number, month: number): CalendarMonth | undefined
   /** The user's current choices. The same object comes back until one changes. */
   settings(): Settings
   setTheme(theme: ThemePreference): Promise<void>
@@ -112,6 +126,8 @@ export interface Sawm {
   tick(): void
   /** Calls the listener whenever what the app shows may have changed. Returns an unsubscribe function. */
   subscribe(listener: () => void): () => void
+  /** A number that changes whenever loaded times or settings change; handy for redrawing derived views. */
+  version(): number
 }
 
 const SETTINGS = 'settings'
@@ -319,6 +335,33 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
     day: dayAt,
 
+    calendarMonths() {
+      const zone = settings.savedLocation?.timeZone
+      if (!zone) return []
+      const today = localDate(device.clock.now(), zone)
+      return Array.from({ length: MONTHS_AHEAD }, (_, i) => monthAfter(today, i))
+    },
+
+    calendarMonth(year, month) {
+      const zone = settings.savedLocation?.timeZone
+      if (!zone) return undefined
+      const today = localDate(device.clock.now(), zone)
+      const first = `${year}-${String(month).padStart(2, '0')}-01`
+      const days: CalendarMonth['days'] = []
+      for (let date = first; date.startsWith(first.slice(0, 8)); date = addDays(date, 1)) {
+        const day = dayAt(date)
+        if (!day) return undefined
+        days.push({ ...day, isToday: date === today })
+      }
+      const hijriMonths: CalendarMonth['hijriMonths'] = []
+      for (const { hijri } of days) {
+        if (hijri && !hijriMonths.some((m) => m.name === hijri.monthName && m.year === hijri.year)) {
+          hijriMonths.push({ name: hijri.monthName, year: hijri.year })
+        }
+      }
+      return { year, month, days, hijriMonths }
+    },
+
     settings: () => settings,
 
     async setTheme(theme) {
@@ -376,6 +419,8 @@ export async function createSawm(device: Device): Promise<Sawm> {
       today()
       if (before !== undefined && lastToday?.json !== before) notify()
     },
+
+    version: () => version,
 
     subscribe(listener) {
       listeners.add(listener)

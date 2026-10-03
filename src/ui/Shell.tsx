@@ -6,6 +6,7 @@ import s from './Shell.module.css'
 
 const PAGES = [
   { to: '/', label: 'Today' },
+  { to: '/calendar', label: 'Calendar' },
   { to: '/settings', label: 'Settings' },
 ]
 

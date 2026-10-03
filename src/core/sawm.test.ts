@@ -445,3 +445,40 @@ describe('Setup', () => {
     expect((await createSawm(fake.device)).settings().setup.fasts).toBe(true)
   })
 })
+
+describe('Calendar', () => {
+  it('shows this month and the next 12', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    const months = sawm.calendarMonths()
+
+    expect(months).toHaveLength(13)
+    expect(months[0]).toEqual({ year: 2026, month: 10 })
+    expect(months.at(-1)).toEqual({ year: 2027, month: 10 })
+  })
+
+  it('shows each date with its Hijri Date and what is planned', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    const february = sawm.calendarMonth(2027, 2)!
+
+    expect(february.days).toHaveLength(28)
+    expect(february.hijriMonths).toEqual([
+      { name: 'Sha’ban', year: 1448 },
+      { name: 'Ramadan', year: 1448 },
+    ])
+    expect(february.days.filter((day) => day.plan.status === 'planned').map((day) => day.date)).toEqual(
+      Array.from({ length: 21 }, (_, i) => `2027-02-${String(8 + i).padStart(2, '0')}`),
+    )
+  })
+
+  it('marks today and the Forbidden Days', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    expect(sawm.calendarMonth(2026, 10)!.days.find((day) => day.isToday)?.date).toBe('2026-10-04')
+    expect(sawm.calendarMonth(2027, 3)!.days.find((day) => day.plan.status === 'forbidden')).toMatchObject({
+      date: '2027-03-09',
+      plan: { reason: 'Eid al-Fitr' },
+    })
+  })
+})
