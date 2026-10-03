@@ -90,7 +90,7 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
             </p>
           </div>
 
-          {selectedDay && <DayDetails day={selectedDay} />}
+          {selectedDay && <DayDetails day={selectedDay} sawm={sawm} />}
         </div>
       ) : (
         <p className={s.loading} role="status">
@@ -101,7 +101,11 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
   )
 }
 
-function DayDetails({ day }: { day: Day }) {
+function DayDetails({ day, sawm }: { day: Day; sawm: Sawm }) {
+  const settings = sawm.settings()
+  const shawwalDays = settings.fastOptions.shawwalDays
+  const canMoveShawwalHere =
+    settings.followed.sixOfShawwal && day.hijri?.month === 10 && day.hijri.day >= 2 && !shawwalDays.includes(day.hijri.day)
   return (
     <article className={s.details} aria-live="polite">
       <h2 className={s.detailsDate}>{fullDate(day.date)}</h2>
@@ -113,6 +117,18 @@ function DayDetails({ day }: { day: Day }) {
       <p className={s.detailsPlan} data-plan={day.plan.status}>
         {planText(day)}
       </p>
+      {canMoveShawwalHere && (
+        <div className={s.move}>
+          <p>Fast one of your Six of Shawwal here instead of:</p>
+          <div className={s.moveChoices}>
+            {shawwalDays.map((from) => (
+              <button key={from} type="button" className={s.moveChoice} onClick={() => void sawm.moveShawwalDay(from, day.hijri!.day)}>
+                {from} Shawwal
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <dl className={s.times}>
         <div>
           <dt>Suhoor</dt>
