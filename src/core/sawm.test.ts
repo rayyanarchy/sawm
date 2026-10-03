@@ -641,3 +641,94 @@ describe('Skips and One-off Fasts', () => {
     expect(sawm.settings().oneOffs).toEqual([])
   })
 })
+
+describe('Hijri Offset and Month-end Check', () => {
+  it('shifts every Hijri Date by the Hijri Offset, up to 2 days either way', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    await sawm.setHijriOffset(1)
+
+    expect(sawm.hijriOffset()).toBe(1)
+    expect(sawm.day('2027-02-08')?.hijri).toMatchObject({ day: 30, monthName: 'Sha’ban' })
+    expect(sawm.day('2027-02-09')).toMatchObject({ hijri: { day: 1, monthName: 'Ramadan' }, plan: { status: 'planned' } })
+    await sawm.setHijriOffset(5)
+    expect(sawm.hijriOffset()).toBe(2)
+  })
+
+  it('asks on the evening of 29 Ramadan whether Eid has been announced, but not before Iftar', async () => {
+    const { sawm, fake } = await karachiAt('2027-03-08T07:00:00Z') // noon on 29 Ramadan
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+
+    fake.setNow('2027-03-08T14:00:00Z') // 19:00, after Iftar at 18:37
+    expect(sawm.today()).toMatchObject({ monthEndCheck: { month: '1448-09', question: 'Has Eid been announced for tomorrow?' } })
+  })
+
+  it('gives Ramadan a 30th day when Eid has not been announced, without moving days already passed', async () => {
+    const { sawm } = await karachiAt('2027-03-08T14:00:00Z')
+
+    await sawm.answerMonthEndCheck('no')
+
+    expect(sawm.day('2027-03-08')?.hijri).toMatchObject({ day: 29, monthName: 'Ramadan' })
+    expect(sawm.day('2027-03-09')).toMatchObject({ hijri: { day: 30, monthName: 'Ramadan' }, plan: { status: 'planned', label: 'Ramadan' } })
+    expect(sawm.day('2027-03-10')?.plan).toEqual({ status: 'forbidden', reason: 'Eid al-Fitr' })
+    expect(sawm.today()).toMatchObject({ state: 'before-suhoor', focus: { date: '2027-03-09' } })
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+  })
+
+  it('keeps Eid tomorrow when it has been announced', async () => {
+    const { sawm } = await karachiAt('2027-03-08T14:00:00Z')
+
+    await sawm.answerMonthEndCheck('yes')
+
+    expect(sawm.day('2027-03-09')?.plan).toEqual({ status: 'forbidden', reason: 'Eid al-Fitr' })
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+  })
+
+  it('starts Ramadan a day early when it is announced on 29 Sha’ban, against a 30-day prediction', async () => {
+    const { sawm } = await karachiAt('2027-02-06T14:00:00Z') // 19:00 on 29 Sha'ban
+    expect(sawm.today()).toMatchObject({ monthEndCheck: { question: 'Has Ramadan been announced for tomorrow?' } })
+
+    await sawm.answerMonthEndCheck('yes')
+
+    expect(sawm.day('2027-02-07')).toMatchObject({ hijri: { day: 1, monthName: 'Ramadan' }, plan: { status: 'planned' } })
+    expect(sawm.today()).toMatchObject({ state: 'before-suhoor', focus: { date: '2027-02-07', plan: { label: 'Ramadan' } } })
+  })
+
+  it('leaves the prediction alone if unanswered, asking until the following day ends', async () => {
+    const { sawm, fake } = await karachiAt('2027-03-09T05:00:00Z') // 10:00 on 1 Shawwal
+
+    expect(sawm.today()).toMatchObject({ monthEndCheck: { question: 'Did Eid begin today?' } })
+    expect(sawm.day('2027-03-09')?.plan).toEqual({ status: 'forbidden', reason: 'Eid al-Fitr' })
+
+    fake.setNow('2027-03-09T20:00:00Z') // 01:00 the day after
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+  })
+
+  it('asks nothing when Month-end Checks are off', async () => {
+    const { sawm } = await karachiAt('2027-03-08T14:00:00Z')
+
+    await sawm.setMonthEndChecks(false)
+
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+  })
+
+  it('asks about Muharram only for those following Ashura', async () => {
+    const { sawm } = await karachiAt('2027-06-04T15:00:00Z') // 20:00 on 29 Dhul Hijjah
+    expect(sawm.today()).not.toHaveProperty('monthEndCheck')
+
+    await sawm.setFollowing('ashura', true)
+    expect(sawm.today()).toMatchObject({ monthEndCheck: { question: 'Has Muharram been announced for tomorrow?' } })
+  })
+
+  it('keeps the Makkah Date for the Day of Arafah whatever the Hijri Offset', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('arafah', true)
+    await sawm.setHijriOffset(1)
+
+    expect(sawm.day('2027-05-16')?.plan).toMatchObject({ status: 'planned', label: 'Day of Arafah' })
+
+    await sawm.setFastOptions({ arafahReference: 'makkah' })
+    expect(sawm.day('2027-05-15')?.plan).toMatchObject({ status: 'planned', label: 'Day of Arafah' })
+    expect(sawm.day('2027-05-16')?.plan.status).toBe('none')
+  })
+})

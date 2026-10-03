@@ -16,7 +16,7 @@ import {
   type FollowedFastTypes,
   type Skip,
 } from './fasts'
-import { baseMonths, hijriCalendar, HIJRI_MONTHS, type HijriCalendar, type HijriDate } from './hijri'
+import { baseMonths, hijriCalendar, HIJRI_MONTHS, monthKey, nextMonth, type BaseMonth, type HijriCalendar, type HijriDate } from './hijri'
 import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
 import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
 
@@ -75,7 +75,17 @@ export type Today =
       fastComplete?: { label: string }
       /** The first Planned Fast after the focus day, within the months loaded. */
       nextFast: NextFast | null
+      /** A Month-end Check waiting for an answer. */
+      monthEndCheck?: MonthEndCheck
     }
+
+/** The question asked on the evening of the 29th of certain months. */
+export interface MonthEndCheck {
+  /** The month that's ending, e.g. "1448-09" for Ramadan 1448. */
+  month: string
+  /** "Has Eid been announced for tomorrow?" */
+  question: string
+}
 
 /** One Gregorian month of the Calendar. */
 export interface CalendarMonth {
@@ -96,6 +106,15 @@ export interface Settings {
   calculationMethod?: number
   followed: FollowedFastTypes
   fastOptions: FastOptions
+  /**
+   * The Hijri Offset, as changes that each apply from a Hijri month ("1448-09") onward.
+   * A month uses the latest change at or before it; with none, the offset is 0.
+   */
+  hijriOffsets: { from: string; offset: number }[]
+  /** Whether Sawm asks the Month-end Check. */
+  monthEndChecks: boolean
+  /** Answers to Month-end Checks, by the month that was ending. */
+  monthEndAnswers: Record<string, 'yes' | 'no'>
   /** Runs of dates the user isn't fasting. */
   skips: Skip[]
   /** Dates the user added as Planned Fasts themselves. */
@@ -108,6 +127,9 @@ export interface Settings {
 const DEFAULT_SETTINGS: Settings = {
   followed: DEFAULT_FOLLOWED,
   fastOptions: DEFAULT_OPTIONS,
+  hijriOffsets: [],
+  monthEndChecks: true,
+  monthEndAnswers: {},
   skips: [],
   oneOffs: [],
   setup: { fasts: false },
@@ -143,6 +165,13 @@ export interface Sawm {
   setFastOptions(changes: Partial<FastOptions>): Promise<void>
   /** Moves one of the Six of Shawwal from one day of Shawwal to another. */
   moveShawwalDay(from: number, to: number): Promise<void>
+  /** The Hijri Offset in effect for the month in progress. */
+  hijriOffset(): number
+  /** Shifts the user's Hijri calendar by up to 2 days either way, from the month in progress onward. */
+  setHijriOffset(offset: number): Promise<void>
+  /** Answers the pending Month-end Check: has the next month been announced for tomorrow? */
+  answerMonthEndCheck(answer: 'yes' | 'no'): Promise<void>
+  setMonthEndChecks(on: boolean): Promise<void>
   /** Marks a date, or a run of dates, as not fasting. Sawm never asks why. */
   skip(from: string, to?: string): Promise<void>
   /** Undoes the Skip covering a date. */
@@ -181,7 +210,22 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
   // Everything derived from the loaded months and the settings is rebuilt only when either changes.
   let version = 0
-  let derived: { version: number; days: Map<string, DayTimes>; hijri: HijriCalendar; plans: Map<string, Day> } | undefined
+  let derived:
+    | { version: number; days: Map<string, DayTimes>; hijriMonths: BaseMonth[]; hijri: HijriCalendar; plans: Map<string, Day> }
+    | undefined
+
+  /** The Hijri Offset for a month: the latest change at or before it. */
+  function offsetFor(year: number, month: number): number {
+    const key = monthKey(year, month)
+    let offset = 0
+    for (const change of settings.hijriOffsets) if (change.from <= key) offset = change.offset
+    return offset
+  }
+
+  /** Sets the offset from a Hijri month onward, replacing any later changes. */
+  function offsetFrom(key: string, offset: number) {
+    return [...settings.hijriOffsets.filter((change) => change.from < key), { from: key, offset }]
+  }
 
   const notify = () => listeners.forEach((listener) => listener())
 
@@ -273,7 +317,8 @@ export async function createSawm(device: Device): Promise<Sawm> {
       }
     }
     const hijriDays = new Map([...days].map(([date, day]) => [date, day.hijri]))
-    derived = { version, days, hijri: hijriCalendar(baseMonths(hijriDays), () => 0), plans: new Map() }
+    const hijriMonths = baseMonths(hijriDays)
+    derived = { version, days, hijriMonths, hijri: hijriCalendar(hijriMonths, offsetFor), plans: new Map() }
     return derived
   }
 
@@ -327,7 +372,16 @@ export async function createSawm(device: Device): Promise<Sawm> {
       }
     }
 
-    const common = { status: 'ready' as const, location, phase, focus: { ...focus, isTomorrow }, nextFast, ...(fastComplete ? { fastComplete } : {}) }
+    const monthEndCheck = pendingMonthEndCheck(date, now)
+    const common = {
+      status: 'ready' as const,
+      location,
+      phase,
+      focus: { ...focus, isTomorrow },
+      nextFast,
+      ...(fastComplete ? { fastComplete } : {}),
+      ...(monthEndCheck ? { monthEndCheck } : {}),
+    }
     if (focus.plan.status !== 'planned') return { ...common, state: 'not-fasting' }
 
     const suhoor = Date.parse(focus.suhoor.at)
@@ -339,6 +393,26 @@ export async function createSawm(device: Device): Promise<Sawm> {
       countdown: roundUpToMinute(iftar - now),
       progress: Math.round(((now - suhoor) / (iftar - suhoor)) * 1000) / 1000,
     }
+  }
+
+  /**
+   * The Month-end Check waiting for an answer, if any: from Iftar on the user's 29th of Sha'ban, Ramadan and
+   * Dhul Qa'dah (and of Dhul Hijjah for those following Ashura) until it's answered or the following day ends.
+   */
+  function pendingMonthEndCheck(date: string, now: number): MonthEndCheck | undefined {
+    if (!settings.monthEndChecks) return undefined
+    const checked = [8, 9, 11, ...(settings.followed.ashura ? [12] : [])]
+    for (const [day29, when] of [[date, 'tomorrow'], [addDays(date, -1), 'today']] as const) {
+      const day = dayAt(day29)
+      if (!day?.hijri || day.hijri.day !== 29 || !checked.includes(day.hijri.month)) continue
+      if (when === 'tomorrow' && now < Date.parse(day.iftar.at)) continue
+      const month = monthKey(day.hijri.year, day.hijri.month)
+      if (settings.monthEndAnswers[month]) continue
+      const next = HIJRI_MONTHS[nextMonth(day.hijri.year, day.hijri.month).month - 1]!
+      const event = day.hijri.month === 9 ? 'Eid' : next
+      return { month, question: when === 'tomorrow' ? `Has ${event} been announced for tomorrow?` : `Did ${event} begin today?` }
+    }
+    return undefined
   }
 
   function today(): Today {
@@ -363,6 +437,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
     ...stored,
     followed: { ...DEFAULT_SETTINGS.followed, ...stored?.followed },
     fastOptions: { ...DEFAULT_SETTINGS.fastOptions, ...stored?.fastOptions },
+    monthEndAnswers: { ...stored?.monthEndAnswers },
     setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
   }
   const saved = settings.savedLocation
@@ -442,6 +517,45 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
     async setFastOptions(changes) {
       await saveSettings({ fastOptions: { ...settings.fastOptions, ...changes } })
+      notify()
+    },
+
+    hijriOffset() {
+      const zone = settings.savedLocation?.timeZone
+      const hijri = zone ? dayAt(localDate(device.clock.now(), zone))?.hijri : undefined
+      return hijri ? offsetFor(hijri.year, hijri.month) : (settings.hijriOffsets.at(-1)?.offset ?? 0)
+    },
+
+    async setHijriOffset(offset) {
+      const clamped = Math.max(-2, Math.min(2, Math.round(offset)))
+      const zone = settings.savedLocation?.timeZone
+      const hijri = zone ? dayAt(localDate(device.clock.now(), zone))?.hijri : undefined
+      const from = hijri ? monthKey(hijri.year, hijri.month) : '0000-00'
+      await saveSettings({ hijriOffsets: offsetFrom(from, clamped) })
+      notify()
+    },
+
+    async answerMonthEndCheck(answer) {
+      const zone = settings.savedLocation?.timeZone
+      if (!zone) return
+      const check = pendingMonthEndCheck(localDate(device.clock.now(), zone), device.clock.now())
+      if (!check) return
+      const [year, month] = check.month.split('-').map(Number) as [number, number]
+      const next = nextMonth(year, month)
+      const { hijri, hijriMonths } = derive()
+      const day29 = addDays(hijri.startOf(year, month)!, 28)
+      const nextStart = addDays(day29, answer === 'yes' ? 1 : 2)
+      const baseStart = hijriMonths.find((m) => m.year === next.year && m.month === next.month)?.start
+      if (!baseStart) return
+      await saveSettings({
+        hijriOffsets: offsetFrom(monthKey(next.year, next.month), daysBetween(baseStart, nextStart)),
+        monthEndAnswers: { ...settings.monthEndAnswers, [check.month]: answer },
+      })
+      notify()
+    },
+
+    async setMonthEndChecks(on) {
+      await saveSettings({ monthEndChecks: on })
       notify()
     },
 
