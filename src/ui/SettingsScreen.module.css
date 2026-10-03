@@ -101,3 +101,7 @@
 .about a {
   color: inherit;
 }
+
+.switches {
+  border-top: 1px solid var(--line);
+}
