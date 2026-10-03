@@ -15,16 +15,32 @@ export interface TimeOfDay {
   local: string
 }
 
+/** Where the Saved Location is in its day: before Suhoor, between Suhoor and Iftar, or after Iftar. */
+export type Phase = 'predawn' | 'day' | 'night'
+
 export type Today =
   | { status: 'no-location' }
-  | { status: 'ready'; location: SavedLocation; date: string; suhoor: TimeOfDay; iftar: TimeOfDay }
+  | { status: 'ready'; location: SavedLocation; date: string; phase: Phase; suhoor: TimeOfDay; iftar: TimeOfDay }
   /** There's a Saved Location, but no times for today: offline with nothing saved, or the data source failed. */
   | { status: 'unavailable'; location: SavedLocation }
+
+export type ThemePreference = 'system' | 'light' | 'dark'
+
+/** Everything the user has chosen. Lives only on the device (ADR 0003). */
+export interface Settings {
+  savedLocation?: SavedLocation
+  theme: ThemePreference
+}
+
+const DEFAULT_SETTINGS: Settings = { theme: 'system' }
 
 /** Sawm without its screens: everything the app does, behind one interface. */
 export interface Sawm {
   /** What the Today screen shows right now. */
   today(): Today
+  /** The user's current choices. The same object comes back until one changes. */
+  settings(): Settings
+  setTheme(theme: ThemePreference): Promise<void>
   /** Cities, towns and villages matching what the user typed. */
   searchPlaces(query: string): Promise<Place[]>
   /** Makes a place the Saved Location and loads its times. */
@@ -38,16 +54,21 @@ export interface Sawm {
 /** Used until Calculation Methods are chosen per country: Muslim World League. */
 const DEFAULT_METHOD = 3
 
-const SAVED_LOCATION = 'savedLocation'
+const SETTINGS = 'settings'
 
 export async function createSawm(device: Device): Promise<Sawm> {
-  let location: SavedLocation | undefined
+  let settings: Settings = DEFAULT_SETTINGS
   const months = new Map<string, MonthTimes>()
   const loadingMonths = new Map<string, Promise<MonthTimes>>()
   const listeners = new Set<() => void>()
   let lastToday: { value: Today; json: string } | undefined
 
   const notify = () => listeners.forEach((listener) => listener())
+
+  async function saveSettings(changes: Partial<Settings>) {
+    settings = { ...settings, ...changes }
+    await device.storage.set(SETTINGS, settings)
+  }
 
   const query = (place: Place): TimesQuery => ({
     latitude: place.latitude,
@@ -96,16 +117,16 @@ export async function createSawm(device: Device): Promise<Sawm> {
   }
 
   async function refresh() {
-    let place = location
+    let place = settings.savedLocation
     if (!place) return
     try {
       if (!place.timeZone) {
         // The time zone only arrives with the first month of times, so that month is chosen by UTC.
         const first = await loadMonthFor(place, device.clock.now())
         // The user may have chosen another place while this one was loading; that refresh takes over.
-        if (location !== place) return
-        place = location = { ...place, timeZone: first.timeZone }
-        await device.storage.set(SAVED_LOCATION, place)
+        if (settings.savedLocation !== place) return
+        place = { ...place, timeZone: first.timeZone }
+        await saveSettings({ savedLocation: place })
       }
       await loadMonthFor(place, device.clock.now())
     } catch {
@@ -115,22 +136,25 @@ export async function createSawm(device: Device): Promise<Sawm> {
   }
 
   function computeToday(): Today {
+    const location = settings.savedLocation
     if (!location) return { status: 'no-location' }
     const date = location.timeZone && localDate(device.clock.now(), location.timeZone)
     const day = date && dayAt(location, date)
     if (!date || !day) return { status: 'unavailable', location }
+    const now = device.clock.now()
     return {
       status: 'ready',
       location,
       date,
+      phase: now < Date.parse(day.fajr) ? 'predawn' : now < Date.parse(day.maghrib) ? 'day' : 'night',
       suhoor: { at: day.fajr, local: wallClockTime(day.fajr) },
       iftar: { at: day.maghrib, local: wallClockTime(day.maghrib) },
     }
   }
 
   // Start from what's on the device so the first screen never waits on the network; refresh() does the rest.
-  location = await device.storage.get<SavedLocation>(SAVED_LOCATION)
-  if (location) await restoreMonthFor(location, device.clock.now())
+  settings = { ...DEFAULT_SETTINGS, ...(await device.storage.get<Settings>(SETTINGS)) }
+  if (settings.savedLocation) await restoreMonthFor(settings.savedLocation, device.clock.now())
 
   return {
     today() {
@@ -143,9 +167,17 @@ export async function createSawm(device: Device): Promise<Sawm> {
 
     searchPlaces: (text) => searchPlaces(device.fetch, text),
 
+    settings: () => settings,
+
+    async setTheme(theme) {
+      await saveSettings({ theme })
+      notify()
+    },
+
     async setSavedLocation(place) {
-      location = { ...place, latitude: roundCoordinate(place.latitude), longitude: roundCoordinate(place.longitude) }
-      await device.storage.set(SAVED_LOCATION, location)
+      await saveSettings({
+        savedLocation: { ...place, latitude: roundCoordinate(place.latitude), longitude: roundCoordinate(place.longitude) },
+      })
       await refresh()
     },
 

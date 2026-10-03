@@ -1,0 +1,73 @@
+.frame {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+}
+
+/* The sky sits behind everything and stays put while content scrolls. */
+.frame::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+}
+
+.page {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: max(env(safe-area-inset-top), 22px) var(--gutter) calc(104px + env(safe-area-inset-bottom));
+  display: grid;
+}
+
+.nav {
+  position: fixed;
+  left: 50%;
+  bottom: max(env(safe-area-inset-bottom), 16px);
+  translate: -50% 0;
+  display: flex;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.link {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--soft);
+  text-decoration: none;
+  transition: color 200ms var(--ease), background 200ms var(--ease);
+}
+
+.link:hover {
+  color: var(--text);
+}
+
+.link[aria-current='page'] {
+  color: var(--text);
+  background: var(--surface-strong);
+}
+
+@media (min-width: 900px) {
+  .page {
+    padding: 32px 64px 64px;
+  }
+
+  .nav {
+    top: 22px;
+    right: max(56px, calc((100vw - 1100px) / 2 - 8px));
+    bottom: auto;
+    left: auto;
+    translate: none;
+    border-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

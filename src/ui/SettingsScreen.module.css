@@ -1,0 +1,84 @@
+.settings {
+  width: 100%;
+  max-width: 560px;
+  justify-self: center;
+  align-self: start;
+  display: grid;
+  gap: 34px;
+  padding-top: 24px;
+}
+
+.title {
+  font-size: clamp(44px, 12vw, 64px);
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.group {
+  display: grid;
+  gap: 10px;
+}
+
+.heading {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 19px;
+  font-weight: 300;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.action {
+  font-size: 15px;
+  color: var(--soft);
+}
+
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.segment {
+  padding: 10px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--soft);
+  cursor: pointer;
+}
+
+.segment[aria-checked='true'] {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.about {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--soft);
+}
+
+.about a {
+  color: inherit;
+}
