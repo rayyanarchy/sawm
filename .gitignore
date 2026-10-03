@@ -1,7 +1,8 @@
-__pycache__/
-*.pyc
-.venv/
-.DS_Store
-*.egg-info/
+node_modules/
 dist/
-build/
+coverage/
+.wrangler/
+.dev.vars*
+!.dev.vars.example
+*.local
+.DS_Store

@@ -1,0 +1,2829 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "timings": {
+        "Fajr": "2026-10-01T05:14:00+05:30",
+        "Sunrise": "2026-10-01T06:29:00+05:30",
+        "Dhuhr": "2026-10-01T12:27:00+05:30",
+        "Asr": "2026-10-01T15:52:00+05:30",
+        "Sunset": "2026-10-01T18:25:00+05:30",
+        "Maghrib": "2026-10-01T18:25:00+05:30",
+        "Isha": "2026-10-01T19:35:00+05:30",
+        "Imsak": "2026-10-01T05:04:00+05:30",
+        "Midnight": "2026-10-02T00:27:00+05:30",
+        "Firstthird": "2026-10-01T22:26:00+05:30",
+        "Lastthird": "2026-10-02T02:28:00+05:30"
+      },
+      "date": {
+        "readable": "01 Oct 2026",
+        "timestamp": "1790825461",
+        "gregorian": {
+          "date": "01-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "01",
+          "weekday": {
+            "en": "Thursday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "20-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "20",
+          "weekday": {
+            "en": "Al Khamees",
+            "ar": "الخميس"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-02T05:15:00+05:30",
+        "Sunrise": "2026-10-02T06:29:00+05:30",
+        "Dhuhr": "2026-10-02T12:27:00+05:30",
+        "Asr": "2026-10-02T15:51:00+05:30",
+        "Sunset": "2026-10-02T18:24:00+05:30",
+        "Maghrib": "2026-10-02T18:24:00+05:30",
+        "Isha": "2026-10-02T19:34:00+05:30",
+        "Imsak": "2026-10-02T05:05:00+05:30",
+        "Midnight": "2026-10-03T00:27:00+05:30",
+        "Firstthird": "2026-10-02T22:26:00+05:30",
+        "Lastthird": "2026-10-03T02:28:00+05:30"
+      },
+      "date": {
+        "readable": "02 Oct 2026",
+        "timestamp": "1790911861",
+        "gregorian": {
+          "date": "02-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "02",
+          "weekday": {
+            "en": "Friday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "21-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "21",
+          "weekday": {
+            "en": "Al Juma'a",
+            "ar": "الجمعة"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-03T05:15:00+05:30",
+        "Sunrise": "2026-10-03T06:29:00+05:30",
+        "Dhuhr": "2026-10-03T12:27:00+05:30",
+        "Asr": "2026-10-03T15:51:00+05:30",
+        "Sunset": "2026-10-03T18:23:00+05:30",
+        "Maghrib": "2026-10-03T18:23:00+05:30",
+        "Isha": "2026-10-03T19:33:00+05:30",
+        "Imsak": "2026-10-03T05:05:00+05:30",
+        "Midnight": "2026-10-04T00:26:00+05:30",
+        "Firstthird": "2026-10-03T22:25:00+05:30",
+        "Lastthird": "2026-10-04T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "03 Oct 2026",
+        "timestamp": "1790998261",
+        "gregorian": {
+          "date": "03-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "03",
+          "weekday": {
+            "en": "Saturday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "22-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "22",
+          "weekday": {
+            "en": "Al Sabt",
+            "ar": "السبت"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [
+            "Urs of Shaykh Muhiyuddīn Ibn al-‘Arabi ق"
+          ],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-04T05:15:00+05:30",
+        "Sunrise": "2026-10-04T06:30:00+05:30",
+        "Dhuhr": "2026-10-04T12:26:00+05:30",
+        "Asr": "2026-10-04T15:50:00+05:30",
+        "Sunset": "2026-10-04T18:22:00+05:30",
+        "Maghrib": "2026-10-04T18:22:00+05:30",
+        "Isha": "2026-10-04T19:32:00+05:30",
+        "Imsak": "2026-10-04T05:05:00+05:30",
+        "Midnight": "2026-10-05T00:26:00+05:30",
+        "Firstthird": "2026-10-04T22:25:00+05:30",
+        "Lastthird": "2026-10-05T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "04 Oct 2026",
+        "timestamp": "1791084661",
+        "gregorian": {
+          "date": "04-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "04",
+          "weekday": {
+            "en": "Sunday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "23-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "23",
+          "weekday": {
+            "en": "Al Ahad",
+            "ar": "الاحد"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-05T05:16:00+05:30",
+        "Sunrise": "2026-10-05T06:30:00+05:30",
+        "Dhuhr": "2026-10-05T12:26:00+05:30",
+        "Asr": "2026-10-05T15:50:00+05:30",
+        "Sunset": "2026-10-05T18:21:00+05:30",
+        "Maghrib": "2026-10-05T18:21:00+05:30",
+        "Isha": "2026-10-05T19:31:00+05:30",
+        "Imsak": "2026-10-05T05:06:00+05:30",
+        "Midnight": "2026-10-06T00:26:00+05:30",
+        "Firstthird": "2026-10-05T22:24:00+05:30",
+        "Lastthird": "2026-10-06T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "05 Oct 2026",
+        "timestamp": "1791171061",
+        "gregorian": {
+          "date": "05-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "05",
+          "weekday": {
+            "en": "Monday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "24-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "24",
+          "weekday": {
+            "en": "Al Athnayn",
+            "ar": "الاثنين"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-06T05:16:00+05:30",
+        "Sunrise": "2026-10-06T06:30:00+05:30",
+        "Dhuhr": "2026-10-06T12:26:00+05:30",
+        "Asr": "2026-10-06T15:49:00+05:30",
+        "Sunset": "2026-10-06T18:21:00+05:30",
+        "Maghrib": "2026-10-06T18:21:00+05:30",
+        "Isha": "2026-10-06T19:31:00+05:30",
+        "Imsak": "2026-10-06T05:06:00+05:30",
+        "Midnight": "2026-10-07T00:25:00+05:30",
+        "Firstthird": "2026-10-06T22:24:00+05:30",
+        "Lastthird": "2026-10-07T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "06 Oct 2026",
+        "timestamp": "1791257461",
+        "gregorian": {
+          "date": "06-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "06",
+          "weekday": {
+            "en": "Tuesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "25-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "25",
+          "weekday": {
+            "en": "Al Thalaata",
+            "ar": "الثلاثاء"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-07T05:16:00+05:30",
+        "Sunrise": "2026-10-07T06:31:00+05:30",
+        "Dhuhr": "2026-10-07T12:25:00+05:30",
+        "Asr": "2026-10-07T15:48:00+05:30",
+        "Sunset": "2026-10-07T18:20:00+05:30",
+        "Maghrib": "2026-10-07T18:20:00+05:30",
+        "Isha": "2026-10-07T19:30:00+05:30",
+        "Imsak": "2026-10-07T05:06:00+05:30",
+        "Midnight": "2026-10-08T00:25:00+05:30",
+        "Firstthird": "2026-10-07T22:23:00+05:30",
+        "Lastthird": "2026-10-08T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "07 Oct 2026",
+        "timestamp": "1791343861",
+        "gregorian": {
+          "date": "07-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "07",
+          "weekday": {
+            "en": "Wednesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "26-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "26",
+          "weekday": {
+            "en": "Al Arba'a",
+            "ar": "الاربعاء"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-08T05:17:00+05:30",
+        "Sunrise": "2026-10-08T06:31:00+05:30",
+        "Dhuhr": "2026-10-08T12:25:00+05:30",
+        "Asr": "2026-10-08T15:48:00+05:30",
+        "Sunset": "2026-10-08T18:19:00+05:30",
+        "Maghrib": "2026-10-08T18:19:00+05:30",
+        "Isha": "2026-10-08T19:29:00+05:30",
+        "Imsak": "2026-10-08T05:07:00+05:30",
+        "Midnight": "2026-10-09T00:25:00+05:30",
+        "Firstthird": "2026-10-08T22:23:00+05:30",
+        "Lastthird": "2026-10-09T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "08 Oct 2026",
+        "timestamp": "1791430261",
+        "gregorian": {
+          "date": "08-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "08",
+          "weekday": {
+            "en": "Thursday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "27-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "27",
+          "weekday": {
+            "en": "Al Khamees",
+            "ar": "الخميس"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-09T05:17:00+05:30",
+        "Sunrise": "2026-10-09T06:31:00+05:30",
+        "Dhuhr": "2026-10-09T12:25:00+05:30",
+        "Asr": "2026-10-09T15:47:00+05:30",
+        "Sunset": "2026-10-09T18:18:00+05:30",
+        "Maghrib": "2026-10-09T18:18:00+05:30",
+        "Isha": "2026-10-09T19:28:00+05:30",
+        "Imsak": "2026-10-09T05:07:00+05:30",
+        "Midnight": "2026-10-10T00:25:00+05:30",
+        "Firstthird": "2026-10-09T22:22:00+05:30",
+        "Lastthird": "2026-10-10T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "09 Oct 2026",
+        "timestamp": "1791516661",
+        "gregorian": {
+          "date": "09-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "09",
+          "weekday": {
+            "en": "Friday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "28-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "28",
+          "weekday": {
+            "en": "Al Juma'a",
+            "ar": "الجمعة"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-10T05:17:00+05:30",
+        "Sunrise": "2026-10-10T06:32:00+05:30",
+        "Dhuhr": "2026-10-10T12:25:00+05:30",
+        "Asr": "2026-10-10T15:47:00+05:30",
+        "Sunset": "2026-10-10T18:17:00+05:30",
+        "Maghrib": "2026-10-10T18:17:00+05:30",
+        "Isha": "2026-10-10T19:27:00+05:30",
+        "Imsak": "2026-10-10T05:07:00+05:30",
+        "Midnight": "2026-10-11T00:24:00+05:30",
+        "Firstthird": "2026-10-10T22:22:00+05:30",
+        "Lastthird": "2026-10-11T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "10 Oct 2026",
+        "timestamp": "1791603061",
+        "gregorian": {
+          "date": "10-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "10",
+          "weekday": {
+            "en": "Saturday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "29-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "29",
+          "weekday": {
+            "en": "Al Sabt",
+            "ar": "السبت"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-11T05:18:00+05:30",
+        "Sunrise": "2026-10-11T06:32:00+05:30",
+        "Dhuhr": "2026-10-11T12:24:00+05:30",
+        "Asr": "2026-10-11T15:46:00+05:30",
+        "Sunset": "2026-10-11T18:16:00+05:30",
+        "Maghrib": "2026-10-11T18:16:00+05:30",
+        "Isha": "2026-10-11T19:26:00+05:30",
+        "Imsak": "2026-10-11T05:08:00+05:30",
+        "Midnight": "2026-10-12T00:24:00+05:30",
+        "Firstthird": "2026-10-11T22:21:00+05:30",
+        "Lastthird": "2026-10-12T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "11 Oct 2026",
+        "timestamp": "1791689461",
+        "gregorian": {
+          "date": "11-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "11",
+          "weekday": {
+            "en": "Sunday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "30-04-1448",
+          "format": "DD-MM-YYYY",
+          "day": "30",
+          "weekday": {
+            "en": "Al Ahad",
+            "ar": "الاحد"
+          },
+          "month": {
+            "number": 4,
+            "en": "Rabīʿ al-thānī",
+            "ar": "رَبيع الثاني",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-12T05:18:00+05:30",
+        "Sunrise": "2026-10-12T06:33:00+05:30",
+        "Dhuhr": "2026-10-12T12:24:00+05:30",
+        "Asr": "2026-10-12T15:46:00+05:30",
+        "Sunset": "2026-10-12T18:15:00+05:30",
+        "Maghrib": "2026-10-12T18:15:00+05:30",
+        "Isha": "2026-10-12T19:25:00+05:30",
+        "Imsak": "2026-10-12T05:08:00+05:30",
+        "Midnight": "2026-10-13T00:24:00+05:30",
+        "Firstthird": "2026-10-12T22:21:00+05:30",
+        "Lastthird": "2026-10-13T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "12 Oct 2026",
+        "timestamp": "1791775861",
+        "gregorian": {
+          "date": "12-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "12",
+          "weekday": {
+            "en": "Monday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "01-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "1",
+          "weekday": {
+            "en": "Al Athnayn",
+            "ar": "الاثنين"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-13T05:18:00+05:30",
+        "Sunrise": "2026-10-13T06:33:00+05:30",
+        "Dhuhr": "2026-10-13T12:24:00+05:30",
+        "Asr": "2026-10-13T15:45:00+05:30",
+        "Sunset": "2026-10-13T18:14:00+05:30",
+        "Maghrib": "2026-10-13T18:14:00+05:30",
+        "Isha": "2026-10-13T19:24:00+05:30",
+        "Imsak": "2026-10-13T05:08:00+05:30",
+        "Midnight": "2026-10-14T00:24:00+05:30",
+        "Firstthird": "2026-10-13T22:20:00+05:30",
+        "Lastthird": "2026-10-14T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "13 Oct 2026",
+        "timestamp": "1791862261",
+        "gregorian": {
+          "date": "13-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "13",
+          "weekday": {
+            "en": "Tuesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "02-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "2",
+          "weekday": {
+            "en": "Al Thalaata",
+            "ar": "الثلاثاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-14T05:19:00+05:30",
+        "Sunrise": "2026-10-14T06:33:00+05:30",
+        "Dhuhr": "2026-10-14T12:24:00+05:30",
+        "Asr": "2026-10-14T15:45:00+05:30",
+        "Sunset": "2026-10-14T18:13:00+05:30",
+        "Maghrib": "2026-10-14T18:13:00+05:30",
+        "Isha": "2026-10-14T19:24:00+05:30",
+        "Imsak": "2026-10-14T05:09:00+05:30",
+        "Midnight": "2026-10-15T00:23:00+05:30",
+        "Firstthird": "2026-10-14T22:20:00+05:30",
+        "Lastthird": "2026-10-15T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "14 Oct 2026",
+        "timestamp": "1791948661",
+        "gregorian": {
+          "date": "14-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "14",
+          "weekday": {
+            "en": "Wednesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "03-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "3",
+          "weekday": {
+            "en": "Al Arba'a",
+            "ar": "الاربعاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-15T05:19:00+05:30",
+        "Sunrise": "2026-10-15T06:34:00+05:30",
+        "Dhuhr": "2026-10-15T12:23:00+05:30",
+        "Asr": "2026-10-15T15:44:00+05:30",
+        "Sunset": "2026-10-15T18:13:00+05:30",
+        "Maghrib": "2026-10-15T18:13:00+05:30",
+        "Isha": "2026-10-15T19:23:00+05:30",
+        "Imsak": "2026-10-15T05:09:00+05:30",
+        "Midnight": "2026-10-16T00:23:00+05:30",
+        "Firstthird": "2026-10-15T22:20:00+05:30",
+        "Lastthird": "2026-10-16T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "15 Oct 2026",
+        "timestamp": "1792035061",
+        "gregorian": {
+          "date": "15-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "15",
+          "weekday": {
+            "en": "Thursday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "04-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "4",
+          "weekday": {
+            "en": "Al Khamees",
+            "ar": "الخميس"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-16T05:19:00+05:30",
+        "Sunrise": "2026-10-16T06:34:00+05:30",
+        "Dhuhr": "2026-10-16T12:23:00+05:30",
+        "Asr": "2026-10-16T15:44:00+05:30",
+        "Sunset": "2026-10-16T18:12:00+05:30",
+        "Maghrib": "2026-10-16T18:12:00+05:30",
+        "Isha": "2026-10-16T19:22:00+05:30",
+        "Imsak": "2026-10-16T05:09:00+05:30",
+        "Midnight": "2026-10-17T00:23:00+05:30",
+        "Firstthird": "2026-10-16T22:19:00+05:30",
+        "Lastthird": "2026-10-17T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "16 Oct 2026",
+        "timestamp": "1792121461",
+        "gregorian": {
+          "date": "16-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "16",
+          "weekday": {
+            "en": "Friday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "05-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "5",
+          "weekday": {
+            "en": "Al Juma'a",
+            "ar": "الجمعة"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-17T05:20:00+05:30",
+        "Sunrise": "2026-10-17T06:35:00+05:30",
+        "Dhuhr": "2026-10-17T12:23:00+05:30",
+        "Asr": "2026-10-17T15:43:00+05:30",
+        "Sunset": "2026-10-17T18:11:00+05:30",
+        "Maghrib": "2026-10-17T18:11:00+05:30",
+        "Isha": "2026-10-17T19:21:00+05:30",
+        "Imsak": "2026-10-17T05:10:00+05:30",
+        "Midnight": "2026-10-18T00:23:00+05:30",
+        "Firstthird": "2026-10-17T22:19:00+05:30",
+        "Lastthird": "2026-10-18T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "17 Oct 2026",
+        "timestamp": "1792207861",
+        "gregorian": {
+          "date": "17-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "17",
+          "weekday": {
+            "en": "Saturday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "06-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "6",
+          "weekday": {
+            "en": "Al Sabt",
+            "ar": "السبت"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-18T05:20:00+05:30",
+        "Sunrise": "2026-10-18T06:35:00+05:30",
+        "Dhuhr": "2026-10-18T12:23:00+05:30",
+        "Asr": "2026-10-18T15:43:00+05:30",
+        "Sunset": "2026-10-18T18:10:00+05:30",
+        "Maghrib": "2026-10-18T18:10:00+05:30",
+        "Isha": "2026-10-18T19:21:00+05:30",
+        "Imsak": "2026-10-18T05:10:00+05:30",
+        "Midnight": "2026-10-19T00:23:00+05:30",
+        "Firstthird": "2026-10-18T22:18:00+05:30",
+        "Lastthird": "2026-10-19T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "18 Oct 2026",
+        "timestamp": "1792294261",
+        "gregorian": {
+          "date": "18-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "18",
+          "weekday": {
+            "en": "Sunday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "07-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "7",
+          "weekday": {
+            "en": "Al Ahad",
+            "ar": "الاحد"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-19T05:21:00+05:30",
+        "Sunrise": "2026-10-19T06:35:00+05:30",
+        "Dhuhr": "2026-10-19T12:22:00+05:30",
+        "Asr": "2026-10-19T15:42:00+05:30",
+        "Sunset": "2026-10-19T18:09:00+05:30",
+        "Maghrib": "2026-10-19T18:09:00+05:30",
+        "Isha": "2026-10-19T19:20:00+05:30",
+        "Imsak": "2026-10-19T05:11:00+05:30",
+        "Midnight": "2026-10-20T00:22:00+05:30",
+        "Firstthird": "2026-10-19T22:18:00+05:30",
+        "Lastthird": "2026-10-20T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "19 Oct 2026",
+        "timestamp": "1792380661",
+        "gregorian": {
+          "date": "19-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "19",
+          "weekday": {
+            "en": "Monday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "08-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "8",
+          "weekday": {
+            "en": "Al Athnayn",
+            "ar": "الاثنين"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-20T05:21:00+05:30",
+        "Sunrise": "2026-10-20T06:36:00+05:30",
+        "Dhuhr": "2026-10-20T12:22:00+05:30",
+        "Asr": "2026-10-20T15:42:00+05:30",
+        "Sunset": "2026-10-20T18:08:00+05:30",
+        "Maghrib": "2026-10-20T18:08:00+05:30",
+        "Isha": "2026-10-20T19:19:00+05:30",
+        "Imsak": "2026-10-20T05:11:00+05:30",
+        "Midnight": "2026-10-21T00:22:00+05:30",
+        "Firstthird": "2026-10-20T22:18:00+05:30",
+        "Lastthird": "2026-10-21T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "20 Oct 2026",
+        "timestamp": "1792467061",
+        "gregorian": {
+          "date": "20-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "20",
+          "weekday": {
+            "en": "Tuesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "09-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "9",
+          "weekday": {
+            "en": "Al Thalaata",
+            "ar": "الثلاثاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-21T05:21:00+05:30",
+        "Sunrise": "2026-10-21T06:36:00+05:30",
+        "Dhuhr": "2026-10-21T12:22:00+05:30",
+        "Asr": "2026-10-21T15:41:00+05:30",
+        "Sunset": "2026-10-21T18:08:00+05:30",
+        "Maghrib": "2026-10-21T18:08:00+05:30",
+        "Isha": "2026-10-21T19:18:00+05:30",
+        "Imsak": "2026-10-21T05:11:00+05:30",
+        "Midnight": "2026-10-22T00:22:00+05:30",
+        "Firstthird": "2026-10-21T22:17:00+05:30",
+        "Lastthird": "2026-10-22T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "21 Oct 2026",
+        "timestamp": "1792553461",
+        "gregorian": {
+          "date": "21-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "21",
+          "weekday": {
+            "en": "Wednesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "10-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "10",
+          "weekday": {
+            "en": "Al Arba'a",
+            "ar": "الاربعاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-22T05:22:00+05:30",
+        "Sunrise": "2026-10-22T06:37:00+05:30",
+        "Dhuhr": "2026-10-22T12:22:00+05:30",
+        "Asr": "2026-10-22T15:41:00+05:30",
+        "Sunset": "2026-10-22T18:07:00+05:30",
+        "Maghrib": "2026-10-22T18:07:00+05:30",
+        "Isha": "2026-10-22T19:18:00+05:30",
+        "Imsak": "2026-10-22T05:12:00+05:30",
+        "Midnight": "2026-10-23T00:22:00+05:30",
+        "Firstthird": "2026-10-22T22:17:00+05:30",
+        "Lastthird": "2026-10-23T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "22 Oct 2026",
+        "timestamp": "1792639861",
+        "gregorian": {
+          "date": "22-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "22",
+          "weekday": {
+            "en": "Thursday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "11-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "11",
+          "weekday": {
+            "en": "Al Khamees",
+            "ar": "الخميس"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-23T05:22:00+05:30",
+        "Sunrise": "2026-10-23T06:37:00+05:30",
+        "Dhuhr": "2026-10-23T12:22:00+05:30",
+        "Asr": "2026-10-23T15:40:00+05:30",
+        "Sunset": "2026-10-23T18:06:00+05:30",
+        "Maghrib": "2026-10-23T18:06:00+05:30",
+        "Isha": "2026-10-23T19:17:00+05:30",
+        "Imsak": "2026-10-23T05:12:00+05:30",
+        "Midnight": "2026-10-24T00:22:00+05:30",
+        "Firstthird": "2026-10-23T22:17:00+05:30",
+        "Lastthird": "2026-10-24T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "23 Oct 2026",
+        "timestamp": "1792726261",
+        "gregorian": {
+          "date": "23-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "23",
+          "weekday": {
+            "en": "Friday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "12-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "12",
+          "weekday": {
+            "en": "Al Juma'a",
+            "ar": "الجمعة"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-24T05:22:00+05:30",
+        "Sunrise": "2026-10-24T06:38:00+05:30",
+        "Dhuhr": "2026-10-24T12:22:00+05:30",
+        "Asr": "2026-10-24T15:40:00+05:30",
+        "Sunset": "2026-10-24T18:06:00+05:30",
+        "Maghrib": "2026-10-24T18:06:00+05:30",
+        "Isha": "2026-10-24T19:16:00+05:30",
+        "Imsak": "2026-10-24T05:12:00+05:30",
+        "Midnight": "2026-10-25T00:22:00+05:30",
+        "Firstthird": "2026-10-24T22:16:00+05:30",
+        "Lastthird": "2026-10-25T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "24 Oct 2026",
+        "timestamp": "1792812661",
+        "gregorian": {
+          "date": "24-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "24",
+          "weekday": {
+            "en": "Saturday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "13-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "13",
+          "weekday": {
+            "en": "Al Sabt",
+            "ar": "السبت"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-25T05:23:00+05:30",
+        "Sunrise": "2026-10-25T06:38:00+05:30",
+        "Dhuhr": "2026-10-25T12:22:00+05:30",
+        "Asr": "2026-10-25T15:39:00+05:30",
+        "Sunset": "2026-10-25T18:05:00+05:30",
+        "Maghrib": "2026-10-25T18:05:00+05:30",
+        "Isha": "2026-10-25T19:16:00+05:30",
+        "Imsak": "2026-10-25T05:13:00+05:30",
+        "Midnight": "2026-10-26T00:21:00+05:30",
+        "Firstthird": "2026-10-25T22:16:00+05:30",
+        "Lastthird": "2026-10-26T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "25 Oct 2026",
+        "timestamp": "1792899061",
+        "gregorian": {
+          "date": "25-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "25",
+          "weekday": {
+            "en": "Sunday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "14-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "14",
+          "weekday": {
+            "en": "Al Ahad",
+            "ar": "الاحد"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-26T05:23:00+05:30",
+        "Sunrise": "2026-10-26T06:39:00+05:30",
+        "Dhuhr": "2026-10-26T12:21:00+05:30",
+        "Asr": "2026-10-26T15:39:00+05:30",
+        "Sunset": "2026-10-26T18:04:00+05:30",
+        "Maghrib": "2026-10-26T18:04:00+05:30",
+        "Isha": "2026-10-26T19:15:00+05:30",
+        "Imsak": "2026-10-26T05:13:00+05:30",
+        "Midnight": "2026-10-27T00:21:00+05:30",
+        "Firstthird": "2026-10-26T22:16:00+05:30",
+        "Lastthird": "2026-10-27T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "26 Oct 2026",
+        "timestamp": "1792985461",
+        "gregorian": {
+          "date": "26-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "26",
+          "weekday": {
+            "en": "Monday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "15-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "15",
+          "weekday": {
+            "en": "Al Athnayn",
+            "ar": "الاثنين"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-27T05:24:00+05:30",
+        "Sunrise": "2026-10-27T06:39:00+05:30",
+        "Dhuhr": "2026-10-27T12:21:00+05:30",
+        "Asr": "2026-10-27T15:38:00+05:30",
+        "Sunset": "2026-10-27T18:03:00+05:30",
+        "Maghrib": "2026-10-27T18:03:00+05:30",
+        "Isha": "2026-10-27T19:15:00+05:30",
+        "Imsak": "2026-10-27T05:14:00+05:30",
+        "Midnight": "2026-10-28T00:21:00+05:30",
+        "Firstthird": "2026-10-27T22:15:00+05:30",
+        "Lastthird": "2026-10-28T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "27 Oct 2026",
+        "timestamp": "1793071861",
+        "gregorian": {
+          "date": "27-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "27",
+          "weekday": {
+            "en": "Tuesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "16-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "16",
+          "weekday": {
+            "en": "Al Thalaata",
+            "ar": "الثلاثاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-28T05:24:00+05:30",
+        "Sunrise": "2026-10-28T06:40:00+05:30",
+        "Dhuhr": "2026-10-28T12:21:00+05:30",
+        "Asr": "2026-10-28T15:38:00+05:30",
+        "Sunset": "2026-10-28T18:03:00+05:30",
+        "Maghrib": "2026-10-28T18:03:00+05:30",
+        "Isha": "2026-10-28T19:14:00+05:30",
+        "Imsak": "2026-10-28T05:14:00+05:30",
+        "Midnight": "2026-10-29T00:21:00+05:30",
+        "Firstthird": "2026-10-28T22:15:00+05:30",
+        "Lastthird": "2026-10-29T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "28 Oct 2026",
+        "timestamp": "1793158261",
+        "gregorian": {
+          "date": "28-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "28",
+          "weekday": {
+            "en": "Wednesday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "17-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "17",
+          "weekday": {
+            "en": "Al Arba'a",
+            "ar": "الاربعاء"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-29T05:24:00+05:30",
+        "Sunrise": "2026-10-29T06:40:00+05:30",
+        "Dhuhr": "2026-10-29T12:21:00+05:30",
+        "Asr": "2026-10-29T15:38:00+05:30",
+        "Sunset": "2026-10-29T18:02:00+05:30",
+        "Maghrib": "2026-10-29T18:02:00+05:30",
+        "Isha": "2026-10-29T19:13:00+05:30",
+        "Imsak": "2026-10-29T05:14:00+05:30",
+        "Midnight": "2026-10-30T00:21:00+05:30",
+        "Firstthird": "2026-10-29T22:15:00+05:30",
+        "Lastthird": "2026-10-30T02:27:00+05:30"
+      },
+      "date": {
+        "readable": "29 Oct 2026",
+        "timestamp": "1793244661",
+        "gregorian": {
+          "date": "29-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "29",
+          "weekday": {
+            "en": "Thursday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "18-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "18",
+          "weekday": {
+            "en": "Al Khamees",
+            "ar": "الخميس"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-30T05:25:00+05:30",
+        "Sunrise": "2026-10-30T06:41:00+05:30",
+        "Dhuhr": "2026-10-30T12:21:00+05:30",
+        "Asr": "2026-10-30T15:37:00+05:30",
+        "Sunset": "2026-10-30T18:01:00+05:30",
+        "Maghrib": "2026-10-30T18:01:00+05:30",
+        "Isha": "2026-10-30T19:13:00+05:30",
+        "Imsak": "2026-10-30T05:15:00+05:30",
+        "Midnight": "2026-10-31T00:21:00+05:30",
+        "Firstthird": "2026-10-30T22:14:00+05:30",
+        "Lastthird": "2026-10-31T02:28:00+05:30"
+      },
+      "date": {
+        "readable": "30 Oct 2026",
+        "timestamp": "1793331061",
+        "gregorian": {
+          "date": "30-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "30",
+          "weekday": {
+            "en": "Friday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "19-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "19",
+          "weekday": {
+            "en": "Al Juma'a",
+            "ar": "الجمعة"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    },
+    {
+      "timings": {
+        "Fajr": "2026-10-31T05:25:00+05:30",
+        "Sunrise": "2026-10-31T06:41:00+05:30",
+        "Dhuhr": "2026-10-31T12:21:00+05:30",
+        "Asr": "2026-10-31T15:37:00+05:30",
+        "Sunset": "2026-10-31T18:01:00+05:30",
+        "Maghrib": "2026-10-31T18:01:00+05:30",
+        "Isha": "2026-10-31T19:12:00+05:30",
+        "Imsak": "2026-10-31T05:15:00+05:30",
+        "Midnight": "2026-11-01T00:21:00+05:30",
+        "Firstthird": "2026-10-31T22:14:00+05:30",
+        "Lastthird": "2026-11-01T02:28:00+05:30"
+      },
+      "date": {
+        "readable": "31 Oct 2026",
+        "timestamp": "1793417461",
+        "gregorian": {
+          "date": "31-10-2026",
+          "format": "DD-MM-YYYY",
+          "day": "31",
+          "weekday": {
+            "en": "Saturday"
+          },
+          "month": {
+            "number": 10,
+            "en": "October"
+          },
+          "year": "2026",
+          "designation": {
+            "abbreviated": "AD",
+            "expanded": "Anno Domini"
+          },
+          "lunarSighting": false
+        },
+        "hijri": {
+          "date": "20-05-1448",
+          "format": "DD-MM-YYYY",
+          "day": "20",
+          "weekday": {
+            "en": "Al Sabt",
+            "ar": "السبت"
+          },
+          "month": {
+            "number": 5,
+            "en": "Jumādá al-ūlá",
+            "ar": "جُمادى الأولى",
+            "days": 30
+          },
+          "year": "1448",
+          "designation": {
+            "abbreviated": "AH",
+            "expanded": "Anno Hegirae"
+          },
+          "holidays": [],
+          "adjustedHolidays": [],
+          "method": "HJCoSA"
+        }
+      },
+      "meta": {
+        "latitude": 22.38,
+        "longitude": 73.13,
+        "timezone": "Asia/Kolkata",
+        "method": {
+          "id": 3,
+          "name": "Muslim World League",
+          "params": {
+            "Fajr": 18,
+            "Isha": 17
+          },
+          "location": {
+            "latitude": 51.5194682,
+            "longitude": -0.1360365
+          }
+        },
+        "latitudeAdjustmentMethod": "ANGLE_BASED",
+        "midnightMode": "STANDARD",
+        "school": "STANDARD",
+        "offset": {
+          "Imsak": 0,
+          "Fajr": 0,
+          "Sunrise": 0,
+          "Dhuhr": 0,
+          "Asr": 0,
+          "Maghrib": 0,
+          "Sunset": 0,
+          "Isha": 0,
+          "Midnight": 0
+        }
+      }
+    }
+  ]
+}
