@@ -21,11 +21,18 @@ export function App({ sawm }: { sawm: Sawm }) {
     refresh()
     const timer = setInterval(refresh, 60_000)
     document.addEventListener('visibilitychange', refresh)
+    window.addEventListener('online', refresh)
     return () => {
       clearInterval(timer)
       document.removeEventListener('visibilitychange', refresh)
+      window.removeEventListener('online', refresh)
     }
   }, [sawm])
+
+  // Once set up, ask the browser to keep Sawm's data even when space runs low (it may say no; that's fine).
+  useEffect(() => {
+    if (settings.setup.fasts) void navigator.storage?.persist?.()
+  }, [settings.setup.fasts])
 
   // The countdown moves on by the minute; the core only tells us when something on screen changes.
   useEffect(() => {
