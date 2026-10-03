@@ -1,5 +1,5 @@
 import type { Sawm, Today } from '../core'
-import { dayMonth, hijriDayMonth, inDays, shortDate, weekday } from './format'
+import { clockTime, dayMonth, hijriDayMonth, inDays, shortDate, weekday, zoneNameIfDifferent } from './format'
 import { Link } from './Link'
 import s from './TodayScreen.module.css'
 
@@ -49,7 +49,19 @@ function announcement(today: Ready): string {
   return `${focus.plan.status === 'planned' ? `${focus.plan.label}. ` : ''}${event} ${when}.`
 }
 
+function Time({ local, at }: { local: string; at: string }) {
+  const { time, meridiem } = clockTime(local)
+  return (
+    <time dateTime={at}>
+      {time}
+      {meridiem && <span className={s.meridiem}>{meridiem}</span>}
+    </time>
+  )
+}
+
 function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
+  const showImsak = sawm.settings().showImsak
+  const zone = zoneNameIfDifferent(today.location.timeZone)
   const { focus, state, countdown, progress = 0, nextFast, fastComplete, phase } = today
   const fastingDay = state !== 'not-fasting'
   const angle = Math.PI * progress
@@ -146,16 +158,22 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
           <div>
             <dt>{focus.isTomorrow ? 'Suhoor · tomorrow' : 'Suhoor'}</dt>
             <dd>
-              <time dateTime={focus.suhoor.at}>{focus.suhoor.local}</time>
+              <Time {...focus.suhoor} />
             </dd>
+            {showImsak && (
+              <dd className={s.imsak}>
+                Imsak <Time {...focus.imsak} />
+              </dd>
+            )}
           </div>
           <div>
             <dt>Iftar</dt>
             <dd>
-              <time dateTime={focus.iftar.at}>{focus.iftar.local}</time>
+              <Time {...focus.iftar} />
             </dd>
           </div>
         </dl>
+        {zone && <figcaption className={s.zone}>Times in {today.location.name} time ({zone})</figcaption>}
       </figure>
 
       {fastingDay && nextFast && (

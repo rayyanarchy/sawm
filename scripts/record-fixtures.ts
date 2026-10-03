@@ -26,6 +26,9 @@ const urls = [
   ...calendar(24.86, 67, 1, 2026, 10),
   // Karachiya, India: another time zone.
   ...calendar(22.38, 73.13, 1, 2026, 10),
+  // London in June: far enough north that the sky never gets fully dark, by the default and another High-Latitude Rule.
+  ...calendar(51.51, -0.13, 3, 2027, 6),
+  ...calendar(51.51, -0.13, 3, 2027, 6).map((url) => url.replace('&iso8601', '&latitudeAdjustmentMethod=1&iso8601')),
 ]
 
 interface AlAdhanCalendar {

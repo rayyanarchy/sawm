@@ -1,5 +1,5 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
-import { addDays, daysBetween, localDate, monthAfter, wallClockTime, weekdayOf } from './dates'
+import { addDays, daysBetween, localDate, monthAfter, shiftMinutes, wallClockTime, weekdayOf } from './dates'
 import type { Device } from './device'
 import {
   DEFAULT_FOLLOWED,
@@ -104,6 +104,12 @@ export interface Settings {
   savedLocation?: SavedLocation
   /** AlAdhan's id for the Calculation Method the user picked; unset means the default for their country. */
   calculationMethod?: number
+  /** AlAdhan's latitudeAdjustmentMethod (1 middle of the night, 2 one seventh, 3 angle-based); unset is AlAdhan's default. */
+  highLatitudeRule?: 1 | 2 | 3
+  /** Minute Adjustments to match a local mosque's timetable, from −15 to +15. Imsak moves with Suhoor. */
+  minuteAdjustments: { suhoor: number; iftar: number }
+  /** Whether to show Imsak beside Suhoor. */
+  showImsak: boolean
   followed: FollowedFastTypes
   fastOptions: FastOptions
   /**
@@ -125,6 +131,8 @@ export interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
+  minuteAdjustments: { suhoor: 0, iftar: 0 },
+  showImsak: false,
   followed: DEFAULT_FOLLOWED,
   fastOptions: DEFAULT_OPTIONS,
   hijriOffsets: [],
@@ -157,6 +165,8 @@ export interface Sawm {
   defaultCalculationMethod(countryCode: string): number
   /** Picks a Calculation Method, or goes back to the country's default when given undefined. */
   setCalculationMethod(id: number | undefined): Promise<void>
+  /** Changes how Suhoor and Iftar are worked out or shown: the High-Latitude Rule, Minute Adjustments, Imsak. */
+  setTimePreferences(changes: Partial<Pick<Settings, 'highLatitudeRule' | 'minuteAdjustments' | 'showImsak'>>): Promise<void>
   /** Every Fast Type, and whether the user follows it. */
   fastTypes(): (FastType & { followed: boolean })[]
   /** Follows or stops following a Fast Type. The Fast of Dawud and Mondays & Thursdays exclude each other. */
@@ -241,11 +251,12 @@ export async function createSawm(device: Device): Promise<Sawm> {
     latitude: place.latitude,
     longitude: place.longitude,
     method: methodFor(place),
+    ...(settings.highLatitudeRule ? { highLatitudeRule: settings.highLatitudeRule } : {}),
   })
 
   const keyOf = (place: Place, year: number, month: number) => {
-    const { latitude, longitude, method } = query(place)
-    return `times:${latitude},${longitude}:${method}:${year}-${month}`
+    const { latitude, longitude, method, highLatitudeRule } = query(place)
+    return `times:${latitude},${longitude}:${method}${highLatitudeRule ? `/${highLatitudeRule}` : ''}:${year}-${month}`
   }
 
   /** Brings a Gregorian month of times into memory: from the device if saved, else the network. */
@@ -334,9 +345,9 @@ export async function createSawm(device: Device): Promise<Sawm> {
     const day: Day = {
       date,
       ...(userHijri ? { hijri: { ...userHijri, monthName: HIJRI_MONTHS[userHijri.month - 1]! } } : {}),
-      suhoor: time(times.fajr),
-      iftar: time(times.maghrib),
-      imsak: time(times.imsak),
+      suhoor: time(shiftMinutes(times.fajr, settings.minuteAdjustments.suhoor)),
+      iftar: time(shiftMinutes(times.maghrib, settings.minuteAdjustments.iftar)),
+      imsak: time(shiftMinutes(times.imsak, settings.minuteAdjustments.suhoor)),
       plan: userHijri
         ? planDay({ date, hijri: userHijri, makkah: times.hijri, weekday: weekdayOf(date) }, settings.followed, settings.fastOptions, settings)
         : { status: 'none' },
@@ -437,6 +448,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
     ...stored,
     followed: { ...DEFAULT_SETTINGS.followed, ...stored?.followed },
     fastOptions: { ...DEFAULT_SETTINGS.fastOptions, ...stored?.fastOptions },
+    minuteAdjustments: { ...DEFAULT_SETTINGS.minuteAdjustments, ...stored?.minuteAdjustments },
     monthEndAnswers: { ...stored?.monthEndAnswers },
     setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
   }
@@ -497,6 +509,17 @@ export async function createSawm(device: Device): Promise<Sawm> {
     async setCalculationMethod(id) {
       await saveSettings({ calculationMethod: id })
       await refresh()
+    },
+
+    async setTimePreferences(changes) {
+      const clamp = (minutes: number) => Math.max(-15, Math.min(15, Math.round(minutes)))
+      const adjusted = changes.minuteAdjustments && {
+        suhoor: clamp(changes.minuteAdjustments.suhoor),
+        iftar: clamp(changes.minuteAdjustments.iftar),
+      }
+      await saveSettings({ ...changes, ...(adjusted ? { minuteAdjustments: adjusted } : {}) })
+      notify()
+      if ('highLatitudeRule' in changes) await refresh()
     },
 
     fastTypes: () => FAST_TYPES.map((type) => ({ ...type, followed: settings.followed[type.id] })),

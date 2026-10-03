@@ -21,6 +21,8 @@ export interface TimesQuery {
   longitude: number
   /** AlAdhan's id for the Calculation Method. */
   method: number
+  /** AlAdhan's latitudeAdjustmentMethod; unset means AlAdhan's default (angle-based). */
+  highLatitudeRule?: number
 }
 
 interface AlAdhanCalendar {
@@ -38,7 +40,7 @@ interface AlAdhanCalendar {
 /** Fetches one Gregorian month of times from AlAdhan (ADR 0001). */
 export async function fetchMonth(
   fetch: Device['fetch'],
-  { latitude, longitude, method }: TimesQuery,
+  { latitude, longitude, method, highLatitudeRule }: TimesQuery,
   year: number,
   month: number,
 ): Promise<MonthTimes> {
@@ -46,6 +48,7 @@ export async function fetchMonth(
     latitude: String(latitude),
     longitude: String(longitude),
     method: String(method),
+    ...(highLatitudeRule ? { latitudeAdjustmentMethod: String(highLatitudeRule) } : {}),
     iso8601: 'true',
   })
   const response = await fetch(`https://api.aladhan.com/v1/calendar/${year}/${month}?${params}`)

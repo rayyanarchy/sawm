@@ -42,3 +42,14 @@ export function monthAfter(date: string, months: number): { year: number; month:
   const index = year * 12 + (month - 1) + months
   return { year: Math.floor(index / 12), month: (index % 12) + 1 }
 }
+
+/** Moves an ISO 8601 instant written in its place's own offset by some minutes, keeping that offset. */
+export function shiftMinutes(isoWithOffset: string, minutes: number): string {
+  if (minutes === 0) return isoWithOffset
+  const offset = isoWithOffset.slice(19) // e.g. "+05:00"
+  const sign = offset.startsWith('-') ? -1 : 1
+  const [hours, mins] = offset.slice(1).split(':').map(Number) as [number, number]
+  const offsetMs = sign * (hours * 60 + mins) * 60_000
+  const local = new Date(Date.parse(isoWithOffset) + minutes * 60_000 + offsetMs).toISOString().slice(0, 19)
+  return `${local}${offset}`
+}

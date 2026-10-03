@@ -254,3 +254,21 @@
   font-size: 13px;
   color: var(--soft);
 }
+
+.meridiem {
+  margin-left: 0.2em;
+  font-size: 0.55em;
+  letter-spacing: 0.04em;
+  color: var(--soft);
+}
+
+.ends .imsak {
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.zone {
+  padding-top: 8px;
+  font-size: 13px;
+  color: var(--soft);
+}

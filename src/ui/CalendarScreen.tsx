@@ -1,7 +1,7 @@
 import { useMemo, useState, useSyncExternalStore } from 'react'
 import type { CalendarMonth, Day, Sawm } from '../core'
 import s from './CalendarScreen.module.css'
-import { firstDayOfWeek, fullDate, monthYear, weekdayNames } from './format'
+import { clockText, firstDayOfWeek, fullDate, monthYear, weekdayNames } from './format'
 
 const WEEK_START = firstDayOfWeek()
 const WEEKDAYS = weekdayNames(WEEK_START)
@@ -135,11 +135,11 @@ function DayDetails({ day, sawm }: { day: Day & { isPast: boolean }; sawm: Sawm 
       <dl className={s.times}>
         <div>
           <dt>Suhoor</dt>
-          <dd>{day.suhoor.local}</dd>
+          <dd>{clockText(day.suhoor.local)}</dd>
         </div>
         <div>
           <dt>Iftar</dt>
-          <dd>{day.iftar.local}</dd>
+          <dd>{clockText(day.iftar.local)}</dd>
         </div>
       </dl>
     </article>
