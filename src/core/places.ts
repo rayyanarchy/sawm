@@ -14,7 +14,15 @@ export interface Place {
 interface PhotonResponse {
   features: {
     geometry: { coordinates: [longitude: number, latitude: number] }
-    properties: { name?: string; state?: string; country?: string; countrycode?: string }
+    properties: {
+      name?: string
+      city?: string
+      district?: string
+      county?: string
+      state?: string
+      country?: string
+      countrycode?: string
+    }
   }[]
 }
 
@@ -44,4 +52,24 @@ export async function searchPlaces(fetch: Device['fetch'], query: string): Promi
       },
     ]
   })
+}
+
+/** Names the town a position is in, using Photon. The position is rounded before it's sent. */
+export async function placeAt(fetch: Device['fetch'], latitude: number, longitude: number): Promise<Place | undefined> {
+  const lat = roundCoordinate(latitude)
+  const lon = roundCoordinate(longitude)
+  const response = await fetch(`https://photon.komoot.io/reverse?${new URLSearchParams({ lat: String(lat), lon: String(lon), lang: 'en' })}`)
+  if (!response.ok) throw new Error(`Place lookup failed with status ${response.status}`)
+  const { features } = (await response.json()) as PhotonResponse
+  const properties = features[0]?.properties
+  const name = properties && (properties.city ?? properties.district ?? properties.county ?? properties.name)
+  if (!properties || !name || !properties.country || !properties.countrycode) return undefined
+  return {
+    name,
+    ...(properties.state ? { region: properties.state } : {}),
+    country: properties.country,
+    countryCode: properties.countrycode,
+    latitude: lat,
+    longitude: lon,
+  }
 }

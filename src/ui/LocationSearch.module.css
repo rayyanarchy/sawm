@@ -23,6 +23,41 @@
   letter-spacing: -0.03em;
 }
 
+.locate {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--sky-bottom);
+  font-size: 17px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.locate:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.locateDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 4px var(--glow);
+}
+
+.or {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
 .form {
   display: flex;
   gap: 10px;

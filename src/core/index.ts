@@ -1,4 +1,5 @@
-export type { Clock, Device, KeyValueStore } from './device'
+export type { Clock, Device, Geolocation, KeyValueStore, PositionResult } from './device'
+export type { CalculationMethod } from './methods'
 export { createSawm } from './sawm'
 export type { Phase, Sawm, SavedLocation, Settings, ThemePreference, TimeOfDay, Today } from './sawm'
 export type { Place } from './places'

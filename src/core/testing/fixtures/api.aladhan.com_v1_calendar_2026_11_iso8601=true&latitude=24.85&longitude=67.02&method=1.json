@@ -10,7 +10,7 @@
         "Asr": "2026-11-01T15:29:00+05:00",
         "Sunset": "2026-11-01T17:52:00+05:00",
         "Maghrib": "2026-11-01T17:52:00+05:00",
-        "Isha": "2026-11-01T19:05:00+05:00",
+        "Isha": "2026-11-01T19:09:00+05:00",
         "Imsak": "2026-11-01T05:12:00+05:00",
         "Midnight": "2026-11-02T00:15:00+05:00",
         "Firstthird": "2026-11-01T22:07:00+05:00",
@@ -66,15 +66,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -101,7 +101,7 @@
         "Asr": "2026-11-02T15:28:00+05:00",
         "Sunset": "2026-11-02T17:51:00+05:00",
         "Maghrib": "2026-11-02T17:51:00+05:00",
-        "Isha": "2026-11-02T19:04:00+05:00",
+        "Isha": "2026-11-02T19:09:00+05:00",
         "Imsak": "2026-11-02T05:12:00+05:00",
         "Midnight": "2026-11-03T00:15:00+05:00",
         "Firstthird": "2026-11-02T22:07:00+05:00",
@@ -157,15 +157,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -192,7 +192,7 @@
         "Asr": "2026-11-03T15:28:00+05:00",
         "Sunset": "2026-11-03T17:50:00+05:00",
         "Maghrib": "2026-11-03T17:50:00+05:00",
-        "Isha": "2026-11-03T19:04:00+05:00",
+        "Isha": "2026-11-03T19:08:00+05:00",
         "Imsak": "2026-11-03T05:13:00+05:00",
         "Midnight": "2026-11-04T00:15:00+05:00",
         "Firstthird": "2026-11-03T22:07:00+05:00",
@@ -248,15 +248,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -283,7 +283,7 @@
         "Asr": "2026-11-04T15:27:00+05:00",
         "Sunset": "2026-11-04T17:50:00+05:00",
         "Maghrib": "2026-11-04T17:50:00+05:00",
-        "Isha": "2026-11-04T19:03:00+05:00",
+        "Isha": "2026-11-04T19:08:00+05:00",
         "Imsak": "2026-11-04T05:13:00+05:00",
         "Midnight": "2026-11-05T00:15:00+05:00",
         "Firstthird": "2026-11-04T22:07:00+05:00",
@@ -339,15 +339,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -374,7 +374,7 @@
         "Asr": "2026-11-05T15:27:00+05:00",
         "Sunset": "2026-11-05T17:49:00+05:00",
         "Maghrib": "2026-11-05T17:49:00+05:00",
-        "Isha": "2026-11-05T19:03:00+05:00",
+        "Isha": "2026-11-05T19:07:00+05:00",
         "Imsak": "2026-11-05T05:14:00+05:00",
         "Midnight": "2026-11-06T00:15:00+05:00",
         "Firstthird": "2026-11-05T22:07:00+05:00",
@@ -430,15 +430,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -465,7 +465,7 @@
         "Asr": "2026-11-06T15:26:00+05:00",
         "Sunset": "2026-11-06T17:49:00+05:00",
         "Maghrib": "2026-11-06T17:49:00+05:00",
-        "Isha": "2026-11-06T19:02:00+05:00",
+        "Isha": "2026-11-06T19:07:00+05:00",
         "Imsak": "2026-11-06T05:14:00+05:00",
         "Midnight": "2026-11-07T00:15:00+05:00",
         "Firstthird": "2026-11-06T22:06:00+05:00",
@@ -521,15 +521,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -556,7 +556,7 @@
         "Asr": "2026-11-07T15:26:00+05:00",
         "Sunset": "2026-11-07T17:48:00+05:00",
         "Maghrib": "2026-11-07T17:48:00+05:00",
-        "Isha": "2026-11-07T19:02:00+05:00",
+        "Isha": "2026-11-07T19:06:00+05:00",
         "Imsak": "2026-11-07T05:15:00+05:00",
         "Midnight": "2026-11-08T00:15:00+05:00",
         "Firstthird": "2026-11-07T22:06:00+05:00",
@@ -614,15 +614,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -649,7 +649,7 @@
         "Asr": "2026-11-08T15:26:00+05:00",
         "Sunset": "2026-11-08T17:48:00+05:00",
         "Maghrib": "2026-11-08T17:48:00+05:00",
-        "Isha": "2026-11-08T19:01:00+05:00",
+        "Isha": "2026-11-08T19:06:00+05:00",
         "Imsak": "2026-11-08T05:15:00+05:00",
         "Midnight": "2026-11-09T00:15:00+05:00",
         "Firstthird": "2026-11-08T22:06:00+05:00",
@@ -705,15 +705,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -740,7 +740,7 @@
         "Asr": "2026-11-09T15:25:00+05:00",
         "Sunset": "2026-11-09T17:47:00+05:00",
         "Maghrib": "2026-11-09T17:47:00+05:00",
-        "Isha": "2026-11-09T19:01:00+05:00",
+        "Isha": "2026-11-09T19:05:00+05:00",
         "Imsak": "2026-11-09T05:16:00+05:00",
         "Midnight": "2026-11-10T00:16:00+05:00",
         "Firstthird": "2026-11-09T22:06:00+05:00",
@@ -796,15 +796,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -831,7 +831,7 @@
         "Asr": "2026-11-10T15:25:00+05:00",
         "Sunset": "2026-11-10T17:47:00+05:00",
         "Maghrib": "2026-11-10T17:47:00+05:00",
-        "Isha": "2026-11-10T19:01:00+05:00",
+        "Isha": "2026-11-10T19:05:00+05:00",
         "Imsak": "2026-11-10T05:16:00+05:00",
         "Midnight": "2026-11-11T00:16:00+05:00",
         "Firstthird": "2026-11-10T22:06:00+05:00",
@@ -887,15 +887,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -922,7 +922,7 @@
         "Asr": "2026-11-11T15:25:00+05:00",
         "Sunset": "2026-11-11T17:46:00+05:00",
         "Maghrib": "2026-11-11T17:46:00+05:00",
-        "Isha": "2026-11-11T19:00:00+05:00",
+        "Isha": "2026-11-11T19:05:00+05:00",
         "Imsak": "2026-11-11T05:17:00+05:00",
         "Midnight": "2026-11-12T00:16:00+05:00",
         "Firstthird": "2026-11-11T22:06:00+05:00",
@@ -978,15 +978,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1013,7 +1013,7 @@
         "Asr": "2026-11-12T15:24:00+05:00",
         "Sunset": "2026-11-12T17:46:00+05:00",
         "Maghrib": "2026-11-12T17:46:00+05:00",
-        "Isha": "2026-11-12T19:00:00+05:00",
+        "Isha": "2026-11-12T19:04:00+05:00",
         "Imsak": "2026-11-12T05:17:00+05:00",
         "Midnight": "2026-11-13T00:16:00+05:00",
         "Firstthird": "2026-11-12T22:06:00+05:00",
@@ -1069,15 +1069,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1104,7 +1104,7 @@
         "Asr": "2026-11-13T15:24:00+05:00",
         "Sunset": "2026-11-13T17:45:00+05:00",
         "Maghrib": "2026-11-13T17:45:00+05:00",
-        "Isha": "2026-11-13T19:00:00+05:00",
+        "Isha": "2026-11-13T19:04:00+05:00",
         "Imsak": "2026-11-13T05:18:00+05:00",
         "Midnight": "2026-11-14T00:16:00+05:00",
         "Firstthird": "2026-11-13T22:06:00+05:00",
@@ -1162,15 +1162,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1197,7 +1197,7 @@
         "Asr": "2026-11-14T15:24:00+05:00",
         "Sunset": "2026-11-14T17:45:00+05:00",
         "Maghrib": "2026-11-14T17:45:00+05:00",
-        "Isha": "2026-11-14T18:59:00+05:00",
+        "Isha": "2026-11-14T19:04:00+05:00",
         "Imsak": "2026-11-14T05:19:00+05:00",
         "Midnight": "2026-11-15T00:16:00+05:00",
         "Firstthird": "2026-11-14T22:06:00+05:00",
@@ -1253,15 +1253,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1288,7 +1288,7 @@
         "Asr": "2026-11-15T15:24:00+05:00",
         "Sunset": "2026-11-15T17:45:00+05:00",
         "Maghrib": "2026-11-15T17:45:00+05:00",
-        "Isha": "2026-11-15T18:59:00+05:00",
+        "Isha": "2026-11-15T19:04:00+05:00",
         "Imsak": "2026-11-15T05:19:00+05:00",
         "Midnight": "2026-11-16T00:16:00+05:00",
         "Firstthird": "2026-11-15T22:06:00+05:00",
@@ -1344,15 +1344,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1379,7 +1379,7 @@
         "Asr": "2026-11-16T15:23:00+05:00",
         "Sunset": "2026-11-16T17:44:00+05:00",
         "Maghrib": "2026-11-16T17:44:00+05:00",
-        "Isha": "2026-11-16T18:59:00+05:00",
+        "Isha": "2026-11-16T19:03:00+05:00",
         "Imsak": "2026-11-16T05:20:00+05:00",
         "Midnight": "2026-11-17T00:17:00+05:00",
         "Firstthird": "2026-11-16T22:06:00+05:00",
@@ -1435,15 +1435,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1470,7 +1470,7 @@
         "Asr": "2026-11-17T15:23:00+05:00",
         "Sunset": "2026-11-17T17:44:00+05:00",
         "Maghrib": "2026-11-17T17:44:00+05:00",
-        "Isha": "2026-11-17T18:59:00+05:00",
+        "Isha": "2026-11-17T19:03:00+05:00",
         "Imsak": "2026-11-17T05:20:00+05:00",
         "Midnight": "2026-11-18T00:17:00+05:00",
         "Firstthird": "2026-11-17T22:06:00+05:00",
@@ -1526,15 +1526,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1561,7 +1561,7 @@
         "Asr": "2026-11-18T15:23:00+05:00",
         "Sunset": "2026-11-18T17:44:00+05:00",
         "Maghrib": "2026-11-18T17:44:00+05:00",
-        "Isha": "2026-11-18T18:58:00+05:00",
+        "Isha": "2026-11-18T19:03:00+05:00",
         "Imsak": "2026-11-18T05:21:00+05:00",
         "Midnight": "2026-11-19T00:17:00+05:00",
         "Firstthird": "2026-11-18T22:06:00+05:00",
@@ -1617,15 +1617,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1652,7 +1652,7 @@
         "Asr": "2026-11-19T15:23:00+05:00",
         "Sunset": "2026-11-19T17:43:00+05:00",
         "Maghrib": "2026-11-19T17:43:00+05:00",
-        "Isha": "2026-11-19T18:58:00+05:00",
+        "Isha": "2026-11-19T19:03:00+05:00",
         "Imsak": "2026-11-19T05:22:00+05:00",
         "Midnight": "2026-11-20T00:17:00+05:00",
         "Firstthird": "2026-11-19T22:06:00+05:00",
@@ -1708,15 +1708,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1743,7 +1743,7 @@
         "Asr": "2026-11-20T15:23:00+05:00",
         "Sunset": "2026-11-20T17:43:00+05:00",
         "Maghrib": "2026-11-20T17:43:00+05:00",
-        "Isha": "2026-11-20T18:58:00+05:00",
+        "Isha": "2026-11-20T19:03:00+05:00",
         "Imsak": "2026-11-20T05:22:00+05:00",
         "Midnight": "2026-11-21T00:17:00+05:00",
         "Firstthird": "2026-11-20T22:06:00+05:00",
@@ -1801,15 +1801,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1836,7 +1836,7 @@
         "Asr": "2026-11-21T15:22:00+05:00",
         "Sunset": "2026-11-21T17:43:00+05:00",
         "Maghrib": "2026-11-21T17:43:00+05:00",
-        "Isha": "2026-11-21T18:58:00+05:00",
+        "Isha": "2026-11-21T19:03:00+05:00",
         "Imsak": "2026-11-21T05:23:00+05:00",
         "Midnight": "2026-11-22T00:18:00+05:00",
         "Firstthird": "2026-11-21T22:06:00+05:00",
@@ -1892,15 +1892,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -1927,7 +1927,7 @@
         "Asr": "2026-11-22T15:22:00+05:00",
         "Sunset": "2026-11-22T17:43:00+05:00",
         "Maghrib": "2026-11-22T17:43:00+05:00",
-        "Isha": "2026-11-22T18:58:00+05:00",
+        "Isha": "2026-11-22T19:02:00+05:00",
         "Imsak": "2026-11-22T05:23:00+05:00",
         "Midnight": "2026-11-23T00:18:00+05:00",
         "Firstthird": "2026-11-22T22:06:00+05:00",
@@ -1983,15 +1983,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2018,7 +2018,7 @@
         "Asr": "2026-11-23T15:22:00+05:00",
         "Sunset": "2026-11-23T17:43:00+05:00",
         "Maghrib": "2026-11-23T17:43:00+05:00",
-        "Isha": "2026-11-23T18:58:00+05:00",
+        "Isha": "2026-11-23T19:02:00+05:00",
         "Imsak": "2026-11-23T05:24:00+05:00",
         "Midnight": "2026-11-24T00:18:00+05:00",
         "Firstthird": "2026-11-23T22:06:00+05:00",
@@ -2074,15 +2074,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2109,7 +2109,7 @@
         "Asr": "2026-11-24T15:22:00+05:00",
         "Sunset": "2026-11-24T17:42:00+05:00",
         "Maghrib": "2026-11-24T17:42:00+05:00",
-        "Isha": "2026-11-24T18:58:00+05:00",
+        "Isha": "2026-11-24T19:02:00+05:00",
         "Imsak": "2026-11-24T05:25:00+05:00",
         "Midnight": "2026-11-25T00:18:00+05:00",
         "Firstthird": "2026-11-24T22:06:00+05:00",
@@ -2167,15 +2167,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2202,7 +2202,7 @@
         "Asr": "2026-11-25T15:22:00+05:00",
         "Sunset": "2026-11-25T17:42:00+05:00",
         "Maghrib": "2026-11-25T17:42:00+05:00",
-        "Isha": "2026-11-25T18:58:00+05:00",
+        "Isha": "2026-11-25T19:02:00+05:00",
         "Imsak": "2026-11-25T05:25:00+05:00",
         "Midnight": "2026-11-26T00:19:00+05:00",
         "Firstthird": "2026-11-25T22:07:00+05:00",
@@ -2258,15 +2258,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2293,7 +2293,7 @@
         "Asr": "2026-11-26T15:22:00+05:00",
         "Sunset": "2026-11-26T17:42:00+05:00",
         "Maghrib": "2026-11-26T17:42:00+05:00",
-        "Isha": "2026-11-26T18:58:00+05:00",
+        "Isha": "2026-11-26T19:02:00+05:00",
         "Imsak": "2026-11-26T05:26:00+05:00",
         "Midnight": "2026-11-27T00:19:00+05:00",
         "Firstthird": "2026-11-26T22:07:00+05:00",
@@ -2349,15 +2349,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2384,7 +2384,7 @@
         "Asr": "2026-11-27T15:22:00+05:00",
         "Sunset": "2026-11-27T17:42:00+05:00",
         "Maghrib": "2026-11-27T17:42:00+05:00",
-        "Isha": "2026-11-27T18:58:00+05:00",
+        "Isha": "2026-11-27T19:02:00+05:00",
         "Imsak": "2026-11-27T05:26:00+05:00",
         "Midnight": "2026-11-28T00:19:00+05:00",
         "Firstthird": "2026-11-27T22:07:00+05:00",
@@ -2440,15 +2440,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2475,7 +2475,7 @@
         "Asr": "2026-11-28T15:22:00+05:00",
         "Sunset": "2026-11-28T17:42:00+05:00",
         "Maghrib": "2026-11-28T17:42:00+05:00",
-        "Isha": "2026-11-28T18:58:00+05:00",
+        "Isha": "2026-11-28T19:02:00+05:00",
         "Imsak": "2026-11-28T05:27:00+05:00",
         "Midnight": "2026-11-29T00:20:00+05:00",
         "Firstthird": "2026-11-28T22:07:00+05:00",
@@ -2531,15 +2531,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2566,7 +2566,7 @@
         "Asr": "2026-11-29T15:22:00+05:00",
         "Sunset": "2026-11-29T17:42:00+05:00",
         "Maghrib": "2026-11-29T17:42:00+05:00",
-        "Isha": "2026-11-29T18:58:00+05:00",
+        "Isha": "2026-11-29T19:02:00+05:00",
         "Imsak": "2026-11-29T05:28:00+05:00",
         "Midnight": "2026-11-30T00:20:00+05:00",
         "Firstthird": "2026-11-29T22:07:00+05:00",
@@ -2622,15 +2622,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",
@@ -2657,7 +2657,7 @@
         "Asr": "2026-11-30T15:22:00+05:00",
         "Sunset": "2026-11-30T17:42:00+05:00",
         "Maghrib": "2026-11-30T17:42:00+05:00",
-        "Isha": "2026-11-30T18:58:00+05:00",
+        "Isha": "2026-11-30T19:03:00+05:00",
         "Imsak": "2026-11-30T05:28:00+05:00",
         "Midnight": "2026-12-01T00:20:00+05:00",
         "Firstthird": "2026-11-30T22:08:00+05:00",
@@ -2713,15 +2713,15 @@
         "longitude": 67.02,
         "timezone": "Asia/Karachi",
         "method": {
-          "id": 3,
-          "name": "Muslim World League",
+          "id": 1,
+          "name": "University of Islamic Sciences, Karachi",
           "params": {
             "Fajr": 18,
-            "Isha": 17
+            "Isha": 18
           },
           "location": {
-            "latitude": 51.5194682,
-            "longitude": -0.1360365
+            "latitude": 24.8614622,
+            "longitude": 67.0099388
           }
         },
         "latitudeAdjustmentMethod": "ANGLE_BASED",

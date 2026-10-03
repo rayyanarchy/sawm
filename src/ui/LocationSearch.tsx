@@ -3,7 +3,7 @@ import type { Place, Sawm } from '../core'
 import s from './LocationSearch.module.css'
 import { placeName } from './placeName'
 
-type SearchState = 'idle' | 'searching' | 'failed' | 'saving'
+type SearchState = 'idle' | 'searching' | 'failed' | 'saving' | 'locating' | 'denied' | 'no-position'
 
 interface LocationSearchProps {
   sawm: Sawm
@@ -29,6 +29,13 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
     }
   }
 
+  async function locate() {
+    setState('locating')
+    const result = await sawm.useCurrentLocation()
+    if (result === 'ok') onDone()
+    else setState(result === 'denied' ? 'denied' : 'no-position')
+  }
+
   async function choose(place: Place) {
     setState('saving')
     await sawm.setSavedLocation(place)
@@ -41,6 +48,21 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
       <h1 className={s.question}>
         <label htmlFor="place">Where are you fasting?</label>
       </h1>
+      <button type="button" className={s.locate} onClick={locate} disabled={state === 'locating' || state === 'saving'}>
+        <span className={s.locateDot} aria-hidden="true" />
+        {state === 'locating' ? 'Finding you…' : 'Use my location'}
+      </button>
+      {state === 'denied' && (
+        <p role="alert" className={s.note}>
+          Location access is off for Sawm. Search for your city instead.
+        </p>
+      )}
+      {state === 'no-position' && (
+        <p role="alert" className={s.note}>
+          Couldn’t find where you are. Search for your city instead.
+        </p>
+      )}
+      <p className={s.or}>or search</p>
       <form role="search" className={s.form} onSubmit={search}>
         <input
           id="place"
