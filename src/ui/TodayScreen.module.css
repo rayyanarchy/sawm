@@ -1,0 +1,110 @@
+.today {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: 100%;
+  max-width: 1100px;
+  justify-self: center;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--soft);
+}
+
+.place {
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.center {
+  align-self: center;
+  justify-self: center;
+  display: grid;
+  gap: 8px;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.word {
+  font-size: clamp(64px, 19vw, 150px);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.message {
+  font-size: clamp(30px, 8vw, 48px);
+  font-weight: 250;
+  letter-spacing: -0.02em;
+}
+
+.caption {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--soft);
+}
+
+.horizon {
+  width: 100%;
+}
+
+.arcBox {
+  position: relative;
+  height: clamp(90px, 22vw, 170px);
+  margin: 0 6px;
+}
+
+/* Before Suhoor ends the sun is still below the horizon: only its glow shows, at the eastern end. */
+.dawn {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 90%;
+  height: 130%;
+  translate: -50% 0;
+  background: radial-gradient(ellipse at 50% 100%, var(--glow) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.line {
+  height: 1px;
+  background: var(--line);
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.ends > div:last-child {
+  text-align: right;
+}
+
+.ends dt {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.ends dd {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+@media (min-width: 900px) {
+  .top {
+    padding-right: 220px;
+  }
+
+  .ends dd {
+    font-size: 28px;
+  }
+}

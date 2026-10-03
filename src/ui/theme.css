@@ -1,0 +1,136 @@
+/*
+ * Horizon: Sawm's design foundation (#38, #40).
+ * The sky carries the time of day; type is Outfit, mostly light and large; everything else stays quiet.
+ * Tokens are set per theme on <html data-theme> and per moment of the day on [data-sky].
+ */
+
+:root {
+  color-scheme: light;
+  --font: 'Outfit Variable', system-ui, sans-serif;
+
+  --text: #1b2230;
+  --soft: rgb(27 34 48 / 0.7);
+  --faint: rgb(27 34 48 / 0.45);
+  --line: rgb(27 34 48 / 0.2);
+  --surface: rgb(255 255 255 / 0.5);
+  --surface-strong: rgb(255 255 255 / 0.78);
+  --sun: #ee9d4f;
+  --glow: rgb(238 157 79 / 0.42);
+  --focus: #1b2230;
+
+  --sky-top: #cddeea;
+  --sky-bottom: #f6efe3;
+
+  --gutter: 24px;
+  --radius: 14px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --text: #e9edf4;
+  --soft: rgb(233 237 244 / 0.7);
+  --faint: rgb(233 237 244 / 0.45);
+  --line: rgb(233 237 244 / 0.18);
+  --surface: rgb(255 255 255 / 0.05);
+  --surface-strong: rgb(20 24 32 / 0.85);
+  --sun: #f3b06a;
+  --glow: rgb(243 176 106 / 0.32);
+  --focus: #e9edf4;
+
+  --sky-top: #0e1824;
+  --sky-bottom: #263240;
+}
+
+/* Before Suhoor: lavender dawn, or deep night in the dark theme. */
+[data-sky='predawn'] {
+  --sky-top: #dddcec;
+  --sky-bottom: #f2e3d9;
+  --sun: #e48a69;
+  --glow: rgb(228 138 105 / 0.34);
+}
+:root[data-theme='dark'] [data-sky='predawn'] {
+  --sky-top: #05070f;
+  --sky-bottom: #1a1e3a;
+  --sun: #d98a72;
+  --glow: rgb(217 138 114 / 0.3);
+}
+
+/* After Iftar: dusk. */
+[data-sky='night'] {
+  --sky-top: #d9dceb;
+  --sky-bottom: #efe5e1;
+}
+:root[data-theme='dark'] [data-sky='night'] {
+  --sky-top: #080a12;
+  --sky-bottom: #171b29;
+}
+
+/* No times yet: a calm, neutral sky. */
+[data-sky='neutral'] {
+  --sky-top: #ebeae5;
+  --sky-bottom: #f6f4ef;
+}
+:root[data-theme='dark'] [data-sky='neutral'] {
+  --sky-top: #101113;
+  --sky-bottom: #1b1c1f;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-weight: 350;
+  color: var(--text);
+  background: var(--sky-bottom);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure,
+dl,
+dd {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

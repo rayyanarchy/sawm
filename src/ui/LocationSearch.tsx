@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { Place, Sawm } from '../core'
+import s from './LocationSearch.module.css'
 import { placeName } from './placeName'
 
 type SearchState = 'idle' | 'searching' | 'failed' | 'saving'
@@ -35,42 +36,55 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
   }
 
   return (
-    <main>
-      <h1>Sawm</h1>
-      <form role="search" onSubmit={search}>
+    <section className={s.search}>
+      {!canCancel && <p className={s.brand}>Sawm</p>}
+      <h1 className={s.question}>
         <label htmlFor="place">Where are you fasting?</label>
+      </h1>
+      <form role="search" className={s.form} onSubmit={search}>
         <input
           id="place"
+          className={s.input}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="City or town"
           autoComplete="off"
+          enterKeyHint="search"
           required
         />
-        <button type="submit" disabled={state === 'searching'}>
-          Search
+        <button type="submit" className={s.submit} disabled={state === 'searching'}>
+          {state === 'searching' ? 'Searching…' : 'Search'}
         </button>
-        {canCancel && (
-          <button type="button" onClick={onDone}>
-            Cancel
-          </button>
-        )}
       </form>
-      {state === 'failed' && <p role="alert">Couldn't search right now. Check your connection and try again.</p>}
+
+      {state === 'failed' && (
+        <p role="alert" className={s.note}>
+          Couldn’t search right now. Check your connection and try again.
+        </p>
+      )}
       {places &&
         (places.length === 0 ? (
-          <p role="status">No places found. Try a nearby city.</p>
+          <p role="status" className={s.note}>
+            No places found. Try a nearby city.
+          </p>
         ) : (
-          <ul>
+          <ul className={s.results}>
             {places.map((place) => (
               <li key={`${place.latitude},${place.longitude}`}>
-                <button type="button" disabled={state === 'saving'} onClick={() => choose(place)}>
-                  {placeName(place)}
+                <button type="button" className={s.result} disabled={state === 'saving'} onClick={() => choose(place)}>
+                  <span className={s.resultName}>{place.name}</span>
+                  <span className={s.resultRegion}>{placeName({ ...place, name: '' }).replace(/^, /, '')}</span>
                 </button>
               </li>
             ))}
           </ul>
         ))}
-    </main>
+
+      {canCancel && (
+        <button type="button" className={s.cancel} onClick={onDone}>
+          Cancel
+        </button>
+      )}
+    </section>
   )
 }

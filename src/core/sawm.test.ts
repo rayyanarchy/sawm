@@ -69,9 +69,24 @@ describe('Today', () => {
       status: 'ready',
       location: { ...karachi, timeZone: 'Asia/Karachi' },
       date: '2026-10-04',
+      phase: 'day',
       suhoor: { at: '2026-10-04T05:09:00+05:00', local: '05:09' },
       iftar: { at: '2026-10-04T18:16:00+05:00', local: '18:16' },
     })
+  })
+
+  it('knows whether it is before Suhoor, between Suhoor and Iftar, or after Iftar', async () => {
+    const fake = createFakeDevice({ now: '2026-10-03T22:00:00Z' }) // 03:00 on 4 October in Karachi
+    const sawm = await createSawm(fake.device)
+    const [karachi] = await sawm.searchPlaces('Karachi')
+    await sawm.setSavedLocation(karachi!)
+    expect(sawm.today()).toMatchObject({ date: '2026-10-04', phase: 'predawn' })
+
+    fake.setNow('2026-10-04T07:00:00Z') // noon
+    expect(sawm.today()).toMatchObject({ phase: 'day' })
+
+    fake.setNow('2026-10-04T15:00:00Z') // 20:00, after Iftar at 18:16
+    expect(sawm.today()).toMatchObject({ phase: 'night' })
   })
 
   it("judges what day it is by the Saved Location's clock, not the device's", async () => {
@@ -226,5 +241,18 @@ describe('Privacy', () => {
     expect(coordinates).not.toHaveLength(0)
     for (const coordinate of coordinates) expect(coordinate).toMatch(/^-?\d+(\.\d{1,2})?$/)
     expect(sawm.today()).toMatchObject({ location: { latitude: 24.85, longitude: 67.02 } })
+  })
+})
+
+describe('Settings', () => {
+  it('follows the system theme until the user picks one, and remembers the pick', async () => {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z' })
+    const sawm = await createSawm(fake.device)
+    expect(sawm.settings().theme).toBe('system')
+
+    await sawm.setTheme('dark')
+    const restarted = await createSawm(fake.device)
+
+    expect(restarted.settings().theme).toBe('dark')
   })
 })
