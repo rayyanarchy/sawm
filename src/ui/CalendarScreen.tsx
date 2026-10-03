@@ -10,6 +10,8 @@ function planText(day: Day) {
   switch (day.plan.status) {
     case 'planned':
       return day.plan.label
+    case 'skipped':
+      return `Skipped · ${day.plan.label}`
     case 'forbidden':
       return `${day.plan.reason}: no fasting`
     default:
@@ -101,7 +103,7 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
   )
 }
 
-function DayDetails({ day, sawm }: { day: Day; sawm: Sawm }) {
+function DayDetails({ day, sawm }: { day: Day & { isPast: boolean }; sawm: Sawm }) {
   const settings = sawm.settings()
   const shawwalDays = settings.fastOptions.shawwalDays
   const canMoveShawwalHere =
@@ -129,6 +131,7 @@ function DayDetails({ day, sawm }: { day: Day; sawm: Sawm }) {
           </div>
         </div>
       )}
+      {!day.isPast && <PlanActions day={day} sawm={sawm} />}
       <dl className={s.times}>
         <div>
           <dt>Suhoor</dt>
@@ -140,5 +143,75 @@ function DayDetails({ day, sawm }: { day: Day; sawm: Sawm }) {
         </div>
       </dl>
     </article>
+  )
+}
+
+/** What the user can change about a date: Skip it (or a run of days), undo a Skip, or add or remove a One-off Fast. */
+function PlanActions({ day, sawm }: { day: Day; sawm: Sawm }) {
+  const [until, setUntil] = useState<string>()
+  const [refused, setRefused] = useState(false)
+  const plan = day.plan
+
+  if (plan.status === 'forbidden') return null
+  if (plan.status === 'skipped') {
+    return (
+      <div className={s.actions}>
+        <button type="button" className={s.action} onClick={() => void sawm.unskip(day.date)}>
+          Undo skip
+        </button>
+      </div>
+    )
+  }
+  if (plan.status === 'planned' && plan.oneOff && plan.types.length === 0) {
+    return (
+      <div className={s.actions}>
+        <button type="button" className={s.action} onClick={() => void sawm.removeOneOff(day.date)}>
+          Remove one-off fast
+        </button>
+      </div>
+    )
+  }
+  if (plan.status === 'planned') {
+    return (
+      <div className={s.actions}>
+        <button type="button" className={s.action} onClick={() => void sawm.skip(day.date)}>
+          Skip this day
+        </button>
+        {until === undefined ? (
+          <button type="button" className={s.action} onClick={() => setUntil(day.date)}>
+            Not fasting for a while…
+          </button>
+        ) : (
+          <form
+            className={s.until}
+            onSubmit={(event) => {
+              event.preventDefault()
+              void sawm.skip(day.date, until)
+              setUntil(undefined)
+            }}
+          >
+            <label>
+              Not fasting until
+              <input type="date" className={s.date} min={day.date} value={until} onChange={(event) => setUntil(event.target.value)} required />
+            </label>
+            <button type="submit" className={s.action}>
+              Skip
+            </button>
+          </form>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div className={s.actions}>
+      <button
+        type="button"
+        className={s.action}
+        onClick={async () => setRefused((await sawm.addOneOff(day.date)) === 'forbidden')}
+      >
+        Add a one-off fast
+      </button>
+      {refused && <p role="alert">Fasting isn’t allowed on this day.</p>}
+    </div>
   )
 }

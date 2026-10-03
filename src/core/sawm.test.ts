@@ -590,3 +590,54 @@ describe('Fast Types', () => {
     expect(planned(sawm, '2027-06-13', '2027-06-17')).toEqual({ '2027-06-15': 'Ashura', '2027-06-16': 'Ashura' })
   })
 })
+
+describe('Skips and One-off Fasts', () => {
+  it('skips a single Planned Fast, so Today and the Next Fast move past it', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('mondaysThursdays', true)
+
+    await sawm.skip('2026-10-05')
+
+    expect(sawm.day('2026-10-05')?.plan).toEqual({ status: 'skipped', label: 'Mondays & Thursdays' })
+    expect(sawm.today()).toMatchObject({ nextFast: { date: '2026-10-08' } })
+  })
+
+  it('skips a run of days, Ramadan included, and undoes one day of it', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    await sawm.skip('2027-02-10', '2027-02-14')
+    await sawm.unskip('2027-02-12')
+
+    const statuses = ['10', '11', '12', '13', '14', '15'].map((d) => sawm.day(`2027-02-${d}`)?.plan.status)
+    expect(statuses).toEqual(['skipped', 'skipped', 'planned', 'skipped', 'skipped', 'planned'])
+  })
+
+  it('makes today a fasting day with a One-off Fast added the night before', async () => {
+    const { sawm } = await karachiAt('2026-10-03T18:00:00Z') // 23:00 in Karachi
+
+    expect(await sawm.addOneOff('2026-10-04')).toBe('added')
+
+    expect(sawm.today()).toMatchObject({
+      state: 'before-suhoor',
+      focus: { date: '2026-10-04', plan: { status: 'planned', label: 'One-off Fast', oneOff: true } },
+    })
+    await sawm.removeOneOff('2026-10-04')
+    expect(sawm.day('2026-10-04')?.plan.status).toBe('none')
+  })
+
+  it('refuses a One-off Fast on a Forbidden Day', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    expect(await sawm.addOneOff('2027-03-09')).toBe('forbidden')
+    expect(sawm.day('2027-03-09')?.plan).toEqual({ status: 'forbidden', reason: 'Eid al-Fitr' })
+  })
+
+  it('undoes the Skip when a One-off Fast is added on a Skipped Planned Fast', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.skip('2027-02-10')
+
+    expect(await sawm.addOneOff('2027-02-10')).toBe('unskipped')
+    expect(sawm.day('2027-02-10')?.plan).toMatchObject({ status: 'planned', label: 'Ramadan' })
+    expect(sawm.settings().oneOffs).toEqual([])
+  })
+})

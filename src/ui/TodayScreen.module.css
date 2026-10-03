@@ -191,3 +191,28 @@
     font-size: 28px;
   }
 }
+
+.quiet {
+  margin-top: 4px;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  color: var(--soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+  cursor: pointer;
+}
+
+.undo {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

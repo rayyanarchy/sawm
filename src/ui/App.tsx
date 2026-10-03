@@ -60,7 +60,7 @@ export function App({ sawm }: { sawm: Sawm }) {
       ) : path.startsWith('/calendar') ? (
         <CalendarScreen sawm={sawm} />
       ) : (
-        <TodayScreen today={today} />
+        <TodayScreen today={today} sawm={sawm} />
       )}
     </Shell>
   )

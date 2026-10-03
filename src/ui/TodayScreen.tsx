@@ -1,4 +1,4 @@
-import type { Today } from '../core'
+import type { Sawm, Today } from '../core'
 import { dayMonth, hijriDayMonth, inDays, shortDate, weekday } from './format'
 import { Link } from './Link'
 import s from './TodayScreen.module.css'
@@ -6,7 +6,7 @@ import s from './TodayScreen.module.css'
 type Located = Exclude<Today, { status: 'no-location' }>
 type Ready = Extract<Today, { status: 'ready' }>
 
-export function TodayScreen({ today }: { today: Located }) {
+export function TodayScreen({ today, sawm }: { today: Located; sawm: Sawm }) {
   return (
     <section className={s.today}>
       <header className={s.top}>
@@ -22,7 +22,7 @@ export function TodayScreen({ today }: { today: Located }) {
       </header>
 
       {today.status === 'ready' ? (
-        <ReadyToday today={today} />
+        <ReadyToday today={today} sawm={sawm} />
       ) : (
         <div className={s.center} role="status">
           <p className={s.message}>Today’s times aren’t available.</p>
@@ -49,7 +49,7 @@ function announcement(today: Ready): string {
   return `${focus.plan.status === 'planned' ? `${focus.plan.label}. ` : ''}${event} ${when}.`
 }
 
-function ReadyToday({ today }: { today: Ready }) {
+function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
   const { focus, state, countdown, progress = 0, nextFast, fastComplete, phase } = today
   const fastingDay = state !== 'not-fasting'
   const angle = Math.PI * progress
@@ -62,6 +62,15 @@ function ReadyToday({ today }: { today: Ready }) {
           <p className={s.complete}>
             <span className={s.completeDot} aria-hidden="true" />
             Fast complete · {fastComplete.label}
+          </p>
+        )}
+
+        {focus.plan.status === 'skipped' && (
+          <p className={s.complete}>
+            Not fasting {focus.isTomorrow ? 'tomorrow' : 'today'} · {focus.plan.label}
+            <button type="button" className={s.undo} onClick={() => void sawm.unskip(focus.date)}>
+              Undo
+            </button>
           </p>
         )}
 
@@ -81,6 +90,9 @@ function ReadyToday({ today }: { today: Ready }) {
               {state === 'fasting' ? 'until Iftar' : 'until Suhoor ends'}
               {focus.plan.status === 'planned' && ` · ${focus.plan.label}`}
             </p>
+            <button type="button" className={s.quiet} onClick={() => void sawm.skip(focus.date)}>
+              Not fasting {focus.isTomorrow ? 'tomorrow' : 'today'}?
+            </button>
           </>
         ) : nextFast ? (
           <>

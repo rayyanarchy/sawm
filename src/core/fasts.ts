@@ -66,9 +66,24 @@ export const DEFAULT_OPTIONS: FastOptions = {
 export type ForbiddenDay = 'Eid al-Fitr' | 'Eid al-Adha' | 'Day of Tashreeq'
 
 export type DayPlan =
-  | { status: 'planned'; label: string; types: FastTypeId[] }
+  /** `oneOff` is true when the user added this date themselves. */
+  | { status: 'planned'; label: string; types: FastTypeId[]; oneOff?: true }
+  /** The user isn't fasting a date that would otherwise be a Planned Fast. */
+  | { status: 'skipped'; label: string }
   | { status: 'forbidden'; reason: ForbiddenDay }
   | { status: 'none' }
+
+/** A run of dates the user isn't fasting (from and to inclusive, YYYY-MM-DD). */
+export interface Skip {
+  from: string
+  to: string
+}
+
+/** The user's own changes to the plan. */
+export interface PlanChanges {
+  skips: Skip[]
+  oneOffs: string[]
+}
 
 /** A day on which fasting is not allowed, whatever the user follows. */
 export function forbiddenDay(hijri: HijriDate): ForbiddenDay | undefined {
@@ -105,11 +120,27 @@ export function matchingFastTypes({ date, hijri, makkah, weekday }: PlanInput, f
   return FAST_TYPES.filter((type) => followed[type.id] && matches[type.id]).map((type) => type.id)
 }
 
-/** Whether a date is a Planned Fast, and why. Forbidden Days override everything. */
-export function planDay(input: PlanInput, followed: FollowedFastTypes, options: FastOptions): DayPlan {
+export const isSkipped = (date: string, skips: readonly Skip[]) => skips.some((skip) => date >= skip.from && date <= skip.to)
+
+/** Whether a date is a Planned Fast, and why. Forbidden Days override everything, then Skips, then One-off Fasts. */
+export function planDay(input: PlanInput, followed: FollowedFastTypes, options: FastOptions, changes: PlanChanges): DayPlan {
   const forbidden = forbiddenDay(input.hijri)
   if (forbidden) return { status: 'forbidden', reason: forbidden }
   const types = matchingFastTypes(input, followed, options)
-  const first = FAST_TYPES.find((type) => type.id === types[0])
-  return first ? { status: 'planned', label: first.label, types } : { status: 'none' }
+  const oneOff = changes.oneOffs.includes(input.date)
+  const label = FAST_TYPES.find((type) => type.id === types[0])?.label ?? (oneOff ? ONE_OFF_LABEL : undefined)
+  if (!label) return { status: 'none' }
+  if (isSkipped(input.date, changes.skips)) return { status: 'skipped', label }
+  return { status: 'planned', label, types, ...(oneOff ? { oneOff: true as const } : {}) }
+}
+
+/** Removes one date from a set of Skips, splitting any run it falls inside. */
+export function withoutDate(skips: readonly Skip[], date: string, addDays: (date: string, days: number) => string): Skip[] {
+  return skips.flatMap((skip) => {
+    if (date < skip.from || date > skip.to) return [skip]
+    const parts: Skip[] = []
+    if (skip.from < date) parts.push({ from: skip.from, to: addDays(date, -1) })
+    if (date < skip.to) parts.push({ from: addDays(date, 1), to: skip.to })
+    return parts
+  })
 }

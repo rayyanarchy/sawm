@@ -1,7 +1,7 @@
 export type { Clock, Device, Geolocation, KeyValueStore, PositionResult } from './device'
 export type { CalculationMethod } from './methods'
 export { createSawm } from './sawm'
-export type { DayPlan, FastOptions, FastType, FastTypeId, ForbiddenDay } from './fasts'
+export type { DayPlan, FastOptions, FastType, FastTypeId, ForbiddenDay, Skip } from './fasts'
 export type { HijriDate } from './hijri'
 export type { CalendarMonth, Day, HijriLabel, NextFast, Phase, Sawm, SavedLocation, Settings, ThemePreference, TimeOfDay, Today } from './sawm'
 export type { Place } from './places'
