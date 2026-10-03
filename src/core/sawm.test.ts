@@ -732,3 +732,40 @@ describe('Hijri Offset and Month-end Check', () => {
     expect(sawm.day('2027-05-16')?.plan.status).toBe('none')
   })
 })
+
+describe('Time preferences', () => {
+  it('nudges Suhoor and Iftar by Minute Adjustments, without loading anything again', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    const requests = fake.requests.length
+
+    await sawm.setTimePreferences({ minuteAdjustments: { suhoor: -5, iftar: 3 } })
+
+    expect(sawm.today()).toMatchObject({
+      focus: { suhoor: { local: '05:04', at: '2026-10-04T05:04:00+05:00' }, iftar: { local: '18:19' }, imsak: { local: '04:54' } },
+    })
+    expect(fake.requests).toHaveLength(requests)
+    await sawm.setTimePreferences({ minuteAdjustments: { suhoor: -40, iftar: 0 } })
+    expect(sawm.settings().minuteAdjustments).toEqual({ suhoor: -15, iftar: 0 })
+  })
+
+  it('loads times again under another High-Latitude Rule, far north in summer', async () => {
+    const fake = createFakeDevice({ now: '2027-06-20T12:00:00Z' }) // 13:00 in London
+    const sawm = await createSawm(fake.device)
+    await sawm.setSavedLocation({ name: 'London', country: 'United Kingdom', countryCode: 'GB', latitude: 51.51, longitude: -0.13 })
+    expect(sawm.today()).toMatchObject({ location: { timeZone: 'Europe/London' }, focus: { suhoor: { local: '02:30' }, iftar: { local: '21:21' } } })
+
+    await sawm.setTimePreferences({ highLatitudeRule: 1 })
+
+    expect(fake.requests.at(-1)).toContain('latitudeAdjustmentMethod=1')
+    expect(sawm.today()).toMatchObject({ focus: { suhoor: { local: '01:02' }, iftar: { local: '21:21' } } })
+  })
+
+  it('remembers whether to show Imsak', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    expect(sawm.settings().showImsak).toBe(false)
+
+    await sawm.setTimePreferences({ showImsak: true })
+
+    expect((await createSawm(fake.device)).settings().showImsak).toBe(true)
+  })
+})

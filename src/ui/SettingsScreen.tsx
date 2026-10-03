@@ -56,6 +56,38 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
             ))}
           </select>
         </label>
+        {Math.abs(settings.savedLocation?.latitude ?? 0) >= 48 && (
+          <label className={s.row}>
+            <span className={s.rowText}>
+              <span>High-latitude rule</span>
+              <span className={s.rowNote}>How Suhoor is set where the sky never gets fully dark in summer.</span>
+            </span>
+            <select
+              className={s.select}
+              value={settings.highLatitudeRule ?? 'default'}
+              onChange={(event) =>
+                void sawm.setTimePreferences({
+                  highLatitudeRule: event.target.value === 'default' ? undefined : (Number(event.target.value) as 1 | 2 | 3),
+                })
+              }
+            >
+              <option value="default">Default · Angle-based</option>
+              <option value="3">Angle-based</option>
+              <option value="1">Middle of the night</option>
+              <option value="2">One seventh of the night</option>
+            </select>
+          </label>
+        )}
+        <MinuteStepper
+          label="Suhoor adjustment"
+          value={settings.minuteAdjustments.suhoor}
+          onChange={(suhoor) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, suhoor } })}
+        />
+        <MinuteStepper
+          label="Iftar adjustment"
+          value={settings.minuteAdjustments.iftar}
+          onChange={(iftar) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, iftar } })}
+        />
         <div className={s.row}>
           <span className={s.rowText}>
             <span>Hijri Offset</span>
@@ -72,6 +104,12 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
           </span>
         </div>
         <div className={s.switches}>
+          <Switch
+            label="Show Imsak"
+            description="A precautionary time a few minutes before Suhoor."
+            checked={settings.showImsak}
+            onChange={(showImsak) => void sawm.setTimePreferences({ showImsak })}
+          />
           <Switch
             label="Month-end Check"
             description="On the evening of the 29th, ask whether the new month has been announced."
@@ -106,5 +144,23 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
         <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
       </p>
     </section>
+  )
+}
+
+/** Nudges a time by a minute at a time, to match a local mosque's timetable. */
+function MinuteStepper({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
+  return (
+    <div className={s.row}>
+      <span>{label}</span>
+      <span className={s.stepper} role="group" aria-label={label}>
+        <button type="button" onClick={() => onChange(value - 1)} disabled={value <= -15} aria-label="One minute earlier">
+          −
+        </button>
+        <output aria-live="polite">{value === 0 ? 'None' : `${value > 0 ? '+' : '−'}${Math.abs(value)} min`}</output>
+        <button type="button" onClick={() => onChange(value + 1)} disabled={value >= 15} aria-label="One minute later">
+          +
+        </button>
+      </span>
+    </div>
   )
 }

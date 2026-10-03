@@ -51,3 +51,30 @@ export function weekdayNames(start: 0 | 1): string[] {
   // 4 January 2026 was a Sunday.
   return Array.from({ length: 7 }, (_, i) => format(`2026-01-${String(4 + start + i).padStart(2, '0')}`, { weekday: 'short' }))
 }
+
+/** Whether the device shows a 12-hour clock. */
+const twelveHour = (() => {
+  const cycle = new Intl.DateTimeFormat(undefined, { hour: 'numeric' }).resolvedOptions().hourCycle
+  return cycle === 'h11' || cycle === 'h12'
+})()
+
+/** A wall-clock time ("18:17") in the device's own clock style: "18:17", or "6:17" with "PM". */
+export function clockTime(local: string): { time: string; meridiem?: 'AM' | 'PM' } {
+  if (!twelveHour) return { time: local }
+  const [hours, minutes] = local.split(':').map(Number) as [number, number]
+  return { time: `${((hours + 11) % 12) + 1}:${String(minutes).padStart(2, '0')}`, meridiem: hours < 12 ? 'AM' : 'PM' }
+}
+
+/** "6:17 PM" or "18:17", as plain text. */
+export const clockText = (local: string) => {
+  const { time, meridiem } = clockTime(local)
+  return meridiem ? `${time} ${meridiem}` : time
+}
+
+/** The short name of a time zone ("PKT"), if it differs from the device's own zone. */
+export function zoneNameIfDifferent(timeZone: string | undefined): string | undefined {
+  const own = Intl.DateTimeFormat().resolvedOptions().timeZone
+  if (!timeZone || timeZone === own) return undefined
+  const part = new Intl.DateTimeFormat('en', { timeZone, timeZoneName: 'short' }).formatToParts(Date.now()).find((p) => p.type === 'timeZoneName')
+  return part?.value
+}
