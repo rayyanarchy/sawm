@@ -146,11 +146,24 @@ export interface Namespace {
 }
 
 /** The reminder service's HTTP API, under /api/reminders. */
-export async function handleReminders(request: Request, namespace: Namespace, vapidPublicKey: string, now = Date.now()): Promise<Response> {
+export async function handleReminders(request: Request, namespace: Namespace, env: ReminderEnv, now = Date.now()): Promise<Response> {
   const { pathname } = new URL(request.url)
   const stubFor = async (endpoint: string) => namespace.get(namespace.idFromName(await objectName(endpoint)))
 
-  if (pathname === '/api/reminders/key' && request.method === 'GET') return Response.json({ publicKey: vapidPublicKey })
+  if (pathname === '/api/reminders/key' && request.method === 'GET') return Response.json({ publicKey: env.VAPID_PUBLIC_KEY })
+
+  // A Reminder right now, so the user can check they arrive.
+  if (pathname === '/api/reminders/test' && request.method === 'POST') {
+    const body = (await request.json().catch(() => undefined)) as { subscription?: unknown } | undefined
+    if (!validSubscription(body?.subscription)) return new Response('Invalid subscription', { status: 400 })
+    const response = await sendPush(
+      body.subscription,
+      { title: 'Reminders are on', body: 'This is how Sawm will remind you before Suhoor and at Iftar.', url: '/', tag: 'test' },
+      300,
+      vapidOf(env),
+    )
+    return new Response(null, { status: response.ok ? 204 : 502 })
+  }
 
   if (pathname === '/api/reminders' && request.method === 'PUT') {
     const schedule = validSchedule(await request.json().catch(() => undefined), now)

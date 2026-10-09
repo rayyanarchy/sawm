@@ -58,3 +58,18 @@
   text-align: center;
   color: var(--text);
 }
+
+.time,
+.test {
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.test {
+  flex: none;
+  cursor: pointer;
+}

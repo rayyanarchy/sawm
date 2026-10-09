@@ -200,6 +200,10 @@ export interface Sawm {
   disableReminders(): Promise<void>
   /** Changes a Reminder's on/off state or timing. */
   setReminder(kind: 'suhoor' | 'iftar', changes: Partial<ReminderSettings['suhoor']>): Promise<void>
+  /** Changes the Night-before Reminder. */
+  setNightBefore(changes: Partial<ReminderSettings['nightBefore']>): Promise<void>
+  /** Asks the server to send this device a Reminder right now, to check they arrive. */
+  testReminder(): Promise<boolean>
   /** Whether this browser can get Reminders at all. */
   reminderSupport(): ReturnType<Device['push']['support']>
   /** Marks a setup step finished (or skipped). */
@@ -269,7 +273,13 @@ export async function createSawm(device: Device): Promise<Sawm> {
     const zone = settings.savedLocation?.timeZone
     if (!settings.reminders.on || !subscription || !zone) return
     const now = device.clock.now()
-    const entries = reminderSchedule(localDate(now, zone), now, dayAt, settings.reminders)
+    const entries = reminderSchedule({
+      today: localDate(now, zone),
+      now,
+      dayAt,
+      settings: settings.reminders,
+      monthEndQuestion: (date) => monthEndQuestionOn(date, 'tomorrow'),
+    })
     const body = JSON.stringify({ subscription, entries })
     if (body === (await device.storage.get<string>(LAST_UPLOAD))) return
     try {
@@ -452,19 +462,26 @@ export async function createSawm(device: Device): Promise<Sawm> {
    * Dhul Qa'dah (and of Dhul Hijjah for those following Ashura) until it's answered or the following day ends.
    */
   function pendingMonthEndCheck(date: string, now: number): MonthEndCheck | undefined {
-    if (!settings.monthEndChecks) return undefined
-    const checked = [8, 9, 11, ...(settings.followed.ashura ? [12] : [])]
     for (const [day29, when] of [[date, 'tomorrow'], [addDays(date, -1), 'today']] as const) {
       const day = dayAt(day29)
-      if (!day?.hijri || day.hijri.day !== 29 || !checked.includes(day.hijri.month)) continue
+      if (!day?.hijri) continue
       if (when === 'tomorrow' && now < Date.parse(day.iftar.at)) continue
-      const month = monthKey(day.hijri.year, day.hijri.month)
-      if (settings.monthEndAnswers[month]) continue
-      const next = HIJRI_MONTHS[nextMonth(day.hijri.year, day.hijri.month).month - 1]!
-      const event = day.hijri.month === 9 ? 'Eid' : next
-      return { month, question: when === 'tomorrow' ? `Has ${event} been announced for tomorrow?` : `Did ${event} begin today?` }
+      const question = monthEndQuestionOn(day29, when)
+      if (question) return { month: monthKey(day.hijri.year, day.hijri.month), question }
     }
     return undefined
+  }
+
+  /** The Month-end Check asked about a 29th (evening of `date`), worded for that evening or the day after. */
+  function monthEndQuestionOn(date: string, when: 'tomorrow' | 'today'): string | undefined {
+    if (!settings.monthEndChecks) return undefined
+    const hijri = dayAt(date)?.hijri
+    const checked = [8, 9, 11, ...(settings.followed.ashura ? [12] : [])]
+    if (!hijri || hijri.day !== 29 || !checked.includes(hijri.month)) return undefined
+    if (settings.monthEndAnswers[monthKey(hijri.year, hijri.month)]) return undefined
+    const next = HIJRI_MONTHS[nextMonth(hijri.year, hijri.month).month - 1]!
+    const event = hijri.month === 9 ? 'Eid' : next
+    return when === 'tomorrow' ? `Has ${event} been announced for tomorrow?` : `Did ${event} begin today?`
   }
 
   function today(): Today {
@@ -492,7 +509,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
     minuteAdjustments: { ...DEFAULT_SETTINGS.minuteAdjustments, ...stored?.minuteAdjustments },
     monthEndAnswers: { ...stored?.monthEndAnswers },
     setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
-    reminders: { ...DEFAULT_SETTINGS.reminders, ...stored?.reminders },
+    reminders: { ...DEFAULT_SETTINGS.reminders, ...stored?.reminders, nightBefore: { ...DEFAULT_SETTINGS.reminders.nightBefore, ...stored?.reminders?.nightBefore } },
   }
   const saved = settings.savedLocation
   if (saved?.timeZone) {
@@ -697,6 +714,29 @@ export async function createSawm(device: Device): Promise<Sawm> {
         reminders: { ...settings.reminders, [kind]: { ...settings.reminders[kind], ...changes, ...(minutesBefore === undefined ? {} : { minutesBefore }) } },
       })
       notify()
+    },
+
+    async setNightBefore(changes) {
+      const time = changes.time && /^\d{2}:\d{2}$/.test(changes.time) ? changes.time : undefined
+      await saveSettings({
+        reminders: { ...settings.reminders, nightBefore: { ...settings.reminders.nightBefore, ...changes, ...(time ? { time } : {}) } },
+      })
+      notify()
+    },
+
+    async testReminder() {
+      const subscription = settings.subscription
+      if (!settings.reminders.on || !subscription) return false
+      try {
+        const response = await device.fetch('/api/reminders/test', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ subscription }),
+        })
+        return response.ok
+      } catch {
+        return false
+      }
     },
 
     async completeSetup(step) {
