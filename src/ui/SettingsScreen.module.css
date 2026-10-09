@@ -194,3 +194,13 @@
   color: var(--soft);
   text-decoration: none;
 }
+
+.status:empty {
+  display: none;
+}
+
+.status {
+  margin-top: -18px;
+  font-size: 14px;
+  color: var(--soft);
+}

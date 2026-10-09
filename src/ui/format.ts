@@ -71,10 +71,15 @@ export const clockText = (local: string) => {
   return meridiem ? `${time} ${meridiem}` : time
 }
 
-/** The short name of a time zone ("PKT"), if it differs from the device's own zone. */
-export function zoneNameIfDifferent(timeZone: string | undefined): string | undefined {
-  const own = Intl.DateTimeFormat().resolvedOptions().timeZone
-  if (!timeZone || timeZone === own) return undefined
-  const part = new Intl.DateTimeFormat('en', { timeZone, timeZoneName: 'short' }).formatToParts(Date.now()).find((p) => p.type === 'timeZoneName')
-  return part?.value
+const offsetOf = (timeZone: string | undefined, at: number) =>
+  new Intl.DateTimeFormat('en', { timeZone, timeZoneName: 'shortOffset' }).formatToParts(at).find((p) => p.type === 'timeZoneName')?.value
+
+/**
+ * A time zone's offset ("GMT+5:30"), if its clocks read differently from the device's right now. Zones are compared
+ * by offset, not name, so two names for one zone (Asia/Kolkata and Asia/Calcutta) don't count as different.
+ */
+export function zoneOffsetIfDifferent(timeZone: string | undefined, at = Date.now()): string | undefined {
+  if (!timeZone) return undefined
+  const theirs = offsetOf(timeZone, at)
+  return theirs === offsetOf(undefined, at) ? undefined : theirs
 }

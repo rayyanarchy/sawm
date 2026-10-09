@@ -1,16 +1,18 @@
 import { useMemo, useState, useSyncExternalStore } from 'react'
-import type { CalendarMonth, Day, Sawm, Settings } from '../core'
+import type { CalendarMonth, Day, Sawm } from '../core'
 import s from './CalendarScreen.module.css'
 import { clockText, firstDayOfWeek, fullDate, monthYear, weekdayNames } from './format'
 
 const WEEK_START = firstDayOfWeek()
 const WEEKDAYS = weekdayNames(WEEK_START)
 
-const DISPLAYS: { value: Settings['calendarDisplay']; label: string }[] = [
-  { value: 'gregorian', label: 'Gregorian' },
-  { value: 'hijri', label: 'Hijri' },
-  { value: 'both', label: 'Both' },
-]
+function Chevron({ direction }: { direction: 'left' | 'right' }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path d={direction === 'left' ? 'M10 3 5 8l5 5' : 'M6 3l5 5-5 5'} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 function planText(day: Day) {
   switch (day.plan.status) {
@@ -74,37 +76,17 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
   return (
     <section className={s.calendar}>
       <header className={s.header}>
-        <div>
-          <h1 className={s.title}>{title}</h1>
-          {subtitle && <p className={s.subtitle}>{subtitle}</p>}
-        </div>
+        <h1 className={s.title}>{title}</h1>
         <div className={s.arrows}>
           <button type="button" className={s.arrow} onClick={() => setIndex(index - 1)} disabled={index === 0} aria-label="Previous month">
-            ‹
+            <Chevron direction="left" />
           </button>
           <button type="button" className={s.arrow} onClick={() => setIndex(index + 1)} disabled={index >= months.length - 1} aria-label="Next month">
-            ›
+            <Chevron direction="right" />
           </button>
         </div>
+        {subtitle && <p className={s.subtitle}>{subtitle}</p>}
       </header>
-
-      <div className={s.display} role="radiogroup" aria-label="Show dates as">
-        {DISPLAYS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={display === value}
-            className={s.displayOption}
-            onClick={() => {
-              setIndex(0)
-              void sawm.setCalendarDisplay(value)
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
 
       {month ? (
         <div className={s.body}>

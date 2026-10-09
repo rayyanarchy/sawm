@@ -87,8 +87,7 @@
   border-bottom-color: var(--text);
 }
 
-.submit,
-.cancel {
+.submit {
   padding: 10px 18px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -96,11 +95,6 @@
   font-size: 15px;
   font-weight: 400;
   cursor: pointer;
-}
-
-.cancel {
-  justify-self: start;
-  color: var(--soft);
 }
 
 .results {

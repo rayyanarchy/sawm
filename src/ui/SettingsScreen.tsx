@@ -4,6 +4,8 @@ import { Link } from './Link'
 import s from './SettingsScreen.module.css'
 import { CalendarExportButton } from './CalendarExportButton'
 import { FastTypeList } from './FastTypeList'
+import { LocateProblem, PlaceSearch } from './LocationSearch'
+import { useLocate } from './useLocate'
 import { ReminderControls } from './ReminderControls'
 import { Switch } from './Switch'
 
@@ -26,6 +28,7 @@ const DISPLAY_NAMES = { both: 'Gregorian & Hijri', gregorian: 'Gregorian', hijri
 
 /** Settings: a short list of sections, each on its own page. */
 export function SettingsScreen({ sawm, settings, path }: { sawm: Sawm; settings: Settings; path: string }) {
+  if (path === '/settings/location') return <LocationPage sawm={sawm} settings={settings} />
   const section = SECTIONS.find(({ id }) => path === `/settings/${id}`)
   return section ? <SectionPage sawm={sawm} settings={settings} section={section} /> : <SettingsIndex sawm={sawm} settings={settings} />
 }
@@ -64,6 +67,41 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
         Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
         <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
       </p>
+    </section>
+  )
+}
+
+/** Where Sawm's times are for: the place in use, finding it again from the device, or searching for another. */
+function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  const { state, locate } = useLocate(sawm)
+  const saved = settings.savedLocation
+  return (
+    <section className={s.settings}>
+      <Link to="/settings" className={s.back}>
+        ‹ Settings
+      </Link>
+      <h1 className={s.title}>Location</h1>
+      <div className={s.list}>
+        <div className={s.row}>
+          <span className={s.rowText}>
+            <span>{saved?.name ?? 'Not set'}</span>
+            {saved && <span className={s.rowNote}>{placeName({ ...saved, name: '' }).replace(/^, /, '')}</span>}
+          </span>
+          <button type="button" className={s.exportButton} onClick={() => void locate()} disabled={state === 'locating'}>
+            {state === 'locating' ? 'Finding you…' : 'Use my location'}
+          </button>
+        </div>
+      </div>
+      <p className={s.status} role="status">
+        {state === 'done' && `Updated to where you are now: ${saved?.name}.`}
+      </p>
+      <LocateProblem state={state}>Search for your city below.</LocateProblem>
+      <div className={s.group}>
+        <h2 className={s.heading}>
+          <label htmlFor="place">Choose another place</label>
+        </h2>
+        <PlaceSearch sawm={sawm} onChosen={(place) => sawm.setSavedLocation(place)} />
+      </div>
     </section>
   )
 }
