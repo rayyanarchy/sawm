@@ -1,3 +1,4 @@
+import { handleErrorReport } from './errors'
 import { handleReminders, ReminderDevice as ReminderDeviceLogic } from './reminders'
 
 /** The Durable Object behind each push subscription (see reminders.ts). */
@@ -11,6 +12,7 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url)
     if (pathname === '/api/health') return Response.json({ ok: true })
+    if (pathname === '/api/errors') return handleErrorReport(request)
     if (pathname.startsWith('/api/reminders')) return handleReminders(request, env.REMINDERS, env)
     return new Response('Not found', { status: 404 })
   },

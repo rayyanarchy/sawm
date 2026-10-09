@@ -230,6 +230,8 @@ export interface Sawm {
   acceptTravel(): Promise<void>
   /** Keeps the Saved Location; Sawm won't ask again until the device moves on. */
   declineTravel(): Promise<void>
+  /** Reports a crash to Sawm's server: the error's message and stack, the app version and screen, nothing else. */
+  reportError(error: unknown, screen: string, version: string): Promise<void>
   /** Loads whatever the next 12 months need that isn't on the device yet. Safe to call often. */
   refresh(): Promise<void>
   /** Re-reads the clock, and tells subscribers if what Today shows has changed. Call it every second or so. */
@@ -252,6 +254,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
   const listeners = new Set<() => void>()
   let lastToday: { value: Today; json: string } | undefined
   let travel: { place: Place; at: { latitude: number; longitude: number } } | undefined
+  let reportsSent = 0
 
   // Everything derived from the loaded months and the settings is rebuilt only when either changes.
   let version = 0
@@ -810,6 +813,21 @@ export async function createSawm(device: Device): Promise<Sawm> {
       travel = undefined
       if (at) await saveSettings({ travelDeclinedAt: at })
       notify()
+    },
+
+    async reportError(error, screen, version) {
+      // A handful per session is enough to notice a problem, and never floods the logs.
+      if (reportsSent >= 5) return
+      reportsSent++
+      const message = (error instanceof Error ? error.message : String(error)).slice(0, 500)
+      const stack = error instanceof Error && error.stack ? error.stack.slice(0, 4000) : undefined
+      await device
+        .fetch('/api/errors', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ message, stack, version: version.slice(0, 40), screen: screen.slice(0, 40) }),
+        })
+        .catch(() => undefined)
     },
 
     refresh,

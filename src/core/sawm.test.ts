@@ -1009,3 +1009,25 @@ describe('Travel prompt', () => {
     expect(sawm.today()).not.toHaveProperty('travelPrompt')
   })
 })
+
+describe('Error reports', () => {
+  it('sends only the error, the app version and the screen: never location, settings or the subscription', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+    await sawm.enableReminders()
+
+    await sawm.reportError(new Error('Something broke'), 'calendar', 'abc1234')
+
+    const report = fake.server.find((call) => call.url === '/api/errors')!
+    expect(Object.keys(report.body as object).sort()).toEqual(['message', 'screen', 'stack', 'version'])
+    expect(report.body).toMatchObject({ message: 'Something broke', screen: 'calendar', version: 'abc1234' })
+    expect(JSON.stringify(report.body)).not.toMatch(/Karachi|24\.85|push\.example|p256dh/)
+  })
+
+  it('sends at most five reports a session', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+
+    for (let i = 0; i < 8; i++) await sawm.reportError(new Error(`Error ${i}`), 'today', 'v')
+
+    expect(fake.server.filter((call) => call.url === '/api/errors')).toHaveLength(5)
+  })
+})
