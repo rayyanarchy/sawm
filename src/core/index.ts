@@ -1,4 +1,5 @@
-export type { Clock, Device, Geolocation, KeyValueStore, PositionResult } from './device'
+export type { Clock, Device, Geolocation, KeyValueStore, PositionResult, Push, PushSubscriptionJSON } from './device'
+export type { ReminderEntry, ReminderSettings } from './reminders'
 export type { CalculationMethod } from './methods'
 export { createSawm } from './sawm'
 export type { DayPlan, FastOptions, FastType, FastTypeId, ForbiddenDay, Skip } from './fasts'

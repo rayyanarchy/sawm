@@ -769,3 +769,91 @@ describe('Time preferences', () => {
     expect((await createSawm(fake.device)).settings().showImsak).toBe(true)
   })
 })
+
+describe('Reminders', () => {
+  type Upload = { subscription: { endpoint: string }; entries: { id: string; at: number; expiresAt: number; title: string; body: string }[] }
+  const uploads = (fake: ReturnType<typeof createFakeDevice>) =>
+    fake.server.filter((call) => call.method === 'PUT' && call.url === '/api/reminders').map((call) => call.body as Upload)
+
+  it('subscribes and uploads Suhoor and Iftar Reminders for the next 60 days', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z') // the day before Ramadan
+
+    expect(await sawm.enableReminders()).toBe('on')
+
+    const [upload] = uploads(fake)
+    expect(upload!.subscription.endpoint).toBe('https://push.example.com/send/device-1')
+    expect(upload!.entries.slice(0, 2)).toEqual([
+      {
+        id: '2027-02-08:suhoor',
+        at: Date.parse('2027-02-08T05:08:00+05:00'),
+        expiresAt: Date.parse('2027-02-08T05:53:00+05:00'),
+        title: 'Suhoor ends in 45 minutes',
+        body: 'Ramadan · Suhoor ends at 05:53',
+        url: '/',
+      },
+      {
+        id: '2027-02-08:iftar',
+        at: Date.parse('2027-02-08T18:21:00+05:00'),
+        expiresAt: Date.parse('2027-02-08T18:51:00+05:00'),
+        title: 'It’s time for Iftar',
+        body: 'Ramadan · Iftar at 18:21',
+        url: '/',
+      },
+    ])
+    expect(upload!.entries).toHaveLength(58) // two for each of Ramadan's 29 days
+  })
+
+  it('uploads again only when the schedule changes, and leaves Skipped days out', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+    await sawm.enableReminders()
+    await sawm.refresh()
+    expect(uploads(fake)).toHaveLength(1)
+
+    await sawm.skip('2027-02-10')
+
+    expect(uploads(fake)).toHaveLength(2)
+    expect(uploads(fake)[1]!.entries.map((e) => e.id)).not.toContain('2027-02-10:suhoor')
+  })
+
+  it('follows the Reminder timings the user sets', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+    await sawm.enableReminders()
+
+    await sawm.setReminder('suhoor', { minutesBefore: 30 })
+    await sawm.setReminder('iftar', { on: false })
+
+    const entries = uploads(fake).at(-1)!.entries
+    expect(entries[0]).toMatchObject({ id: '2027-02-08:suhoor', at: Date.parse('2027-02-08T05:23:00+05:00'), title: 'Suhoor ends in 30 minutes' })
+    expect(entries.every((e) => e.id.endsWith(':suhoor'))).toBe(true)
+  })
+
+  it('never schedules past the next 60 days', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('mondaysThursdays', true)
+
+    await sawm.enableReminders()
+
+    const last = uploads(fake)[0]!.entries.at(-1)!
+    expect(last.at).toBeLessThanOrEqual(Date.parse('2026-12-04T00:00:00+05:00'))
+  })
+
+  it('forgets the device on the server when Reminders are turned off', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+    await sawm.enableReminders()
+
+    await sawm.disableReminders()
+
+    expect(fake.server.at(-1)).toEqual({ method: 'DELETE', url: '/api/reminders', body: { endpoint: 'https://push.example.com/send/device-1' } })
+    expect(fake.isSubscribed()).toBe(false)
+    await sawm.skip('2027-02-10')
+    expect(uploads(fake)).toHaveLength(1)
+  })
+
+  it('says why when Reminders can’t be turned on', async () => {
+    const denied = createFakeDevice({ now: '2027-02-07T12:00:00Z', push: { answer: 'denied' } })
+    expect(await (await createSawm(denied.device)).enableReminders()).toBe('denied')
+
+    const iPhone = createFakeDevice({ now: '2027-02-07T12:00:00Z', push: { support: 'needs-home-screen' } })
+    expect(await (await createSawm(iPhone.device)).enableReminders()).toBe('needs-home-screen')
+  })
+})

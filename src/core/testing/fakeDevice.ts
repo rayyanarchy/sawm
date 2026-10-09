@@ -1,4 +1,4 @@
-import type { Device, PositionResult } from '../device'
+import type { Device, PositionResult, Push } from '../device'
 import { fixtureName } from './fixtureName'
 
 const fixtures = import.meta.glob<unknown>('./fixtures/*.json', { eager: true, import: 'default' })
@@ -11,15 +11,27 @@ export function createFakeDevice(options: {
   now: string
   /** Where the device says it is, or why it won't say. */
   position?: { latitude: number; longitude: number } | 'denied' | 'unavailable'
+  /** What the browser does when asked for push notifications. */
+  push?: { support?: ReturnType<Push['support']>; answer?: 'granted' | 'denied' }
 }) {
   let now = Date.parse(options.now)
   let online = true
   let held: (() => void)[] | undefined
   const requests: string[] = []
+  /** Every call to Sawm's own server, with its method and parsed body. */
+  const server: { method: string; url: string; body: unknown }[] = []
+  let subscribed = false
   const stored = new Map<string, string>()
 
   const device: Device = {
-    async fetch(url) {
+    async fetch(url, init) {
+      if (url.startsWith('/')) {
+        if (!online) throw new TypeError('Failed to fetch')
+        const method = init?.method ?? 'GET'
+        server.push({ method, url, body: init?.body ? JSON.parse(String(init.body)) : undefined })
+        if (url === '/api/reminders/key') return Response.json({ publicKey: 'BFAKEPUBLICKEY' })
+        return new Response(null, { status: 204 })
+      }
       requests.push(url)
       if (held) await new Promise<void>((resolve) => held!.push(resolve))
       if (!online) throw new TypeError('Failed to fetch')
@@ -39,6 +51,21 @@ export function createFakeDevice(options: {
       },
     },
     clock: { now: () => now },
+    push: {
+      support: () => options.push?.support ?? 'supported',
+      async subscribe(publicKey) {
+        if (publicKey !== 'BFAKEPUBLICKEY') throw new Error('Subscribed with the wrong VAPID key')
+        if (options.push?.answer === 'denied') return 'denied'
+        subscribed = true
+        return { endpoint: 'https://push.example.com/send/device-1', keys: { p256dh: 'p256dh-key', auth: 'auth-secret' } }
+      },
+      async unsubscribe() {
+        subscribed = false
+      },
+      async current() {
+        return subscribed ? { endpoint: 'https://push.example.com/send/device-1', keys: { p256dh: 'p256dh-key', auth: 'auth-secret' } } : undefined
+      },
+    },
     geolocation: {
       async current(): Promise<PositionResult> {
         const position = options.position ?? 'unavailable'
@@ -49,8 +76,10 @@ export function createFakeDevice(options: {
 
   return {
     device,
-    /** Every URL the core has requested, in order. */
+    /** Every URL the core has requested from other services, in order. */
     requests,
+    server,
+    isSubscribed: () => subscribed,
     setNow(iso: string) {
       now = Date.parse(iso)
     },

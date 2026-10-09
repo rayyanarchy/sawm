@@ -18,6 +18,7 @@ async function setUp(page: Page) {
   await page.getByRole('button', { name: 'Search' }).click()
   await page.getByRole('button', { name: /Karachi\s*Sindh, Pakistan/ }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
+  await page.getByRole('button', { name: 'Not now' }).click()
   await expect(page.getByText('Suhoor', { exact: true })).toBeVisible()
 }
 

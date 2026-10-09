@@ -3,6 +3,7 @@ import { placeName } from './placeName'
 import { Link } from './Link'
 import s from './SettingsScreen.module.css'
 import { FastTypeList } from './FastTypeList'
+import { ReminderControls } from './ReminderControls'
 import { Switch } from './Switch'
 
 const THEMES: { value: ThemePreference; label: string }[] = [
@@ -28,6 +29,13 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
           <span>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
           <span className={s.action}>Change</span>
         </Link>
+      </section>
+
+      <section className={s.group} aria-labelledby="settings-reminders">
+        <h2 id="settings-reminders" className={s.heading}>
+          Reminders
+        </h2>
+        <ReminderControls sawm={sawm} settings={settings} />
       </section>
 
       <section className={s.group} aria-labelledby="settings-fasts">

@@ -36,3 +36,47 @@ self.addEventListener('fetch', (event) => {
   // have, so Vary has to be ignored or nothing would match.
   event.respondWith(caches.match(request, { ignoreVary: true }).then((cached) => cached ?? fetch(request)))
 })
+
+// Reminders (ADR 0002): the server sends each one as an encrypted push; show it, and open Sawm when tapped.
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {}
+  event.waitUntil(
+    self.registration.showNotification(data.title ?? 'Sawm', {
+      body: data.body,
+      tag: data.tag,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      data: { url: data.url ?? '/' },
+    }),
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = event.notification.data?.url ?? '/'
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((client) => new URL(client.url).origin === self.location.origin)
+      if (open) return open.navigate(url).then((client) => (client ?? open).focus())
+      return self.clients.openWindow(url)
+    }),
+  )
+})
+
+// The browser replaced the subscription: subscribe again if needed, and have the server move the schedule over.
+self.addEventListener('pushsubscriptionchange', (event) => {
+  event.waitUntil(
+    (async () => {
+      const previous = event.oldSubscription
+      let next = event.newSubscription
+      if (!next) {
+        const { publicKey } = await (await fetch('/api/reminders/key')).json()
+        const padded = publicKey.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (publicKey.length % 4)) % 4)
+        next = await self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: Uint8Array.from(atob(padded), (c) => c.charCodeAt(0)) })
+      }
+      if (previous) {
+        await fetch('/api/reminders/move', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ from: previous.endpoint, to: next.toJSON() }) })
+      }
+    })(),
+  )
+})
