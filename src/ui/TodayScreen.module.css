@@ -126,13 +126,31 @@
 
 .sun {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 9px;
+  height: 9px;
   translate: -50% 50%;
   border-radius: 50%;
-  background: var(--sun);
-  box-shadow: 0 0 0 7px var(--glow), 0 0 42px 10px var(--glow);
+  background: #fff8ec;
+  box-shadow: 0 0 6px 2px var(--sun);
   transition: left 1s linear, bottom 1s linear;
+}
+
+/* The glow: one soft gradient rather than stacked wide shadows, which some browsers draw in visible tiles. */
+.sun::before {
+  content: '';
+  position: absolute;
+  inset: -150px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--glow) 0%,
+    color-mix(in srgb, var(--glow) 70%, transparent) 10%,
+    color-mix(in srgb, var(--glow) 30%, transparent) 32%,
+    color-mix(in srgb, var(--glow) 10%, transparent) 55%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
 /* Before Suhoor ends the sun is still below the horizon: only its glow shows, at the eastern end. */
@@ -183,10 +201,6 @@
 }
 
 @media (min-width: 900px) {
-  .top {
-    padding-right: 220px;
-  }
-
   .ends dd {
     font-size: 28px;
   }

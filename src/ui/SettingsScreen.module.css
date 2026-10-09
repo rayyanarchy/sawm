@@ -36,16 +36,11 @@
   align-items: baseline;
   gap: 16px;
   padding: 14px 0;
-  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   font-size: 19px;
   font-weight: 300;
   color: var(--text);
   text-decoration: none;
-}
-
-.row + .row {
-  border-top: 0;
 }
 
 .select {
@@ -102,10 +97,6 @@
   color: inherit;
 }
 
-.switches {
-  border-top: 1px solid var(--line);
-}
-
 .rowText {
   display: grid;
   gap: 2px;
@@ -156,4 +147,50 @@
   background: var(--surface);
   font-size: 15px;
   cursor: pointer;
+}
+
+/* A list of rows: one rule on top, then each row draws only its bottom rule, so no line ever doubles. */
+.list {
+  border-top: 1px solid var(--line);
+}
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.entryText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  font-size: 19px;
+  font-weight: 300;
+}
+
+.entrySummary {
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex: none;
+  font-size: 24px;
+  color: var(--soft);
+}
+
+.back {
+  justify-self: start;
+  margin-bottom: -18px;
+  font-size: 15px;
+  color: var(--soft);
+  text-decoration: none;
 }

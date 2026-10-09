@@ -16,14 +16,14 @@
 }
 
 .title {
-  font-size: clamp(32px, 8.6vw, 64px);
+  font-size: clamp(32px, 8.6vw, 60px);
   font-weight: 200;
-  line-height: 1;
+  line-height: 1.05;
   letter-spacing: -0.03em;
 }
 
-.hijri {
-  margin-top: 8px;
+.subtitle {
+  margin-top: 6px;
   font-size: 15px;
   color: var(--soft);
 }
@@ -39,7 +39,7 @@
   border: 1px solid var(--line);
   border-radius: 50%;
   background: var(--surface);
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
 }
@@ -47,6 +47,30 @@
 .arrow:disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+.display {
+  justify-self: start;
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.displayOption {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 14px;
+  color: var(--soft);
+  cursor: pointer;
+}
+
+.displayOption[aria-checked='true'] {
+  background: var(--surface-strong);
+  color: var(--text);
 }
 
 .body {
@@ -61,7 +85,7 @@
 }
 
 .weekday {
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   text-align: center;
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -70,65 +94,118 @@
 }
 
 .days {
-  row-gap: 4px;
+  row-gap: 10px;
 }
 
+/* A day: its number, centred, with an optional band behind it for fasts. */
 .day {
   position: relative;
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: 1px;
-  aspect-ratio: 1 / 1.05;
-  max-height: 84px;
+  height: 58px;
+  padding: 0;
   border: 0;
-  border-radius: 16px;
   background: transparent;
   cursor: pointer;
 }
 
-.day[aria-selected='true'] {
-  background: var(--surface-strong);
+.band {
+  position: absolute;
+  inset: 8px 0;
+  border-radius: 0;
+  pointer-events: none;
 }
 
-.day[aria-current='date'] .number {
-  outline: 1px solid var(--text);
-  outline-offset: 3px;
-  border-radius: 999px;
+.day[data-plan='planned'] .band {
+  background: color-mix(in srgb, var(--sun) 24%, transparent);
+}
+
+.day[data-plan='skipped'] .band {
+  border-top: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+  border-bottom: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+}
+
+.day[data-plan='planned']:not([data-joins-left]) .band,
+.day[data-plan='skipped']:not([data-joins-left]) .band {
+  left: 4px;
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+}
+
+.day[data-plan='skipped']:not([data-joins-left]) .band {
+  border-left: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+}
+
+.day[data-plan='planned']:not([data-joins-right]) .band,
+.day[data-plan='skipped']:not([data-joins-right]) .band {
+  right: 4px;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.day[data-plan='skipped']:not([data-joins-right]) .band {
+  border-right: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+}
+
+.face {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 3px 4px;
+  border-radius: 17px;
+  line-height: 1;
+  transition: background 150ms var(--ease), color 150ms var(--ease);
 }
 
 .number {
-  min-width: 1.6em;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 300;
-  line-height: 1.2;
 }
 
-.hijriDay {
-  font-size: 11px;
+.secondary {
+  margin-top: 3px;
+  font-size: 10px;
   color: var(--soft);
 }
 
-.mark {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.word {
+  margin-top: 3px;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
 }
 
-.day[data-plan='planned'] .mark {
-  background: var(--sun);
-  box-shadow: 0 0 0 3px var(--glow);
+.day[data-past] .face {
+  color: var(--soft);
 }
 
-.day[data-plan='forbidden'] .mark {
-  border: 1px solid var(--soft);
-  box-sizing: border-box;
+.day[aria-current='date'] .number {
+  color: var(--sun);
+  font-weight: 500;
+}
+
+.day[aria-selected='true'] .face,
+.day[aria-selected='true'] .face > * {
+  color: var(--sky-bottom);
+}
+
+.day[aria-selected='true'] .face {
+  background: var(--text);
+}
+
+.day:hover:not([aria-selected='true']) .face {
+  background: var(--surface);
 }
 
 .legend {
   display: flex;
   gap: 18px;
-  padding-top: 12px;
+  padding-top: 14px;
   font-size: 13px;
   color: var(--soft);
 }
@@ -141,19 +218,26 @@
 
 .legendItem::before {
   content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.legendItem[data-plan='planned']::before {
-  background: var(--sun);
-  box-shadow: 0 0 0 3px var(--glow);
-}
-
-.legendItem[data-plan='forbidden']::before {
-  border: 1px solid var(--soft);
+  width: 18px;
+  height: 10px;
+  border-radius: 999px;
   box-sizing: border-box;
+}
+
+.legendItem[data-kind='planned']::before {
+  background: color-mix(in srgb, var(--sun) 24%, transparent);
+}
+
+.legendItem[data-kind='skipped']::before {
+  border: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+}
+
+.legendItem[data-kind='today']::before {
+  width: auto;
+  height: auto;
+  content: '7';
+  color: var(--sun);
+  font-weight: 500;
 }
 
 .details {
@@ -218,10 +302,6 @@
     padding-top: 0;
   }
 
-  .header {
-    padding-right: 220px;
-  }
-
   .body {
     grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
     align-items: start;
@@ -252,11 +332,6 @@
   cursor: pointer;
 }
 
-.day[data-plan='skipped'] .mark {
-  border: 1px solid var(--sun);
-  box-sizing: border-box;
-  opacity: 0.7;
-}
 
 .actions {
   display: flex;

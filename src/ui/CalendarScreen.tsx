@@ -1,10 +1,16 @@
 import { useMemo, useState, useSyncExternalStore } from 'react'
-import type { CalendarMonth, Day, Sawm } from '../core'
+import type { CalendarMonth, Day, Sawm, Settings } from '../core'
 import s from './CalendarScreen.module.css'
 import { clockText, firstDayOfWeek, fullDate, monthYear, weekdayNames } from './format'
 
 const WEEK_START = firstDayOfWeek()
 const WEEKDAYS = weekdayNames(WEEK_START)
+
+const DISPLAYS: { value: Settings['calendarDisplay']; label: string }[] = [
+  { value: 'gregorian', label: 'Gregorian' },
+  { value: 'hijri', label: 'Hijri' },
+  { value: 'both', label: 'Both' },
+]
 
 function planText(day: Day) {
   switch (day.plan.status) {
@@ -19,26 +25,58 @@ function planText(day: Day) {
   }
 }
 
+/** A short word under a Forbidden Day's number. */
+const forbiddenWord = (day: Day) => (day.plan.status !== 'forbidden' ? undefined : day.plan.reason === 'Day of Tashreeq' ? 'Tashreeq' : 'Eid')
+
+/** "Rabi’ al-Thani – Jumada al-Ula 1448", naming the year once when both months share it. */
+function hijriSpan(months: { name: string; year: number }[]) {
+  const sameYear = months.every((m) => m.year === months[0]!.year)
+  return sameYear ? `${months.map((m) => m.name).join(' – ')} ${months[0]!.year}` : months.map((m) => `${m.name} ${m.year}`).join(' – ')
+}
+
+/** "February – March 2027" for a Hijri month's Gregorian span. */
+function gregorianSpan(month: CalendarMonth) {
+  const first = month.days[0]!.date
+  const last = month.days.at(-1)!.date
+  const [fy, fm] = first.split('-').map(Number) as [number, number]
+  const [ly, lm] = last.split('-').map(Number) as [number, number]
+  if (fy === ly && fm === lm) return monthYear(fy, fm)
+  const name = (y: number, m: number) => monthYear(y, m).replace(/\s*\d{4}$/, '')
+  return fy === ly ? `${name(fy, fm)} – ${monthYear(ly, lm)}` : `${monthYear(fy, fm)} – ${monthYear(ly, lm)}`
+}
+
 export function CalendarScreen({ sawm }: { sawm: Sawm }) {
   const version = useSyncExternalStore(sawm.subscribe, sawm.version)
-  const months = useMemo(() => sawm.calendarMonths(), [sawm, version]) // eslint-disable-line react-hooks/exhaustive-deps
+  const display = sawm.settings().calendarDisplay
+  const byHijri = display === 'hijri'
+  const months = useMemo(() => (byHijri ? sawm.hijriCalendarMonths() : sawm.calendarMonths()), [sawm, byHijri, version]) // eslint-disable-line react-hooks/exhaustive-deps
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<string>()
   const current = months[Math.min(index, months.length - 1)]
   const month: CalendarMonth | undefined = useMemo(
-    () => (current ? sawm.calendarMonth(current.year, current.month) : undefined),
-    [sawm, current, version], // eslint-disable-line react-hooks/exhaustive-deps
+    () => (current ? (byHijri ? sawm.hijriCalendarMonth(current.year, current.month) : sawm.calendarMonth(current.year, current.month)) : undefined),
+    [sawm, current, byHijri, version], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const selectedDay = month?.days.find((day) => day.date === selected) ?? month?.days.find((day) => day.isToday) ?? month?.days[0]
   const leading = month ? (new Date(`${month.days[0]!.date}T12:00:00Z`).getUTCDay() - WEEK_START + 7) % 7 : 0
 
+  const title = !month || !current ? 'Calendar' : byHijri ? `${month.hijriMonths[0]!.name} ${month.hijriMonths[0]!.year}` : monthYear(current.year, current.month)
+  const subtitle = !month ? undefined : byHijri ? gregorianSpan(month) : hijriSpan(month.hijriMonths)
+
+  // A planned fast joins the planned days beside it, in the same week row, into one band.
+  const fasting = (i: number) => {
+    const plan = month?.days[i]?.plan.status
+    return plan === 'planned' || plan === 'skipped'
+  }
+  const column = (i: number) => (leading + i) % 7
+
   return (
     <section className={s.calendar}>
       <header className={s.header}>
         <div>
-          <h1 className={s.title}>{current ? monthYear(current.year, current.month) : 'Calendar'}</h1>
-          {month && <p className={s.hijri}>{month.hijriMonths.map((m) => `${m.name} ${m.year}`).join(' – ')}</p>}
+          <h1 className={s.title}>{title}</h1>
+          {subtitle && <p className={s.subtitle}>{subtitle}</p>}
         </div>
         <div className={s.arrows}>
           <button type="button" className={s.arrow} onClick={() => setIndex(index - 1)} disabled={index === 0} aria-label="Previous month">
@@ -50,9 +88,27 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
         </div>
       </header>
 
+      <div className={s.display} role="radiogroup" aria-label="Show dates as">
+        {DISPLAYS.map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={display === value}
+            className={s.displayOption}
+            onClick={() => {
+              setIndex(0)
+              void sawm.setCalendarDisplay(value)
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {month ? (
         <div className={s.body}>
-          <div className={s.grid} role="grid" aria-label={monthYear(month.year, month.month)}>
+          <div className={s.grid} role="grid" aria-label={title}>
             <div className={s.week} role="row">
               {WEEKDAYS.map((name) => (
                 <span key={name} className={s.weekday} role="columnheader">
@@ -64,30 +120,45 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
               {Array.from({ length: leading }, (_, i) => (
                 <span key={`blank-${i}`} aria-hidden="true" />
               ))}
-              {month.days.map((day) => (
-                <button
-                  key={day.date}
-                  type="button"
-                  role="gridcell"
-                  className={s.day}
-                  data-plan={day.plan.status}
-                  aria-current={day.isToday ? 'date' : undefined}
-                  aria-selected={day.date === selectedDay?.date}
-                  aria-label={`${fullDate(day.date)}${day.hijri ? `, ${day.hijri.day} ${day.hijri.monthName}` : ''}. ${planText(day)}`}
-                  onClick={() => setSelected(day.date)}
-                >
-                  <span className={s.number}>{Number(day.date.slice(8))}</span>
-                  <span className={s.hijriDay}>{day.hijri?.day}</span>
-                  <span className={s.mark} aria-hidden="true" />
-                </button>
-              ))}
+              {month.days.map((day, i) => {
+                const primary = byHijri ? day.hijri?.day : Number(day.date.slice(8))
+                const joinsLeft = fasting(i) && i > 0 && fasting(i - 1) && column(i) !== 0
+                const joinsRight = fasting(i) && i < month.days.length - 1 && fasting(i + 1) && column(i) !== 6
+                const word = forbiddenWord(day)
+                return (
+                  <button
+                    key={day.date}
+                    type="button"
+                    role="gridcell"
+                    className={s.day}
+                    data-plan={day.plan.status}
+                    data-joins-left={joinsLeft || undefined}
+                    data-joins-right={joinsRight || undefined}
+                    data-past={day.isPast || undefined}
+                    aria-current={day.isToday ? 'date' : undefined}
+                    aria-selected={day.date === selectedDay?.date}
+                    aria-label={`${fullDate(day.date)}${day.hijri ? `, ${day.hijri.day} ${day.hijri.monthName}` : ''}. ${planText(day)}${day.isToday ? '. Today' : ''}`}
+                    onClick={() => setSelected(day.date)}
+                  >
+                    <span className={s.band} aria-hidden="true" />
+                    <span className={s.face}>
+                      <span className={s.number}>{primary}</span>
+                      {display === 'both' && <span className={s.secondary}>{day.hijri?.day}</span>}
+                      {word && <span className={s.word}>{word}</span>}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
             <p className={s.legend}>
-              <span className={s.legendItem} data-plan="planned">
-                Planned fast
+              <span className={s.legendItem} data-kind="planned">
+                Fast
               </span>
-              <span className={s.legendItem} data-plan="forbidden">
-                No fasting
+              <span className={s.legendItem} data-kind="skipped">
+                Skipped
+              </span>
+              <span className={s.legendItem} data-kind="today">
+                Today
               </span>
             </p>
           </div>

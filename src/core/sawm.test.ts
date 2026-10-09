@@ -247,7 +247,7 @@ describe('Today', () => {
     ])
   })
 
-  it('loads the current month and the next 12', async () => {
+  it('loads last month, the current month and the next 12', async () => {
     const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z' })
     const sawm = await createSawm(fake.device)
     const [karachi] = await sawm.searchPlaces('Karachi')
@@ -256,7 +256,7 @@ describe('Today', () => {
 
     const months = fake.requests.filter((url) => url.includes('aladhan')).map((url) => url.match(/calendar\/(\d+\/\d+)/)![1])
     expect(months.sort()).toEqual(
-      ['2026/10', '2026/11', '2026/12', '2027/1', '2027/2', '2027/3', '2027/4', '2027/5', '2027/6', '2027/7', '2027/8', '2027/9', '2027/10'].sort(),
+      ['2026/9', '2026/10', '2026/11', '2026/12', '2027/1', '2027/2', '2027/3', '2027/4', '2027/5', '2027/6', '2027/7', '2027/8', '2027/9', '2027/10'].sort(),
     )
   })
 
@@ -1029,5 +1029,42 @@ describe('Error reports', () => {
     for (let i = 0; i < 8; i++) await sawm.reportError(new Error(`Error ${i}`), 'today', 'v')
 
     expect(fake.server.filter((call) => call.url === '/api/errors')).toHaveLength(5)
+  })
+})
+
+describe('Calendar in Hijri months', () => {
+  it('pages by the user’s own Hijri months, from the month in progress', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    expect(sawm.hijriCalendarMonths()[0]).toEqual({ year: 1448, month: 4 })
+    const ramadan = sawm.hijriCalendarMonth(1448, 9)!
+    expect(ramadan.hijriMonths).toEqual([{ name: 'Ramadan', year: 1448 }])
+    expect(ramadan.days.map((d) => d.date)).toHaveLength(29)
+    expect(ramadan.days[0]).toMatchObject({ date: '2027-02-08', hijri: { day: 1 }, plan: { status: 'planned' } })
+  })
+
+  it('shows the whole month in progress, including the days before this Gregorian month', async () => {
+    const { sawm } = await karachiAt('2026-10-04T06:00:00Z')
+
+    const month = sawm.hijriCalendarMonth(1448, 4)!
+    expect(month.days[0]).toMatchObject({ hijri: { day: 1 }, isPast: true })
+    expect(month.days[0]!.date < '2026-10-01').toBe(true)
+    expect(month.days.find((d) => d.isToday)?.date).toBe('2026-10-04')
+  })
+
+  it('follows a Month-end Check answer when paging', async () => {
+    const { sawm } = await karachiAt('2027-02-06T14:00:00Z') // 29 Sha'ban, after Iftar
+    await sawm.answerMonthEndCheck('yes')
+
+    expect(sawm.hijriCalendarMonth(1448, 9)!.days[0]!.date).toBe('2027-02-07')
+  })
+
+  it('remembers how the user likes dates shown', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    expect(sawm.settings().calendarDisplay).toBe('both')
+
+    await sawm.setCalendarDisplay('hijri')
+
+    expect((await createSawm(fake.device)).settings().calendarDisplay).toBe('hijri')
   })
 })

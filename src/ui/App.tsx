@@ -79,7 +79,7 @@ export function App({ sawm }: { sawm: Sawm }) {
       {path === '/settings/location' ? (
         <LocationSearch sawm={sawm} canCancel onDone={() => navigate('/')} />
       ) : path.startsWith('/settings') ? (
-        <SettingsScreen sawm={sawm} settings={settings} />
+        <SettingsScreen sawm={sawm} settings={settings} path={path} />
       ) : path.startsWith('/calendar') ? (
         <CalendarScreen sawm={sawm} />
       ) : (

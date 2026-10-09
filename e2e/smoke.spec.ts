@@ -45,7 +45,7 @@ test('opens Today offline after a first visit', async ({ page, context }) => {
 
 test('has no serious accessibility problems', async ({ page }) => {
   await setUp(page)
-  for (const path of ['/', '/calendar', '/settings']) {
+  for (const path of ['/', '/calendar', '/settings', '/settings/reminders', '/settings/fasts', '/settings/times', '/settings/appearance']) {
     await page.goto(path)
     await page.waitForLoadState('networkidle')
     const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()

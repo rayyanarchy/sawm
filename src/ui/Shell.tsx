@@ -34,7 +34,8 @@ export function Shell({ sky, theme, showNav = true, children }: ShellProps) {
       document.head.append(meta)
     }
     meta.content = color
-    document.body.style.background = getComputedStyle(frame.current).getPropertyValue('--sky-bottom').trim()
+    // What shows behind the status bar and when scrolling past the top: the top of the sky, so nothing seams.
+    document.documentElement.style.background = color
   }, [sky, theme])
 
   return (
