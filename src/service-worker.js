@@ -29,8 +29,10 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return
 
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('/').then((cached) => cached ?? Response.error())))
+    event.respondWith(fetch(request).catch(() => caches.match('/', { ignoreVary: true }).then((cached) => cached ?? Response.error())))
     return
   }
-  event.respondWith(caches.match(request).then((cached) => cached ?? fetch(request)))
+  // Cloudflare sends "Vary: Origin", and module scripts are requested with an Origin header the precache didn't
+  // have, so Vary has to be ignored or nothing would match.
+  event.respondWith(caches.match(request, { ignoreVary: true }).then((cached) => cached ?? fetch(request)))
 })

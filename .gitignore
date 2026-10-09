@@ -6,3 +6,6 @@ coverage/
 !.dev.vars.example
 *.local
 .DS_Store
+.lighthouseci/
+test-results/
+playwright-report/
