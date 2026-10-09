@@ -2,6 +2,8 @@
   position: relative;
   isolation: isolate;
   min-height: 100dvh;
+  /* The sun's glow reaches past the screen's edges; it must never make the page scroll sideways. */
+  overflow-x: clip;
 }
 
 /* The sky sits behind everything and stays put while content scrolls. */
@@ -17,7 +19,8 @@
   box-sizing: border-box;
   min-height: 100dvh;
   grid-template-columns: minmax(0, 1fr);
-  padding: max(env(safe-area-inset-top), 22px) var(--gutter) calc(104px + env(safe-area-inset-bottom));
+  /* Clear of the status bar and the blur iOS lays over the top of the screen. */
+  padding: calc(env(safe-area-inset-top) + 20px) var(--gutter) calc(104px + env(safe-area-inset-bottom));
   display: grid;
 }
 
@@ -55,18 +58,30 @@
   background: var(--surface-strong);
 }
 
+/* On a wide screen the navigation is a header in the page's flow, so nothing can sit underneath it. */
 @media (min-width: 900px) {
+  .frame {
+    display: flex;
+    flex-direction: column;
+  }
+
   .page {
-    padding: 32px 64px 64px;
+    flex: 1;
+    min-height: auto;
+    padding: 12px 64px 64px;
   }
 
   .nav {
-    top: 22px;
-    right: max(56px, calc((100vw - 1100px) / 2 - 8px));
-    bottom: auto;
-    left: auto;
+    position: static;
+    order: -1;
+    align-self: center;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    width: min(1100px + 128px, 100%);
+    padding: 22px 64px 0;
     translate: none;
-    border-color: transparent;
+    border: 0;
+    border-radius: 0;
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

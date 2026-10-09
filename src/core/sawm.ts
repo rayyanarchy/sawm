@@ -137,6 +137,7 @@ export interface Settings {
   /** Which setup steps the user has finished or skipped. */
   setup: { fasts: boolean; reminders: boolean }
   theme: ThemePreference
+  calendarDisplay: 'both' | 'gregorian' | 'hijri'
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -152,6 +153,7 @@ const DEFAULT_SETTINGS: Settings = {
   reminders: DEFAULT_REMINDERS,
   setup: { fasts: false, reminders: false },
   theme: 'system',
+  calendarDisplay: 'both',
 }
 
 /** Sawm without its screens: everything the app does, behind one interface. */
@@ -164,6 +166,12 @@ export interface Sawm {
   calendarMonths(): { year: number; month: number }[]
   /** A month of the Calendar, if its times are loaded. */
   calendarMonth(year: number, month: number): CalendarMonth | undefined
+  /** The Hijri months the Calendar can show, from the month in progress: the user's own Hijri calendar. */
+  hijriCalendarMonths(): { year: number; month: number }[]
+  /** A Hijri month of the Calendar, from its first day to its last, if loaded. */
+  hijriCalendarMonth(year: number, month: number): CalendarMonth | undefined
+  /** How the Calendar shows dates: Gregorian, Hijri, or Gregorian with Hijri days beside them. */
+  setCalendarDisplay(display: Settings['calendarDisplay']): Promise<void>
   /** The user's current choices. The same object comes back until one changes. */
   settings(): Settings
   setTheme(theme: ThemePreference): Promise<void>
@@ -373,6 +381,8 @@ export async function createSawm(device: Device): Promise<Sawm> {
       // This month and next come first, so Today works as soon as possible.
       await Promise.all([0, 1].map((i) => loadMonth(place!, monthAfter(today, i))))
       notify()
+      // Last month too, so the calendar can show the whole of a Hijri month that began in it.
+      await Promise.allSettled([loadMonth(place, monthAfter(today, -1))])
       for (let i = 2; i < MONTHS_AHEAD; i += 3) {
         await Promise.allSettled([i, i + 1, i + 2].filter((m) => m < MONTHS_AHEAD).map((m) => loadMonth(place!, monthAfter(today, m))))
       }
@@ -535,7 +545,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
   const saved = settings.savedLocation
   if (saved?.timeZone) {
     const date = localDate(device.clock.now(), saved.timeZone)
-    for (let i = 0; i < MONTHS_AHEAD; i++) await restoreMonth(saved, monthAfter(date, i))
+    for (let i = -1; i < MONTHS_AHEAD; i++) await restoreMonth(saved, monthAfter(date, i))
   }
 
   return {
@@ -568,6 +578,42 @@ export async function createSawm(device: Device): Promise<Sawm> {
         }
       }
       return { year, month, days, hijriMonths }
+    },
+
+    hijriCalendarMonths() {
+      const zone = settings.savedLocation?.timeZone
+      const hijri = zone ? dayAt(localDate(device.clock.now(), zone))?.hijri : undefined
+      if (!hijri) return []
+      const months = [{ year: hijri.year, month: hijri.month }]
+      while (months.length < 12) {
+        const next = nextMonth(months.at(-1)!.year, months.at(-1)!.month)
+        if (!derive().hijri.startOf(next.year, next.month) || !dayAt(derive().hijri.startOf(next.year, next.month)!)) break
+        months.push(next)
+      }
+      return months
+    },
+
+    hijriCalendarMonth(year, month) {
+      const zone = settings.savedLocation?.timeZone
+      const { hijri } = derive()
+      const start = hijri.startOf(year, month)
+      const after = nextMonth(year, month)
+      const end = hijri.startOf(after.year, after.month)
+      if (!zone || !start || !end) return undefined
+      const today = localDate(device.clock.now(), zone)
+      const days: CalendarMonth['days'] = []
+      for (let date = start; date < end; date = addDays(date, 1)) {
+        const day = dayAt(date)
+        if (!day) return undefined
+        days.push({ ...day, isToday: date === today, isPast: date < today })
+      }
+      const [y, m] = start.split('-').map(Number) as [number, number]
+      return { year: y, month: m, days, hijriMonths: [{ name: HIJRI_MONTHS[month - 1]!, year }] }
+    },
+
+    async setCalendarDisplay(calendarDisplay) {
+      await saveSettings({ calendarDisplay })
+      notify()
     },
 
     settings: () => settings,

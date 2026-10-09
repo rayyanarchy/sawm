@@ -9,7 +9,9 @@ export function FastsSetup({ sawm, settings }: { sawm: Sawm; settings: Settings 
       <p className={s.brand}>Sawm</p>
       <h1 className={s.question}>Which fasts do you keep?</h1>
       <p className={s.lead}>Sawm plans them, counts down through them and reminds you. You can change this any time in Settings.</p>
-      <FastTypeList sawm={sawm} settings={settings} />
+      <div className={s.list}>
+        <FastTypeList sawm={sawm} settings={settings} />
+      </div>
       <button type="button" className={s.primary} onClick={() => void sawm.completeSetup('fasts')}>
         Continue
       </button>

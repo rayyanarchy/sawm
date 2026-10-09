@@ -13,30 +13,87 @@ const THEMES: { value: ThemePreference; label: string }[] = [
   { value: 'dark', label: 'Dark' },
 ]
 
-export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
-  const offset = sawm.hijriOffset()
-  // What "Default" means for the Saved Location's country, whichever method is picked right now.
-  const countryDefault = sawm.defaultCalculationMethod(settings.savedLocation?.countryCode ?? '')
-  const defaultMethodName = sawm.calculationMethods().find((method) => method.id === countryDefault)?.name
+type Section = 'reminders' | 'fasts' | 'times' | 'appearance'
+
+const SECTIONS: { id: Section; label: string }[] = [
+  { id: 'reminders', label: 'Reminders' },
+  { id: 'fasts', label: 'Fasts' },
+  { id: 'times', label: 'Times' },
+  { id: 'appearance', label: 'Appearance' },
+]
+
+const DISPLAY_NAMES = { both: 'Gregorian & Hijri', gregorian: 'Gregorian', hijri: 'Hijri' } as const
+
+/** Settings: a short list of sections, each on its own page. */
+export function SettingsScreen({ sawm, settings, path }: { sawm: Sawm; settings: Settings; path: string }) {
+  const section = SECTIONS.find(({ id }) => path === `/settings/${id}`)
+  return section ? <SectionPage sawm={sawm} settings={settings} section={section} /> : <SettingsIndex sawm={sawm} settings={settings} />
+}
+
+function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  const followed = sawm.fastTypes().filter((type) => type.followed)
+  const { reminders } = settings
+  const summaries: Record<Section, string> = {
+    reminders: reminders.on ? `On · ${reminders.suhoor.on ? `${reminders.suhoor.minutesBefore} min before Suhoor` : 'Iftar only'}` : 'Off',
+    fasts: followed.length === 0 ? 'None' : followed.length <= 2 ? followed.map((t) => t.label).join(', ') : `${followed[0]!.label} and ${followed.length - 1} more`,
+    times: `${sawm.calculationMethod().name} method`,
+    appearance: `${settings.theme === 'system' ? 'System' : settings.theme === 'light' ? 'Light' : 'Dark'} · ${DISPLAY_NAMES[settings.calendarDisplay]}`,
+  }
   return (
     <section className={s.settings}>
       <h1 className={s.title}>Settings</h1>
-
-      <section className={s.group} aria-labelledby="settings-location">
-        <h2 id="settings-location" className={s.heading}>
-          Location
-        </h2>
-        <Link to="/settings/location" className={s.row}>
-          <span>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
-          <span className={s.action}>Change</span>
+      <nav className={s.list} aria-label="Settings">
+        <Link to="/settings/location" className={s.entry}>
+          <span className={s.entryText}>
+            <span>Location</span>
+            <span className={s.entrySummary}>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
+          </span>
+          <span className={s.chevron} aria-hidden="true">›</span>
         </Link>
-      </section>
+        {SECTIONS.map(({ id, label }) => (
+          <Link key={id} to={`/settings/${id}`} className={s.entry}>
+            <span className={s.entryText}>
+              <span>{label}</span>
+              <span className={s.entrySummary}>{summaries[id]}</span>
+            </span>
+            <span className={s.chevron} aria-hidden="true">›</span>
+          </Link>
+        ))}
+      </nav>
+      <p className={s.about}>
+        Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
+        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
+      </p>
+    </section>
+  )
+}
 
-      <section className={s.group} aria-labelledby="settings-reminders">
-        <h2 id="settings-reminders" className={s.heading}>
-          Reminders
-        </h2>
+function SectionPage({ sawm, settings, section }: { sawm: Sawm; settings: Settings; section: { id: Section; label: string } }) {
+  return (
+    <section className={s.settings}>
+      <Link to="/settings" className={s.back}>
+        ‹ Settings
+      </Link>
+      <h1 className={s.title}>{section.label}</h1>
+      {section.id === 'reminders' && <RemindersSection sawm={sawm} settings={settings} />}
+      {section.id === 'fasts' && (
+        <div className={s.list}>
+          <FastTypeList sawm={sawm} settings={settings} />
+        </div>
+      )}
+      {section.id === 'times' && <TimesSection sawm={sawm} settings={settings} />}
+      {section.id === 'appearance' && <AppearanceSection sawm={sawm} settings={settings} />}
+    </section>
+  )
+}
+
+function RemindersSection({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  return (
+    <>
+      <div className={s.list}>
         <ReminderControls sawm={sawm} settings={settings} />
+      </div>
+      <div className={s.list}>
         <div className={s.row}>
           <span className={s.rowText}>
             <span>Calendar Export</span>
@@ -46,122 +103,134 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
             Export
           </CalendarExportButton>
         </div>
-      </section>
+      </div>
+    </>
+  )
+}
 
-      <section className={s.group} aria-labelledby="settings-fasts">
-        <h2 id="settings-fasts" className={s.heading}>
-          Fasts
-        </h2>
-        <FastTypeList sawm={sawm} settings={settings} />
-      </section>
-
-      <section className={s.group} aria-labelledby="settings-times">
-        <h2 id="settings-times" className={s.heading}>
-          Times
-        </h2>
+function TimesSection({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  const offset = sawm.hijriOffset()
+  // What "Default" means for the Saved Location's country, whichever method is picked right now.
+  const countryDefault = sawm.defaultCalculationMethod(settings.savedLocation?.countryCode ?? '')
+  const defaultMethodName = sawm.calculationMethods().find((method) => method.id === countryDefault)?.name
+  return (
+    <div className={s.list}>
+      <label className={s.row}>
+        <span>Calculation method</span>
+        <select
+          className={s.select}
+          value={settings.calculationMethod ?? 'default'}
+          onChange={(event) => void sawm.setCalculationMethod(event.target.value === 'default' ? undefined : Number(event.target.value))}
+        >
+          <option value="default">Default · {defaultMethodName}</option>
+          {sawm.calculationMethods().map((method) => (
+            <option key={method.id} value={method.id}>
+              {method.authority ? `${method.name} · ${method.authority}` : method.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {Math.abs(settings.savedLocation?.latitude ?? 0) >= 48 && (
         <label className={s.row}>
-          <span>Calculation method</span>
+          <span className={s.rowText}>
+            <span>High-latitude rule</span>
+            <span className={s.rowNote}>How Suhoor is set where the sky never gets fully dark in summer.</span>
+          </span>
           <select
             className={s.select}
-            value={settings.calculationMethod ?? 'default'}
-            onChange={(event) => void sawm.setCalculationMethod(event.target.value === 'default' ? undefined : Number(event.target.value))}
+            value={settings.highLatitudeRule ?? 'default'}
+            onChange={(event) =>
+              void sawm.setTimePreferences({
+                highLatitudeRule: event.target.value === 'default' ? undefined : (Number(event.target.value) as 1 | 2 | 3),
+              })
+            }
           >
-            <option value="default">Default · {defaultMethodName}</option>
-            {sawm.calculationMethods().map((method) => (
-              <option key={method.id} value={method.id}>
-                {method.authority ? `${method.name} · ${method.authority}` : method.name}
-              </option>
-            ))}
+            <option value="default">Default · Angle-based</option>
+            <option value="3">Angle-based</option>
+            <option value="1">Middle of the night</option>
+            <option value="2">One seventh of the night</option>
           </select>
         </label>
-        {Math.abs(settings.savedLocation?.latitude ?? 0) >= 48 && (
-          <label className={s.row}>
-            <span className={s.rowText}>
-              <span>High-latitude rule</span>
-              <span className={s.rowNote}>How Suhoor is set where the sky never gets fully dark in summer.</span>
-            </span>
-            <select
-              className={s.select}
-              value={settings.highLatitudeRule ?? 'default'}
-              onChange={(event) =>
-                void sawm.setTimePreferences({
-                  highLatitudeRule: event.target.value === 'default' ? undefined : (Number(event.target.value) as 1 | 2 | 3),
-                })
-              }
-            >
-              <option value="default">Default · Angle-based</option>
-              <option value="3">Angle-based</option>
-              <option value="1">Middle of the night</option>
-              <option value="2">One seventh of the night</option>
-            </select>
-          </label>
-        )}
-        <MinuteStepper
-          label="Suhoor adjustment"
-          value={settings.minuteAdjustments.suhoor}
-          onChange={(suhoor) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, suhoor } })}
-        />
-        <MinuteStepper
-          label="Iftar adjustment"
-          value={settings.minuteAdjustments.iftar}
-          onChange={(iftar) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, iftar } })}
-        />
-        <div className={s.row}>
-          <span className={s.rowText}>
-            <span>Hijri Offset</span>
-            <span className={s.rowNote}>Shift Hijri dates to match your community’s moon sighting.</span>
-          </span>
-          <span className={s.stepper} role="group" aria-label="Hijri Offset">
-            <button type="button" onClick={() => void sawm.setHijriOffset(offset - 1)} disabled={offset <= -2} aria-label="One day earlier">
-              −
-            </button>
-            <output aria-live="polite">{offset === 0 ? '0 days' : `${offset > 0 ? '+' : '−'}${Math.abs(offset)} day${Math.abs(offset) === 1 ? '' : 's'}`}</output>
-            <button type="button" onClick={() => void sawm.setHijriOffset(offset + 1)} disabled={offset >= 2} aria-label="One day later">
-              +
-            </button>
-          </span>
-        </div>
-        <div className={s.switches}>
-          <Switch
-            label="Show Imsak"
-            description="A precautionary time a few minutes before Suhoor."
-            checked={settings.showImsak}
-            onChange={(showImsak) => void sawm.setTimePreferences({ showImsak })}
-          />
-          <Switch
-            label="Month-end Check"
-            description="On the evening of the 29th, ask whether the new month has been announced."
-            checked={settings.monthEndChecks}
-            onChange={(on) => void sawm.setMonthEndChecks(on)}
-          />
-        </div>
-      </section>
+      )}
+      <MinuteStepper
+        label="Suhoor adjustment"
+        value={settings.minuteAdjustments.suhoor}
+        onChange={(suhoor) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, suhoor } })}
+      />
+      <MinuteStepper
+        label="Iftar adjustment"
+        value={settings.minuteAdjustments.iftar}
+        onChange={(iftar) => void sawm.setTimePreferences({ minuteAdjustments: { ...settings.minuteAdjustments, iftar } })}
+      />
+      <div className={s.row}>
+        <span className={s.rowText}>
+          <span>Hijri Offset</span>
+          <span className={s.rowNote}>Shift Hijri dates to match your community’s moon sighting.</span>
+        </span>
+        <span className={s.stepper} role="group" aria-label="Hijri Offset">
+          <button type="button" onClick={() => void sawm.setHijriOffset(offset - 1)} disabled={offset <= -2} aria-label="One day earlier">
+            −
+          </button>
+          <output aria-live="polite">{offset === 0 ? '0 days' : `${offset > 0 ? '+' : '−'}${Math.abs(offset)} day${Math.abs(offset) === 1 ? '' : 's'}`}</output>
+          <button type="button" onClick={() => void sawm.setHijriOffset(offset + 1)} disabled={offset >= 2} aria-label="One day later">
+            +
+          </button>
+        </span>
+      </div>
+      <Switch
+        label="Show Imsak"
+        description="A precautionary time a few minutes before Suhoor."
+        checked={settings.showImsak}
+        onChange={(showImsak) => void sawm.setTimePreferences({ showImsak })}
+      />
+      <Switch
+        label="Month-end Check"
+        description="On the evening of the 29th, ask whether the new month has been announced."
+        checked={settings.monthEndChecks}
+        onChange={(on) => void sawm.setMonthEndChecks(on)}
+      />
+    </div>
+  )
+}
 
-      <section className={s.group} aria-labelledby="settings-appearance">
-        <h2 id="settings-appearance" className={s.heading}>
-          Appearance
-        </h2>
-        <div className={s.segmented} role="radiogroup" aria-label="Theme">
-          {THEMES.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              role="radio"
-              aria-checked={settings.theme === value}
-              className={s.segment}
-              onClick={() => void sawm.setTheme(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </section>
+function AppearanceSection({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
+  return (
+    <>
+      <div className={s.group}>
+        <h2 className={s.heading}>Theme</h2>
+        <Segmented
+          label="Theme"
+          value={settings.theme}
+          choices={THEMES}
+          onChange={(theme) => void sawm.setTheme(theme)}
+        />
+      </div>
+      <div className={s.group}>
+        <h2 className={s.heading}>Calendar dates</h2>
+        <Segmented
+          label="Calendar dates"
+          value={settings.calendarDisplay}
+          choices={[
+            { value: 'gregorian', label: 'Gregorian' },
+            { value: 'hijri', label: 'Hijri' },
+            { value: 'both', label: 'Both' },
+          ]}
+          onChange={(display) => void sawm.setCalendarDisplay(display)}
+        />
+      </div>
+    </>
+  )
+}
 
-      <p className={s.about}>
-        Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
-        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
-      </p>
-    </section>
+function Segmented<T extends string>({ label, value, choices, onChange }: { label: string; value: T; choices: { value: T; label: string }[]; onChange: (value: T) => void }) {
+  return (
+    <div className={s.segmented} role="radiogroup" aria-label={label}>
+      {choices.map((choice) => (
+        <button key={choice.value} type="button" role="radio" aria-checked={value === choice.value} className={s.segment} onClick={() => onChange(choice.value)}>
+          {choice.label}
+        </button>
+      ))}
+    </div>
   )
 }
 

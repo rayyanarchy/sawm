@@ -82,11 +82,15 @@ body {
   min-height: 100%;
 }
 
+html {
+  background: var(--sky-top);
+}
+
 body {
   font-family: var(--font);
   font-weight: 350;
   color: var(--text);
-  background: var(--sky-bottom);
+  background: transparent;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   font-variant-numeric: tabular-nums;

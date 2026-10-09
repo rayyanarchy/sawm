@@ -18,8 +18,9 @@ const urls = [
   'https://photon.komoot.io/reverse?lat=24.86&lon=67&lang=en',
   // Lahore, for the travel prompt.
   'https://photon.komoot.io/reverse?lat=31.55&lon=74.34&lang=en',
-  // Karachi, Pakistan: the Karachi method (1) by default, from October 2026 through Shawwal 1448 and beyond.
-  ...calendar(24.85, 67.02, 1, 2026, 10, 14),
+  // Karachi, Pakistan: the Karachi method (1) by default, from September 2026 (the month before tests start)
+  // through Shawwal 1448 and beyond.
+  ...calendar(24.85, 67.02, 1, 2026, 9, 15),
   // ...and the months tests starting in February or March 2027 (Ramadan 1448) load.
   ...calendar(24.85, 67.02, 1, 2027, 12, 4),
   // Muslim World League (3), when chosen.
