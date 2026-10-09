@@ -35,3 +35,15 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - run: pnpm lhci
+      - name: Lighthouse summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          for f in glob.glob('.lighthouseci/lhr-*.json'):
+              d = json.load(open(f))
+              print({k: v['score'] for k, v in d['categories'].items()})
+              for a in ['first-contentful-paint', 'largest-contentful-paint', 'total-blocking-time', 'speed-index', 'cumulative-layout-shift', 'bootup-time', 'mainthread-work-breakdown']:
+                  print(a, d['audits'][a].get('displayValue'))
+              print('benchmark', d['environment'].get('benchmarkIndex'))
+          PY
