@@ -70,6 +70,22 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
   return (
     <>
       <div className={s.center}>
+        {today.travelPrompt && (
+          <section className={s.check} aria-labelledby="travel-prompt">
+            <p id="travel-prompt" className={s.checkQuestion}>
+              You’re in {today.travelPrompt.place.name}. Use {today.travelPrompt.place.name} times?
+            </p>
+            <div className={s.checkAnswers}>
+              <button type="button" className={s.checkAnswer} onClick={() => void sawm.acceptTravel()}>
+                Use {today.travelPrompt.place.name}
+              </button>
+              <button type="button" className={s.checkAnswer} onClick={() => void sawm.declineTravel()}>
+                Keep {today.location.name}
+              </button>
+            </div>
+          </section>
+        )}
+
         {today.monthEndCheck && (
           <section className={s.check} aria-labelledby="month-end-check">
             <p id="month-end-check" className={s.checkQuestion}>

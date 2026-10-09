@@ -951,3 +951,61 @@ describe('Calendar Export', () => {
     expect(uids(sawm.calendarExport())).toEqual(before)
   })
 })
+
+describe('Travel prompt', () => {
+  const lahore = { latitude: 31.5497, longitude: 74.3436 }
+
+  async function karachiWithAccess(locationPermission: 'granted' | 'prompt') {
+    const fake = createFakeDevice({ now: '2026-10-04T06:00:00Z', locationPermission, position: { latitude: 24.85, longitude: 67.02 } })
+    const sawm = await createSawm(fake.device)
+    const [karachi] = await sawm.searchPlaces('Karachi')
+    await sawm.setSavedLocation(karachi!)
+    return { sawm, fake }
+  }
+
+  it('offers to switch when Sawm opens more than 50 km from the Saved Location', async () => {
+    const { sawm, fake } = await karachiWithAccess('granted')
+    await sawm.checkTravel()
+    expect(sawm.today()).not.toHaveProperty('travelPrompt')
+
+    fake.moveTo(lahore)
+    await sawm.checkTravel()
+
+    expect(sawm.today()).toMatchObject({ travelPrompt: { place: { name: 'Lahore', country: 'Pakistan' } } })
+  })
+
+  it('switches the Saved Location when accepted, keeping a Calculation Method chosen by hand', async () => {
+    const { sawm, fake } = await karachiWithAccess('granted')
+    await sawm.setCalculationMethod(3)
+    fake.moveTo(lahore)
+    await sawm.checkTravel()
+    fake.goOffline()
+
+    await sawm.acceptTravel()
+
+    expect(sawm.settings().savedLocation).toMatchObject({ name: 'Lahore', latitude: 31.55, longitude: 74.34 })
+    expect(sawm.calculationMethod()).toMatchObject({ id: 3, isDefault: false })
+    expect(sawm.today()).not.toHaveProperty('travelPrompt')
+  })
+
+  it('stays quiet after a decline until the device moves on', async () => {
+    const { sawm, fake } = await karachiWithAccess('granted')
+    fake.moveTo(lahore)
+    await sawm.checkTravel()
+
+    await sawm.declineTravel()
+    await sawm.checkTravel()
+
+    expect(sawm.today()).not.toHaveProperty('travelPrompt')
+    expect(sawm.settings().savedLocation?.name).toBe('Karachi')
+  })
+
+  it('never asks for location access itself', async () => {
+    const { sawm, fake } = await karachiWithAccess('prompt')
+    fake.moveTo(lahore)
+
+    await sawm.checkTravel()
+
+    expect(sawm.today()).not.toHaveProperty('travelPrompt')
+  })
+})

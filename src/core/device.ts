@@ -33,6 +33,8 @@ export type PositionResult =
 export interface Geolocation {
   /** Asks for the device's current position, prompting the user if needed. */
   current(): Promise<PositionResult>
+  /** Whether the user has already allowed location access, without asking. */
+  permission(): Promise<'granted' | 'prompt' | 'denied' | 'unsupported'>
 }
 
 /** Durable on-device storage for small JSON values. */

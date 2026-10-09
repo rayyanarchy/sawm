@@ -22,12 +22,16 @@ export function App({ sawm }: { sawm: Sawm }) {
   useEffect(() => {
     const refresh = () => void sawm.refresh()
     refresh()
+    void sawm.checkTravel()
+    const onVisible = () => document.visibilityState === 'visible' && void sawm.checkTravel()
+    document.addEventListener('visibilitychange', onVisible)
     const timer = setInterval(refresh, 60_000)
     document.addEventListener('visibilitychange', refresh)
     window.addEventListener('online', refresh)
     return () => {
       clearInterval(timer)
       document.removeEventListener('visibilitychange', refresh)
+      document.removeEventListener('visibilitychange', onVisible)
       window.removeEventListener('online', refresh)
     }
   }, [sawm])

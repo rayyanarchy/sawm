@@ -11,6 +11,8 @@ export function createFakeDevice(options: {
   now: string
   /** Where the device says it is, or why it won't say. */
   position?: { latitude: number; longitude: number } | 'denied' | 'unavailable'
+  /** Whether location access was already allowed (for the travel prompt). */
+  locationPermission?: 'granted' | 'prompt' | 'denied'
   /** What the browser does when asked for push notifications. */
   push?: { support?: ReturnType<Push['support']>; answer?: 'granted' | 'denied' }
 }) {
@@ -21,6 +23,7 @@ export function createFakeDevice(options: {
   /** Every call to Sawm's own server, with its method and parsed body. */
   const server: { method: string; url: string; body: unknown }[] = []
   let subscribed = false
+  let currentPosition = options.position
   const stored = new Map<string, string>()
 
   const device: Device = {
@@ -68,8 +71,11 @@ export function createFakeDevice(options: {
     },
     geolocation: {
       async current(): Promise<PositionResult> {
-        const position = options.position ?? 'unavailable'
+        const position = currentPosition ?? 'unavailable'
         return typeof position === 'string' ? { status: position } : { status: 'ok', ...position }
+      },
+      async permission() {
+        return options.locationPermission ?? 'prompt'
       },
     },
   }
@@ -80,6 +86,9 @@ export function createFakeDevice(options: {
     requests,
     server,
     isSubscribed: () => subscribed,
+    moveTo(position: { latitude: number; longitude: number }) {
+      currentPosition = position
+    },
     setNow(iso: string) {
       now = Date.parse(iso)
     },

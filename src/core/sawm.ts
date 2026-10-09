@@ -20,7 +20,7 @@ import {
 } from './fasts'
 import { baseMonths, hijriCalendar, HIJRI_MONTHS, monthKey, nextMonth, type BaseMonth, type HijriCalendar, type HijriDate } from './hijri'
 import { CALCULATION_METHODS, defaultMethodFor, methodById, type CalculationMethod } from './methods'
-import { placeAt, roundCoordinate, searchPlaces, type Place } from './places'
+import { distanceKm, placeAt, roundCoordinate, searchPlaces, type Place } from './places'
 
 /** The one place whose times Sawm shows. Its time zone is learnt from the data source. */
 export interface SavedLocation extends Place {
@@ -79,6 +79,8 @@ export type Today =
       nextFast: NextFast | null
       /** A Month-end Check waiting for an answer. */
       monthEndCheck?: MonthEndCheck
+      /** The device is far from the Saved Location: offer to switch to where it is. */
+      travelPrompt?: { place: Place }
     }
 
 /** The question asked on the evening of the 29th of certain months. */
@@ -130,6 +132,8 @@ export interface Settings {
   reminders: ReminderSettings
   /** This device's push subscription, while Reminders are on. */
   subscription?: PushSubscriptionJSON
+  /** Where the device was when the user last declined the travel prompt. */
+  travelDeclinedAt?: { latitude: number; longitude: number }
   /** Which setup steps the user has finished or skipped. */
   setup: { fasts: boolean; reminders: boolean }
   theme: ThemePreference
@@ -217,6 +221,15 @@ export interface Sawm {
   setSavedLocation(place: Place): Promise<void>
   /** Sets the Saved Location from the device's own position. */
   useCurrentLocation(): Promise<'ok' | 'denied' | 'unavailable'>
+  /**
+   * On opening: if location access is already allowed and the device is more than 50 km from the Saved Location
+   * (and from where the user last declined), offers to switch. Never asks for location access itself.
+   */
+  checkTravel(): Promise<void>
+  /** Switches the Saved Location to where the device is. A Calculation Method chosen by hand is kept. */
+  acceptTravel(): Promise<void>
+  /** Keeps the Saved Location; Sawm won't ask again until the device moves on. */
+  declineTravel(): Promise<void>
   /** Loads whatever the next 12 months need that isn't on the device yet. Safe to call often. */
   refresh(): Promise<void>
   /** Re-reads the clock, and tells subscribers if what Today shows has changed. Call it every second or so. */
@@ -238,6 +251,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
   const loadingMonths = new Map<string, Promise<MonthTimes>>()
   const listeners = new Set<() => void>()
   let lastToday: { value: Today; json: string } | undefined
+  let travel: { place: Place; at: { latitude: number; longitude: number } } | undefined
 
   // Everything derived from the loaded months and the settings is rebuilt only when either changes.
   let version = 0
@@ -446,6 +460,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
       nextFast,
       ...(fastComplete ? { fastComplete } : {}),
       ...(monthEndCheck ? { monthEndCheck } : {}),
+      ...(travel ? { travelPrompt: { place: travel.place } } : {}),
     }
     if (focus.plan.status !== 'planned') return { ...common, state: 'not-fasting' }
 
@@ -768,6 +783,33 @@ export async function createSawm(device: Device): Promise<Sawm> {
       } catch {
         return 'unavailable'
       }
+    },
+
+    async checkTravel() {
+      const saved = settings.savedLocation
+      if (!saved || (await device.geolocation.permission()) !== 'granted') return
+      const position = await device.geolocation.current()
+      if (position.status !== 'ok') return
+      const far = (from: { latitude: number; longitude: number }) => distanceKm(from, position) > 50
+      if (!far(saved) || (settings.travelDeclinedAt && !far(settings.travelDeclinedAt))) return
+      const place = await placeAt(device.fetch, position.latitude, position.longitude).catch(() => undefined)
+      if (!place) return
+      travel = { place, at: { latitude: place.latitude, longitude: place.longitude } }
+      notify()
+    },
+
+    async acceptTravel() {
+      const place = travel?.place
+      travel = undefined
+      if (place) await setSavedLocation(place)
+      notify()
+    },
+
+    async declineTravel() {
+      const at = travel?.at
+      travel = undefined
+      if (at) await saveSettings({ travelDeclinedAt: at })
+      notify()
     },
 
     refresh,
