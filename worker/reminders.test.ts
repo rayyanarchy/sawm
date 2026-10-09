@@ -62,7 +62,7 @@ function service() {
     },
   }
   const api = (method: string, path: string, body?: unknown) =>
-    handleReminders(new Request(`https://sawm.example${path}`, { method, body: body === undefined ? undefined : JSON.stringify(body) }), namespace, vapidPublic, now)
+    handleReminders(new Request(`https://sawm.example${path}`, { method, body: body === undefined ? undefined : JSON.stringify(body) }), namespace, env, now)
 
   return {
     api,
@@ -203,5 +203,14 @@ describe('Reminder service', () => {
   it('hands browsers the VAPID public key to subscribe with', async () => {
     const s = service()
     expect(await (await s.api('GET', '/api/reminders/key')).json()).toEqual({ publicKey: vapidPublic })
+  })
+
+  it('sends a test Reminder straight away', async () => {
+    const browser = await subscriber()
+    const s = service()
+
+    expect((await s.api('POST', '/api/reminders/test', { subscription: browser.subscription })).status).toBe(204)
+
+    expect(await decrypt(pushes[0]!.body, browser)).toMatchObject({ title: 'Reminders are on', tag: 'test' })
   })
 })

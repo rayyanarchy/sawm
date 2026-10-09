@@ -24,6 +24,7 @@ export function HomeScreenSteps() {
 /** Turning Reminders on and off, and their timings. */
 export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
   const [problem, setProblem] = useState<string>()
+  const [tested, setTested] = useState<boolean>()
   const support = sawm.reminderSupport()
   const { reminders } = settings
 
@@ -65,6 +66,36 @@ export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Set
           {reminders.iftar.on && (
             <Lead label="Before Iftar" value={reminders.iftar.minutesBefore} step={5} max={30} onChange={(minutesBefore) => void sawm.setReminder('iftar', { minutesBefore })} />
           )}
+          <Switch
+            label="Night-before Reminder"
+            description="The evening before a voluntary fast, to make your intention."
+            checked={reminders.nightBefore.on}
+            onChange={(on) => void sawm.setNightBefore({ on })}
+          />
+          {reminders.nightBefore.on && (
+            <label className={s.lead}>
+              <span>At</span>
+              <input
+                type="time"
+                className={s.time}
+                value={reminders.nightBefore.time}
+                onChange={(event) => event.target.value && void sawm.setNightBefore({ time: event.target.value })}
+              />
+            </label>
+          )}
+          <div className={s.lead}>
+            <span>{tested === undefined ? 'Check Reminders arrive' : tested ? 'Sent. It should arrive in a moment.' : 'Couldn’t send one. Try again later.'}</span>
+            <button
+              type="button"
+              className={s.test}
+              onClick={async () => {
+                setTested(undefined)
+                setTested(await sawm.testReminder())
+              }}
+            >
+              Send a test
+            </button>
+          </div>
         </>
       )}
     </div>

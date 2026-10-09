@@ -800,7 +800,7 @@ describe('Reminders', () => {
         url: '/',
       },
     ])
-    expect(upload!.entries).toHaveLength(58) // two for each of Ramadan's 29 days
+    expect(upload!.entries.filter((e) => /:(suhoor|iftar)$/.test(e.id))).toHaveLength(58) // two for each of Ramadan's 29 days
   })
 
   it('uploads again only when the schedule changes, and leaves Skipped days out', async () => {
@@ -824,7 +824,7 @@ describe('Reminders', () => {
 
     const entries = uploads(fake).at(-1)!.entries
     expect(entries[0]).toMatchObject({ id: '2027-02-08:suhoor', at: Date.parse('2027-02-08T05:23:00+05:00'), title: 'Suhoor ends in 30 minutes' })
-    expect(entries.every((e) => e.id.endsWith(':suhoor'))).toBe(true)
+    expect(entries.some((e) => e.id.endsWith(':iftar'))).toBe(false)
   })
 
   it('never schedules past the next 60 days', async () => {
@@ -856,4 +856,56 @@ describe('Reminders', () => {
     const iPhone = createFakeDevice({ now: '2027-02-07T12:00:00Z', push: { support: 'needs-home-screen' } })
     expect(await (await createSawm(iPhone.device)).enableReminders()).toBe('needs-home-screen')
   })
+
+  it('reminds the evening before a voluntary fast, but not before Ramadan days', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    await sawm.setFollowing('mondaysThursdays', true)
+
+    await sawm.enableReminders()
+
+    const entries = uploads(fake)[0]!.entries
+    expect(entries.find((e) => e.id === '2026-10-05:night-before')).toMatchObject({
+      at: Date.parse('2026-10-04T21:00:00+05:00'),
+      expiresAt: Date.parse('2026-10-05T05:10:00+05:00'),
+      title: 'Tomorrow: Mondays & Thursdays',
+    })
+    await sawm.setNightBefore({ time: '20:30' })
+    expect(uploads(fake).at(-1)!.entries.find((e) => e.id === '2026-10-05:night-before')?.at).toBe(Date.parse('2026-10-04T20:30:00+05:00'))
+  })
+
+  it('points to the Month-end Check two hours after Iftar on the 29th, until it is answered', async () => {
+    const { sawm, fake } = await karachiAt('2027-03-08T07:00:00Z') // noon on 29 Ramadan
+    await sawm.enableReminders()
+
+    expect(uploads(fake)[0]!.entries.find((e) => e.id === '2027-03-08:month-end')).toMatchObject({
+      at: Date.parse('2027-03-08T20:37:00+05:00'),
+      title: 'Has Eid been announced for tomorrow?',
+    })
+    fake.setNow('2027-03-08T14:00:00Z')
+    await sawm.answerMonthEndCheck('yes')
+    expect(uploads(fake).at(-1)!.entries.find((e) => e.id === '2027-03-08:month-end')).toBeUndefined()
+  })
+
+  it('asks the user to open Sawm a week before the schedule runs out', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+
+    await sawm.enableReminders()
+
+    expect(uploads(fake)[0]!.entries.find((e) => e.id.endsWith(':renewal'))).toMatchObject({
+      id: '2026-11-26:renewal',
+      at: Date.parse('2026-11-26T12:00:00+05:00'),
+      title: 'Open Sawm to keep your reminders going',
+    })
+  })
+
+  it('can send a test Reminder', async () => {
+    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
+    expect(await sawm.testReminder()).toBe(false)
+
+    await sawm.enableReminders()
+
+    expect(await sawm.testReminder()).toBe(true)
+    expect(fake.server.at(-1)).toMatchObject({ method: 'POST', url: '/api/reminders/test' })
+  })
 })
+

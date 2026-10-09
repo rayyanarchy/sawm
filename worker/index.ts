@@ -11,7 +11,7 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url)
     if (pathname === '/api/health') return Response.json({ ok: true })
-    if (pathname.startsWith('/api/reminders')) return handleReminders(request, env.REMINDERS, env.VAPID_PUBLIC_KEY)
+    if (pathname.startsWith('/api/reminders')) return handleReminders(request, env.REMINDERS, env)
     return new Response('Not found', { status: 404 })
   },
 } satisfies ExportedHandler<Env>
