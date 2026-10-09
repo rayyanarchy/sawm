@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useSyncExternalStore, type FormEvent } from 'react'
 import type { Place, Sawm } from '../core'
 import s from './LocationSearch.module.css'
 import { placeName } from './placeName'
@@ -13,7 +13,22 @@ interface LocationSearchProps {
   canCancel?: boolean
 }
 
+function useOnline() {
+  return useSyncExternalStore(
+    (listener) => {
+      window.addEventListener('online', listener)
+      window.addEventListener('offline', listener)
+      return () => {
+        window.removeEventListener('online', listener)
+        window.removeEventListener('offline', listener)
+      }
+    },
+    () => navigator.onLine,
+  )
+}
+
 export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSearchProps) {
+  const online = useOnline()
   const [query, setQuery] = useState('')
   const [places, setPlaces] = useState<Place[]>()
   const [state, setState] = useState<SearchState>('idle')
@@ -48,6 +63,11 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
       <h1 className={s.question}>
         <label htmlFor="place">Where are you fasting?</label>
       </h1>
+      {!online && (
+        <p role="status" className={s.note}>
+          You’re offline. Sawm needs to go online once to find your place and load its times.
+        </p>
+      )}
       <button type="button" className={s.locate} onClick={locate} disabled={state === 'locating' || state === 'saving'}>
         <span className={s.locateDot} aria-hidden="true" />
         {state === 'locating' ? 'Finding you…' : 'Use my location'}
