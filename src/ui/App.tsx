@@ -1,13 +1,15 @@
-import { useEffect, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
 import type { Sawm } from '../core'
-import { CalendarScreen } from './CalendarScreen'
 import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
 import { navigate, usePath } from './router'
-import { SettingsScreen } from './SettingsScreen'
 import { Shell } from './Shell'
 import { TodayScreen } from './TodayScreen'
 import { useAppliedTheme } from './useAppliedTheme'
+
+// Loaded on first visit to keep the first screen fast.
+const CalendarScreen = lazy(() => import('./CalendarScreen').then((m) => ({ default: m.CalendarScreen })))
+const SettingsScreen = lazy(() => import('./SettingsScreen').then((m) => ({ default: m.SettingsScreen })))
 
 export function App({ sawm }: { sawm: Sawm }) {
   const today = useSyncExternalStore(sawm.subscribe, sawm.today)
@@ -60,6 +62,7 @@ export function App({ sawm }: { sawm: Sawm }) {
 
   return (
     <Shell sky={sky} theme={theme}>
+      <Suspense fallback={null}>
       {path === '/settings/location' ? (
         <LocationSearch sawm={sawm} canCancel onDone={() => navigate('/')} />
       ) : path.startsWith('/settings') ? (
@@ -69,6 +72,7 @@ export function App({ sawm }: { sawm: Sawm }) {
       ) : (
         <TodayScreen today={today} sawm={sawm} />
       )}
+      </Suspense>
     </Shell>
   )
 }

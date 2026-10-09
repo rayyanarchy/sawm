@@ -19,3 +19,31 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
+
+  browser:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - run: pnpm lhci
+      - name: Lighthouse summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          for f in glob.glob('.lighthouseci/lhr-*.json'):
+              d = json.load(open(f))
+              print({k: v['score'] for k, v in d['categories'].items()})
+              for a in ['first-contentful-paint', 'largest-contentful-paint', 'total-blocking-time', 'speed-index', 'cumulative-layout-shift', 'bootup-time', 'mainthread-work-breakdown']:
+                  print(a, d['audits'][a].get('displayValue'))
+              print('benchmark', d['environment'].get('benchmarkIndex'))
+          PY
