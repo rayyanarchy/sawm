@@ -1,6 +1,7 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
 import { addDays, daysBetween, localDate, monthAfter, shiftMinutes, wallClockTime, weekdayOf } from './dates'
-import type { Device } from './device'
+import type { Device, PushSubscriptionJSON } from './device'
+import { DEFAULT_REMINDERS, reminderSchedule, type ReminderSettings } from './reminders'
 import {
   DEFAULT_FOLLOWED,
   DEFAULT_OPTIONS,
@@ -125,8 +126,11 @@ export interface Settings {
   skips: Skip[]
   /** Dates the user added as Planned Fasts themselves. */
   oneOffs: string[]
+  reminders: ReminderSettings
+  /** This device's push subscription, while Reminders are on. */
+  subscription?: PushSubscriptionJSON
   /** Which setup steps the user has finished or skipped. */
-  setup: { fasts: boolean }
+  setup: { fasts: boolean; reminders: boolean }
   theme: ThemePreference
 }
 
@@ -140,7 +144,8 @@ const DEFAULT_SETTINGS: Settings = {
   monthEndAnswers: {},
   skips: [],
   oneOffs: [],
-  setup: { fasts: false },
+  reminders: DEFAULT_REMINDERS,
+  setup: { fasts: false, reminders: false },
   theme: 'system',
 }
 
@@ -189,6 +194,14 @@ export interface Sawm {
   /** Adds a date as a One-off Fast; refused on a Forbidden Day. On a Skipped date, it undoes the Skip instead. */
   addOneOff(date: string): Promise<'added' | 'unskipped' | 'forbidden'>
   removeOneOff(date: string): Promise<void>
+  /** Turns Reminders on for this device: asks permission, subscribes, and uploads the Reminder Schedule. */
+  enableReminders(): Promise<'on' | 'denied' | 'needs-home-screen' | 'unsupported' | 'unavailable'>
+  /** Turns Reminders off, and has the server forget this device. */
+  disableReminders(): Promise<void>
+  /** Changes a Reminder's on/off state or timing. */
+  setReminder(kind: 'suhoor' | 'iftar', changes: Partial<ReminderSettings['suhoor']>): Promise<void>
+  /** Whether this browser can get Reminders at all. */
+  reminderSupport(): ReturnType<Device['push']['support']>
   /** Marks a setup step finished (or skipped). */
   completeSetup(step: keyof Settings['setup']): Promise<void>
   /** Cities, towns and villages matching what the user typed. */
@@ -208,6 +221,7 @@ export interface Sawm {
 }
 
 const SETTINGS = 'settings'
+const LAST_UPLOAD = 'reminders:lastUpload'
 /** The current month and the next 12. */
 const MONTHS_AHEAD = 13
 
@@ -243,6 +257,27 @@ export async function createSawm(device: Device): Promise<Sawm> {
     settings = { ...settings, ...changes }
     version++
     await device.storage.set(SETTINGS, settings)
+    await syncReminders()
+  }
+
+  /**
+   * Uploads the Reminder Schedule when it has changed since the last upload (ADR 0003). Never throws:
+   * offline, it simply tries again on the next change or refresh.
+   */
+  async function syncReminders() {
+    const subscription = settings.subscription
+    const zone = settings.savedLocation?.timeZone
+    if (!settings.reminders.on || !subscription || !zone) return
+    const now = device.clock.now()
+    const entries = reminderSchedule(localDate(now, zone), now, dayAt, settings.reminders)
+    const body = JSON.stringify({ subscription, entries })
+    if (body === (await device.storage.get<string>(LAST_UPLOAD))) return
+    try {
+      const response = await device.fetch('/api/reminders', { method: 'PUT', headers: { 'content-type': 'application/json' }, body })
+      if (response.ok) await device.storage.set(LAST_UPLOAD, body)
+    } catch {
+      // Offline: the next refresh tries again.
+    }
   }
 
   const methodFor = (place: Place) => settings.calculationMethod ?? defaultMethodFor(place.countryCode)
@@ -315,6 +350,12 @@ export async function createSawm(device: Device): Promise<Sawm> {
       // Offline, or the data source failed: Today says its times are unavailable until the next refresh.
     }
     notify()
+    // The browser may have replaced the push subscription (its service worker moves the schedule over); follow it.
+    if (settings.reminders.on && settings.subscription) {
+      const current = await device.push.current().catch(() => undefined)
+      if (current && current.endpoint !== settings.subscription.endpoint) await saveSettings({ subscription: current })
+    }
+    await syncReminders()
   }
 
   function derive() {
@@ -451,6 +492,7 @@ export async function createSawm(device: Device): Promise<Sawm> {
     minuteAdjustments: { ...DEFAULT_SETTINGS.minuteAdjustments, ...stored?.minuteAdjustments },
     monthEndAnswers: { ...stored?.monthEndAnswers },
     setup: { ...DEFAULT_SETTINGS.setup, ...stored?.setup },
+    reminders: { ...DEFAULT_SETTINGS.reminders, ...stored?.reminders },
   }
   const saved = settings.savedLocation
   if (saved?.timeZone) {
@@ -616,6 +658,43 @@ export async function createSawm(device: Device): Promise<Sawm> {
       if (!days.includes(from) || days.includes(to) || to < 2 || to > 30) return
       await saveSettings({
         fastOptions: { ...settings.fastOptions, shawwalDays: days.map((day) => (day === from ? to : day)).sort((a, b) => a - b) },
+      })
+      notify()
+    },
+
+    reminderSupport: () => device.push.support(),
+
+    async enableReminders() {
+      const support = device.push.support()
+      if (support !== 'supported') return support
+      let publicKey: string
+      try {
+        publicKey = ((await (await device.fetch('/api/reminders/key')).json()) as { publicKey: string }).publicKey
+      } catch {
+        return 'unavailable'
+      }
+      const subscription = await device.push.subscribe(publicKey)
+      if (subscription === 'denied' || subscription === 'unavailable') return subscription
+      await saveSettings({ subscription, reminders: { ...settings.reminders, on: true } })
+      notify()
+      return 'on'
+    },
+
+    async disableReminders() {
+      const endpoint = settings.subscription?.endpoint
+      await saveSettings({ reminders: { ...settings.reminders, on: false }, subscription: undefined })
+      await device.storage.set(LAST_UPLOAD, undefined)
+      notify()
+      if (endpoint) {
+        await device.fetch('/api/reminders', { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint }) }).catch(() => undefined)
+        await device.push.unsubscribe().catch(() => undefined)
+      }
+    },
+
+    async setReminder(kind, changes) {
+      const minutesBefore = changes.minutesBefore === undefined ? undefined : Math.max(0, Math.min(180, Math.round(changes.minutesBefore)))
+      await saveSettings({
+        reminders: { ...settings.reminders, [kind]: { ...settings.reminders[kind], ...changes, ...(minutesBefore === undefined ? {} : { minutesBefore }) } },
       })
       notify()
     },

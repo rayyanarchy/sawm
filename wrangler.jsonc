@@ -9,5 +9,14 @@
   },
   "observability": {
     "enabled": true
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "REMINDERS", "class_name": "ReminderDevice" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ReminderDevice"] }],
+  "vars": {
+    // The VAPID public key browsers subscribe with; its private half is the VAPID_PRIVATE_KEY secret.
+    "VAPID_PUBLIC_KEY": "BDTLhrMOEWJxJ-DjHRBghCl-dYkwCXqljbgEgOGCpha36Tgepi_y1ApvgtlFeFlfzXAKGAOK_t0WyQZb4ok0iEo",
+    "VAPID_SUBJECT": "https://sawm.rayyanarchy.workers.dev"
   }
 }

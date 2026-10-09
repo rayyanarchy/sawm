@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
 import type { Sawm } from '../core'
 import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
+import { RemindersSetup } from './RemindersSetup'
 import { navigate, usePath } from './router'
 import { Shell } from './Shell'
 import { TodayScreen } from './TodayScreen'
@@ -56,6 +57,14 @@ export function App({ sawm }: { sawm: Sawm }) {
     return (
       <Shell sky={sky} theme={theme} showNav={false}>
         <FastsSetup sawm={sawm} settings={settings} />
+      </Shell>
+    )
+  }
+
+  if (!settings.setup.reminders) {
+    return (
+      <Shell sky={sky} theme={theme} showNav={false}>
+        <RemindersSetup sawm={sawm} />
       </Shell>
     )
   }

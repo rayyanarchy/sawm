@@ -1,0 +1,60 @@
+.controls {
+  border-top: 1px solid var(--line);
+}
+
+.note {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--soft);
+}
+
+.steps {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+  color: var(--text);
+}
+
+.lead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 14px 18px;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  color: var(--soft);
+}
+
+.stepper {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.stepper button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.stepper output {
+  min-width: 82px;
+  text-align: center;
+  color: var(--text);
+}
