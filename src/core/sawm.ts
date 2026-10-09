@@ -1,6 +1,7 @@
 import { fetchMonth, type DayTimes, type MonthTimes, type TimesQuery } from './aladhan'
 import { addDays, daysBetween, localDate, monthAfter, shiftMinutes, wallClockTime, weekdayOf } from './dates'
 import type { Device, PushSubscriptionJSON } from './device'
+import { calendarExport } from './calendarExport'
 import { DEFAULT_REMINDERS, reminderSchedule, type ReminderSettings } from './reminders'
 import {
   DEFAULT_FOLLOWED,
@@ -204,6 +205,8 @@ export interface Sawm {
   setNightBefore(changes: Partial<ReminderSettings['nightBefore']>): Promise<void>
   /** Asks the server to send this device a Reminder right now, to check they arrive. */
   testReminder(): Promise<boolean>
+  /** The Calendar Export: an .ics file of the next 60 days of Planned Fasts with alerts. */
+  calendarExport(): string
   /** Whether this browser can get Reminders at all. */
   reminderSupport(): ReturnType<Device['push']['support']>
   /** Marks a setup step finished (or skipped). */
@@ -680,6 +683,12 @@ export async function createSawm(device: Device): Promise<Sawm> {
     },
 
     reminderSupport: () => device.push.support(),
+
+    calendarExport() {
+      const zone = settings.savedLocation?.timeZone
+      const now = device.clock.now()
+      return calendarExport(zone ? localDate(now, zone) : localDate(now, 'UTC'), now, dayAt, settings.reminders)
+    },
 
     async enableReminders() {
       const support = device.push.support()

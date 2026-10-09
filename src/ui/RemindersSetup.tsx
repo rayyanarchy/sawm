@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Sawm } from '../core'
 import s from './FastsSetup.module.css'
+import { exportCalendar } from './exportCalendar'
 import { HomeScreenSteps } from './ReminderControls'
 
 /** Setup step 3: Reminders, with Home Screen instructions first on iPhone. */
@@ -47,6 +48,11 @@ export function RemindersSetup({ sawm }: { sawm: Sawm }) {
             Not now
           </button>
         </div>
+      )}
+      {support !== 'supported' && (
+        <button type="button" className={s.secondary} onClick={() => exportCalendar(sawm)}>
+          Add fasts to my calendar instead
+        </button>
       )}
       {problem && (
         <p role="alert" className={s.lead}>

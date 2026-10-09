@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Sawm, Settings } from '../core'
 import s from './ReminderControls.module.css'
+import { CalendarExportButton } from './CalendarExportButton'
 import { Switch } from './Switch'
 
 type Outcome = Awaited<ReturnType<Sawm['enableReminders']>>
@@ -53,7 +54,8 @@ export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Set
       />
       {problem && (
         <p role="alert" className={s.note}>
-          {problem}
+          {problem} Or add your fasts to your phone’s calendar instead, with alerts:{' '}
+          <CalendarExportButton sawm={sawm} className={s.test} />
         </p>
       )}
       {reminders.on && (
