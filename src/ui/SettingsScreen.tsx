@@ -2,6 +2,7 @@ import type { Sawm, Settings, ThemePreference } from '../core'
 import { placeName } from './placeName'
 import { Link } from './Link'
 import s from './SettingsScreen.module.css'
+import { CalendarExportButton } from './CalendarExportButton'
 import { FastTypeList } from './FastTypeList'
 import { ReminderControls } from './ReminderControls'
 import { Switch } from './Switch'
@@ -36,6 +37,15 @@ export function SettingsScreen({ sawm, settings }: { sawm: Sawm; settings: Setti
           Reminders
         </h2>
         <ReminderControls sawm={sawm} settings={settings} />
+        <div className={s.row}>
+          <span className={s.rowText}>
+            <span>Calendar Export</span>
+            <span className={s.rowNote}>Your fasts for the next 60 days, with alerts, in your phone’s own calendar.</span>
+          </span>
+          <CalendarExportButton sawm={sawm} className={s.exportButton}>
+            Export
+          </CalendarExportButton>
+        </div>
       </section>
 
       <section className={s.group} aria-labelledby="settings-fasts">

@@ -909,3 +909,45 @@ describe('Reminders', () => {
   })
 })
 
+
+describe('Calendar Export', () => {
+  it('lists the next 60 days of Planned Fasts with alerts at the Reminder timings', async () => {
+    const { sawm } = await karachiAt('2027-02-07T12:00:00Z')
+    await sawm.setReminder('iftar', { minutesBefore: 10 })
+
+    const ics = sawm.calendarExport()
+
+    expect(ics.startsWith('BEGIN:VCALENDAR\r\nVERSION:2.0\r\n')).toBe(true)
+    expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true)
+    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(58)
+    const first = ics.slice(ics.indexOf('BEGIN:VEVENT'), ics.indexOf('END:VEVENT') + 10)
+    expect(first.split('\r\n')).toEqual([
+      'BEGIN:VEVENT',
+      'UID:2027-02-08-suhoor@sawm',
+      'DTSTAMP:20270207T120000Z',
+      'DTSTART:20270208T005300Z',
+      'DTEND:20270208T005300Z',
+      'SUMMARY:Suhoor ends · Ramadan',
+      'DESCRIPTION:Stop eating and drinking by 05:53.',
+      'TRANSP:TRANSPARENT',
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Suhoor ends · Ramadan',
+      'TRIGGER:-PT45M',
+      'END:VALARM',
+      'END:VEVENT',
+    ])
+    expect(ics).toContain('UID:2027-02-08-iftar@sawm')
+    expect(ics).toContain('TRIGGER:-PT10M')
+  })
+
+  it('gives each event the same UID every time, so a new export updates the old one', async () => {
+    const { sawm, fake } = await karachiAt('2027-02-07T12:00:00Z')
+    const uids = (ics: string) => ics.match(/^UID:.*$/gm)
+    const before = uids(sawm.calendarExport())
+
+    fake.setNow('2027-02-07T13:00:00Z')
+
+    expect(uids(sawm.calendarExport())).toEqual(before)
+  })
+})
