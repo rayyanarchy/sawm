@@ -3,6 +3,7 @@ import type { Sawm } from '../core'
 import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
 import { RemindersSetup } from './RemindersSetup'
+import { PlaceLine } from './PlaceLine'
 import { navigate, usePath } from './router'
 import { Shell } from './Shell'
 import { TodayScreen } from './TodayScreen'
@@ -74,11 +75,9 @@ export function App({ sawm }: { sawm: Sawm }) {
   }
 
   return (
-    <Shell sky={sky} theme={theme}>
+    <Shell sky={sky} theme={theme} header={<PlaceLine today={today} />}>
       <Suspense fallback={null}>
-      {path === '/settings/location' ? (
-        <LocationSearch sawm={sawm} canCancel onDone={() => navigate('/')} />
-      ) : path.startsWith('/settings') ? (
+      {path.startsWith('/settings') ? (
         <SettingsScreen sawm={sawm} settings={settings} path={path} />
       ) : path.startsWith('/calendar') ? (
         <CalendarScreen sawm={sawm} />

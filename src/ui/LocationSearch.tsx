@@ -2,16 +2,7 @@ import { useState, useSyncExternalStore, type FormEvent } from 'react'
 import type { Place, Sawm } from '../core'
 import s from './LocationSearch.module.css'
 import { placeName } from './placeName'
-
-type SearchState = 'idle' | 'searching' | 'failed' | 'saving' | 'locating' | 'denied' | 'no-position'
-
-interface LocationSearchProps {
-  sawm: Sawm
-  /** Called once a place is chosen, or when the user cancels. */
-  onDone: () => void
-  /** Whether there's a Saved Location to go back to. */
-  canCancel?: boolean
-}
+import { useLocate, type LocateState } from './useLocate'
 
 function useOnline() {
   return useSyncExternalStore(
@@ -27,11 +18,11 @@ function useOnline() {
   )
 }
 
-export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSearchProps) {
-  const online = useOnline()
+/** Searching for a place by name and picking one of the results. */
+export function PlaceSearch({ sawm, onChosen, label }: { sawm: Sawm; onChosen: (place: Place) => Promise<void>; label?: string }) {
   const [query, setQuery] = useState('')
   const [places, setPlaces] = useState<Place[]>()
-  const [state, setState] = useState<SearchState>('idle')
+  const [state, setState] = useState<'idle' | 'searching' | 'failed' | 'saving'>('idle')
 
   async function search(event: FormEvent) {
     event.preventDefault()
@@ -44,45 +35,16 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
     }
   }
 
-  async function locate() {
-    setState('locating')
-    const result = await sawm.useCurrentLocation()
-    if (result === 'ok') onDone()
-    else setState(result === 'denied' ? 'denied' : 'no-position')
-  }
-
   async function choose(place: Place) {
     setState('saving')
-    await sawm.setSavedLocation(place)
-    onDone()
+    await onChosen(place)
+    setPlaces(undefined)
+    setQuery('')
+    setState('idle')
   }
 
   return (
-    <section className={s.search}>
-      {!canCancel && <p className={s.brand}>Sawm</p>}
-      <h1 className={s.question}>
-        <label htmlFor="place">Where are you fasting?</label>
-      </h1>
-      {!online && (
-        <p role="status" className={s.note}>
-          You’re offline. Sawm needs to go online once to find your place and load its times.
-        </p>
-      )}
-      <button type="button" className={s.locate} onClick={locate} disabled={state === 'locating' || state === 'saving'}>
-        <span className={s.locateDot} aria-hidden="true" />
-        {state === 'locating' ? 'Finding you…' : 'Use my location'}
-      </button>
-      {state === 'denied' && (
-        <p role="alert" className={s.note}>
-          Location access is off for Sawm. Search for your city instead.
-        </p>
-      )}
-      {state === 'no-position' && (
-        <p role="alert" className={s.note}>
-          Couldn’t find where you are. Search for your city instead.
-        </p>
-      )}
-      <p className={s.or}>or search</p>
+    <>
       <form role="search" className={s.form} onSubmit={search}>
         <input
           id="place"
@@ -90,6 +52,7 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="City or town"
+          aria-label={label}
           autoComplete="off"
           enterKeyHint="search"
           required
@@ -113,7 +76,7 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
           <ul className={s.results}>
             {places.map((place) => (
               <li key={`${place.latitude},${place.longitude}`}>
-                <button type="button" className={s.result} disabled={state === 'saving'} onClick={() => choose(place)}>
+                <button type="button" className={s.result} disabled={state === 'saving'} onClick={() => void choose(place)}>
                   <span className={s.resultName}>{place.name}</span>
                   <span className={s.resultRegion}>{placeName({ ...place, name: '' }).replace(/^, /, '')}</span>
                 </button>
@@ -121,12 +84,57 @@ export function LocationSearch({ sawm, onDone, canCancel = false }: LocationSear
             ))}
           </ul>
         ))}
+    </>
+  )
+}
 
-      {canCancel && (
-        <button type="button" className={s.cancel} onClick={onDone}>
-          Cancel
-        </button>
+export function LocateProblem({ state, children }: { state: LocateState; children?: string }) {
+  if (state === 'denied') {
+    return (
+      <p role="alert" className={s.note}>
+        Location access is off for Sawm. {children ?? 'Search for your city instead.'}
+      </p>
+    )
+  }
+  if (state === 'no-position') {
+    return (
+      <p role="alert" className={s.note}>
+        Couldn’t find where you are. {children ?? 'Search for your city instead.'}
+      </p>
+    )
+  }
+  return null
+}
+
+/** Setup step 1: where the user is fasting. */
+export function LocationSearch({ sawm, onDone }: { sawm: Sawm; onDone: () => void }) {
+  const online = useOnline()
+  const { state, locate } = useLocate(sawm)
+
+  return (
+    <section className={s.search}>
+      <p className={s.brand}>Sawm</p>
+      <h1 className={s.question}>
+        <label htmlFor="place">Where are you fasting?</label>
+      </h1>
+      {!online && (
+        <p role="status" className={s.note}>
+          You’re offline. Sawm needs to go online once to find your place and load its times.
+        </p>
       )}
+      <button type="button" className={s.locate} onClick={async () => (await locate()) && onDone()} disabled={state === 'locating'}>
+        <span className={s.locateDot} aria-hidden="true" />
+        {state === 'locating' ? 'Finding you…' : 'Use my location'}
+      </button>
+      <LocateProblem state={state} />
+      <p className={s.or}>or search</p>
+      <PlaceSearch
+        sawm={sawm}
+        onChosen={async (place) => {
+          await sawm.setSavedLocation(place)
+          onDone()
+        }}
+      />
     </section>
   )
 }

@@ -7,18 +7,18 @@
 }
 
 .top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 15px;
-  color: var(--soft);
+  display: grid;
+  gap: 2px;
 }
 
-.place {
-  color: var(--text);
-  font-weight: 500;
-  text-decoration: none;
+@media (min-width: 900px) {
+  .today {
+    grid-template-rows: 1fr auto auto;
+  }
+
+  .top {
+    display: none;
+  }
 }
 
 .center {

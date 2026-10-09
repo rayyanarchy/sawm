@@ -1,6 +1,7 @@
 import type { Sawm, Today } from '../core'
-import { clockTime, dayMonth, hijriDayMonth, inDays, shortDate, weekday, zoneNameIfDifferent } from './format'
+import { clockTime, dayMonth, inDays, weekday, zoneOffsetIfDifferent } from './format'
 import { Link } from './Link'
+import { PlaceLine } from './PlaceLine'
 import s from './TodayScreen.module.css'
 
 type Located = Exclude<Today, { status: 'no-location' }>
@@ -9,16 +10,9 @@ type Ready = Extract<Today, { status: 'ready' }>
 export function TodayScreen({ today, sawm }: { today: Located; sawm: Sawm }) {
   return (
     <section className={s.today}>
+      {/* On a wide screen this sits in the header beside the navigation instead. */}
       <header className={s.top}>
-        <Link to="/settings/location" className={s.place} aria-label={`${today.location.name}, change location`}>
-          {today.location.name}
-        </Link>
-        {today.status === 'ready' && (
-          <p>
-            {shortDate(today.focus.date)}
-            {today.focus.hijri && ` · ${hijriDayMonth(today.focus.hijri)}`}
-          </p>
-        )}
+        <PlaceLine today={today} />
       </header>
 
       {today.status === 'ready' ? (
@@ -61,7 +55,7 @@ function Time({ local, at }: { local: string; at: string }) {
 
 function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
   const showImsak = sawm.settings().showImsak
-  const zone = zoneNameIfDifferent(today.location.timeZone)
+  const zone = zoneOffsetIfDifferent(today.location.timeZone)
   const { focus, state, countdown, progress = 0, nextFast, fastComplete, phase } = today
   const fastingDay = state !== 'not-fasting'
   const angle = Math.PI * progress
@@ -189,7 +183,7 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
             </dd>
           </div>
         </dl>
-        {zone && <figcaption className={s.zone}>Times in {today.location.name} time ({zone})</figcaption>}
+        {zone && <figcaption className={s.zone}>Times in {zone}, not your device’s time zone</figcaption>}
       </figure>
 
       {fastingDay && nextFast && (

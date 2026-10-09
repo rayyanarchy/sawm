@@ -9,10 +9,10 @@
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
 }
 
 .title {
@@ -23,6 +23,7 @@
 }
 
 .subtitle {
+  grid-column: 1 / -1;
   margin-top: 6px;
   font-size: 15px;
   color: var(--soft);
@@ -34,43 +35,21 @@
 }
 
 .arrow {
+  display: grid;
+  place-items: center;
   width: 44px;
   height: 44px;
+  padding: 0;
   border: 1px solid var(--line);
   border-radius: 50%;
   background: var(--surface);
-  font-size: 22px;
-  line-height: 1;
+  color: var(--text);
   cursor: pointer;
 }
 
 .arrow:disabled {
   opacity: 0.35;
   cursor: default;
-}
-
-.display {
-  justify-self: start;
-  display: inline-flex;
-  padding: 3px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-}
-
-.displayOption {
-  padding: 7px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  font-size: 14px;
-  color: var(--soft);
-  cursor: pointer;
-}
-
-.displayOption[aria-checked='true'] {
-  background: var(--surface-strong);
-  color: var(--text);
 }
 
 .body {
@@ -97,7 +76,10 @@
   row-gap: 10px;
 }
 
-/* A day: its number, centred, with an optional band behind it for fasts. */
+/*
+ * A day: its number, centred. Every mark on a day is the same shape (a pill inset 8px top and bottom, 4px at the
+ * sides): the fast band behind it, the hover and the selection. Bands for fasts on neighbouring days run together.
+ */
 .day {
   position: relative;
   display: grid;
@@ -110,7 +92,8 @@
   cursor: pointer;
 }
 
-.band {
+.band,
+.day::after {
   position: absolute;
   inset: 8px 0;
   border-radius: 0;
@@ -148,17 +131,28 @@
   border-right: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
 }
 
+.day::after {
+  content: '';
+  inset: 8px 4px;
+  border-radius: 999px;
+  transition: background 150ms var(--ease);
+}
+
+.day:hover:not([aria-selected='true'])::after {
+  background: var(--surface);
+}
+
+.day[aria-selected='true']::after {
+  background: var(--text);
+}
+
+/* Above the selection. */
 .face {
   position: relative;
+  z-index: 2;
   display: grid;
   justify-items: center;
-  align-content: center;
-  min-width: 34px;
-  min-height: 34px;
-  padding: 3px 4px;
-  border-radius: 17px;
   line-height: 1;
-  transition: background 150ms var(--ease), color 150ms var(--ease);
 }
 
 .number {
@@ -184,22 +178,20 @@
   color: var(--soft);
 }
 
-.day[aria-current='date'] .number {
-  color: var(--sun);
-  font-weight: 500;
-}
-
 .day[aria-selected='true'] .face,
 .day[aria-selected='true'] .face > * {
   color: var(--sky-bottom);
 }
 
-.day[aria-selected='true'] .face {
-  background: var(--text);
-}
-
-.day:hover:not([aria-selected='true']) .face {
-  background: var(--surface);
+/* Today: the same pill, outlined in the sun's colour. */
+.day[aria-current='date']::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 8px 4px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--sun);
+  pointer-events: none;
 }
 
 .legend {
@@ -233,11 +225,7 @@
 }
 
 .legendItem[data-kind='today']::before {
-  width: auto;
-  height: auto;
-  content: '7';
-  color: var(--sun);
-  font-weight: 500;
+  border: 1.5px solid var(--sun);
 }
 
 .details {

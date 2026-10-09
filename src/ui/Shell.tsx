@@ -16,10 +16,12 @@ interface ShellProps {
   theme: 'light' | 'dark'
   /** Hidden while there's nowhere to go yet, such as during setup. */
   showNav?: boolean
+  /** On a wide screen, shown at the start of the header row, level with the navigation. */
+  header?: ReactNode
   children: ReactNode
 }
 
-export function Shell({ sky, theme, showNav = true, children }: ShellProps) {
+export function Shell({ sky, theme, showNav = true, header, children }: ShellProps) {
   const path = usePath()
   const frame = useRef<HTMLDivElement>(null)
 
@@ -40,19 +42,22 @@ export function Shell({ sky, theme, showNav = true, children }: ShellProps) {
 
   return (
     <div ref={frame} className={s.frame} data-sky={sky}>
-      <div className={s.page}>{children}</div>
       {showNav && (
-        <nav className={s.nav} aria-label="Main">
-          {PAGES.map(({ to, label }) => {
-            const current = to === '/' ? path === '/' : path.startsWith(to)
-            return (
-              <Link key={to} to={to} className={s.link} aria-current={current ? 'page' : undefined}>
-                {label}
-              </Link>
-            )
-          })}
-        </nav>
+        <div className={s.bar}>
+          {header && <div className={s.header}>{header}</div>}
+          <nav className={s.nav} aria-label="Main">
+            {PAGES.map(({ to, label }) => {
+              const current = to === '/' ? path === '/' : path.startsWith(to)
+              return (
+                <Link key={to} to={to} className={s.link} aria-current={current ? 'page' : undefined}>
+                  {label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
       )}
+      <div className={s.page}>{children}</div>
     </div>
   )
 }
