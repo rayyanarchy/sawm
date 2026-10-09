@@ -41,6 +41,14 @@ export const browserDevice: Device = {
     },
   },
   geolocation: {
+    async permission() {
+      if (!('geolocation' in navigator)) return 'unsupported'
+      try {
+        return (await navigator.permissions.query({ name: 'geolocation' })).state
+      } catch {
+        return 'prompt'
+      }
+    },
     current: () =>
       new Promise<PositionResult>((resolve) => {
         if (!('geolocation' in navigator)) return resolve({ status: 'unavailable' })

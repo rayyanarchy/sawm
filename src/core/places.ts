@@ -73,3 +73,12 @@ export async function placeAt(fetch: Device['fetch'], latitude: number, longitud
     longitude: lon,
   }
 }
+
+/** The distance between two places on the Earth's surface, in kilometres. */
+export function distanceKm(a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }): number {
+  const rad = (degrees: number) => (degrees * Math.PI) / 180
+  const dLat = rad(b.latitude - a.latitude)
+  const dLon = rad(b.longitude - a.longitude)
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(dLon / 2) ** 2
+  return 2 * 6371 * Math.asin(Math.sqrt(h))
+}
