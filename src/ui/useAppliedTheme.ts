@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from 'react'
+import { useLayoutEffect, useSyncExternalStore } from 'react'
 import type { ThemePreference } from '../core'
 
 const darkScheme = window.matchMedia('(prefers-color-scheme: dark)')
@@ -14,7 +14,8 @@ export function useAppliedTheme(preference: ThemePreference): 'light' | 'dark' {
   )
   const theme = preference === 'system' ? (systemDark ? 'dark' : 'light') : preference
 
-  useEffect(() => {
+  // A layout effect, so the theme is on <html> before the Shell (a child, whose effects run first) reads its colours.
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
 
