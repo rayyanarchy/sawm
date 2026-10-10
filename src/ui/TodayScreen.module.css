@@ -177,6 +177,22 @@
   pointer-events: none;
 }
 
+/* At night, a thin crescent high on the right, brightening as the sky darkens. */
+.moon {
+  position: absolute;
+  top: -40px;
+  right: 10%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow:
+    inset -5px 3px 0 0 var(--moon),
+    -2px 1px 14px -4px var(--moon);
+  rotate: -20deg;
+  transition: opacity 1.5s var(--ease);
+  pointer-events: none;
+}
+
 .line {
   height: 1px;
   background: var(--line);
