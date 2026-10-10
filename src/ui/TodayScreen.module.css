@@ -159,11 +159,14 @@
 .dawn {
   position: absolute;
   left: 0;
-  bottom: 0;
+  /* Reaches a little below the horizon and fades out there, so the glow has no hard edge. */
+  bottom: -40%;
   width: 90%;
-  height: 130%;
+  height: 170%;
   translate: -50% 0;
-  background: radial-gradient(ellipse at 50% 100%, var(--glow) 0%, transparent 62%);
+  background: radial-gradient(ellipse 50% 45% at 50% 76%, var(--glow) 0%, transparent 100%);
+  mask: linear-gradient(to top, transparent 0%, #000 24%);
+  -webkit-mask: linear-gradient(to top, transparent 0%, #000 24%);
   pointer-events: none;
 }
 

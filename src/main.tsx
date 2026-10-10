@@ -3,7 +3,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createSawm } from './core'
 import { browserDevice } from './device/browser'
+import { demoDevice } from './device/demo'
 import { App } from './ui/App'
+import { DemoPanel } from './ui/DemoPanel'
 import './ui/theme.css'
 
 // Keeps the app opening offline once it has loaded once.
@@ -19,7 +21,11 @@ if (installed) {
   for (const type of ['gesturestart', 'gesturechange']) document.addEventListener(type, (event) => event.preventDefault(), { passive: false })
 }
 
-const sawm = await createSawm(browserDevice)
+// Demo mode (open with ?demo): a movable clock to see Sawm at any time of day. Nothing it does is kept.
+if (new URLSearchParams(window.location.search).has('demo')) sessionStorage.setItem('sawm-demo', '1')
+const demo = sessionStorage.getItem('sawm-demo') ? demoDevice(browserDevice) : undefined
+
+const sawm = await createSawm(demo?.device ?? browserDevice)
 
 // Crashes go to Sawm's own server (and from there to its logs), with no personal data.
 const screen = () => window.location.pathname.split('/')[1] || 'today'
@@ -29,5 +35,6 @@ window.addEventListener('unhandledrejection', (event) => void sawm.reportError(e
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App sawm={sawm} />
+    {demo && <DemoPanel sawm={sawm} clock={demo.clock} />}
   </StrictMode>,
 )

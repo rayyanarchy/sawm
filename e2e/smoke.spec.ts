@@ -8,7 +8,9 @@ test.beforeEach(async ({ page, context }) => {
   await page.clock.install({ time: new Date('2026-10-04T06:00:00Z') })
   await context.route(/photon\.komoot\.io|api\.aladhan\.com/, async (route) => {
     const file = new URL(`../src/core/testing/fixtures/${fixtureName(route.request().url())}`, import.meta.url)
-    await route.fulfill({ json: JSON.parse(await readFile(file, 'utf8')) })
+    // A response that wasn't recorded fails like a network error, rather than leaving the request hanging.
+    const body = await readFile(file, 'utf8').catch(() => undefined)
+    await (body ? route.fulfill({ json: JSON.parse(body) }) : route.abort())
   })
 })
 
@@ -52,4 +54,33 @@ test('has no serious accessibility problems', async ({ page }) => {
     const serious = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')
     expect(serious.map((v) => `${path}: ${v.id} (${v.nodes.length})`)).toEqual([])
   }
+})
+
+test('shows today in the calendar and selects another day', async ({ page }) => {
+  await setUp(page)
+  await page.goto('/calendar')
+  const today = page.locator('[role="gridcell"][aria-current="date"]')
+  await expect(today).toHaveAttribute('aria-label', /^Sunday, October 4, 2026/)
+  await expect(today).toHaveAttribute('aria-selected', 'true')
+
+  await page.getByRole('gridcell', { name: /^Monday, October 12, 2026/ }).click()
+  await expect(page.getByRole('gridcell', { name: /^Monday, October 12, 2026/ })).toHaveAttribute('aria-selected', 'true')
+  await expect(today).toHaveAttribute('aria-selected', 'false')
+  await expect(page.getByRole('heading', { level: 2, name: /October 12, 2026/ })).toBeVisible()
+})
+
+test('updates the Saved Location from the device, from Settings', async ({ page, context }) => {
+  await setUp(page)
+  await context.grantPermissions(['geolocation'])
+  await context.setGeolocation({ latitude: 24.86, longitude: 67 })
+  await page.goto('/settings/location')
+  await expect(page.getByText('Sindh, Pakistan')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Use my location' }).click()
+  await expect(page.getByRole('status')).toHaveText('Updated to where you are now: Karachi.')
+
+  await page.getByLabel('Choose another place').fill('Karachi')
+  await page.getByRole('button', { name: 'Search' }).click()
+  await page.getByRole('button', { name: /Karachi\s*Sindh, Pakistan/ }).click()
+  await expect(page.getByRole('list')).toHaveCount(0)
 })
