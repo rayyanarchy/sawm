@@ -7,7 +7,7 @@
   align-self: start;
   display: grid;
   gap: 34px;
-  padding-top: 24px;
+  padding-top: 8px;
 }
 
 .title {
@@ -208,6 +208,15 @@
   color: inherit;
 }
 
+/* The developer's name, in a face used nowhere else: the note is the one personal thing in Sawm. */
+.author {
+  font-family: 'Syne', var(--font);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
 /* The developer's initial, drawn in the text colour so it suits either theme. */
 .signature {
   width: 44px;
@@ -217,25 +226,24 @@
   -webkit-mask: url('/icons/rayyan-initial.png') center / contain no-repeat;
 }
 
-.signed {
+.about {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  font-size: 14px;
   color: var(--soft);
 }
 
-.about {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.about a {
+  color: inherit;
 }
 
 .repo {
-  flex: none;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--surface);
   color: var(--text);
