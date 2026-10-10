@@ -39,13 +39,13 @@
   box-sizing: border-box;
   width: min(1100px + 2 * var(--gutter), 100%);
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top) + 20px) max(var(--gutter), env(safe-area-inset-right)) 0 max(var(--gutter), env(safe-area-inset-left));
+  padding: calc(env(safe-area-inset-top) + 20px) var(--gutter) 0;
 }
 
 .bar + .page {
   flex: 1;
   min-height: auto;
-  padding: 20px max(var(--gutter), env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+  padding: 20px var(--gutter) calc(20px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -97,13 +97,27 @@
   }
 }
 
-/* A phone on its side: little height, so the header sits closer to the top. */
-@media (orientation: landscape) and (max-height: 540px) {
-  .bar {
-    padding-top: 14px;
+/*
+ * Sawm is upright only. Android honours the manifest's portrait lock; iOS can't lock a web app, so a phone turned
+ * on its side gets a note to turn it back instead of a squeezed layout.
+ */
+.turn {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .frame > :not(.turn) {
+    display: none;
   }
 
-  .bar + .page {
-    padding-top: 12px;
+  .turn {
+    display: grid;
+    align-content: center;
+    min-height: 100dvh;
+    padding: 0 var(--gutter);
+    font-size: 19px;
+    font-weight: 300;
+    color: var(--soft);
+    text-align: center;
   }
 }

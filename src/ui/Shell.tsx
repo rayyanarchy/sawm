@@ -1,4 +1,5 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { Phase } from '../core'
 import { Icon } from './icons'
 import { Link } from './Link'
@@ -22,9 +23,19 @@ interface ShellProps {
   children: ReactNode
 }
 
+/** Where a page's title goes: the start of the header row, level with the navigation. */
+const HeaderSlot = createContext<HTMLElement | null>(null)
+
+/** Puts a page's title in the header row, or where it stands when there's no header row (as during setup). */
+export function InHeader({ children }: { children: ReactNode }) {
+  const slot = useContext(HeaderSlot)
+  return slot ? createPortal(children, slot) : children
+}
+
 export function Shell({ sky, theme, showNav = true, header, children }: ShellProps) {
   const path = usePath()
   const frame = useRef<HTMLDivElement>(null)
+  const [slot, setSlot] = useState<HTMLElement | null>(null)
 
   // Match the browser's own chrome (status bar, address bar) to the top of the sky.
   useEffect(() => {
@@ -45,7 +56,9 @@ export function Shell({ sky, theme, showNav = true, header, children }: ShellPro
     <div ref={frame} className={s.frame} data-sky={sky}>
       {showNav && (
         <header className={s.bar}>
-          {header && <div className={s.header}>{header}</div>}
+          <div ref={setSlot} className={s.header}>
+            {header}
+          </div>
           <nav className={s.nav} aria-label="Main">
             {PAGES.map(({ to, label, icon }) => (
               <Link key={to} to={to} className={s.link} aria-label={label} aria-current={path.startsWith(to) ? 'page' : undefined}>
@@ -55,7 +68,12 @@ export function Shell({ sky, theme, showNav = true, header, children }: ShellPro
           </nav>
         </header>
       )}
-      <div className={s.page}>{children}</div>
+      <HeaderSlot.Provider value={showNav ? slot : null}>
+        <div className={s.page}>{children}</div>
+      </HeaderSlot.Provider>
+      <p className={s.turn} aria-hidden="true">
+        Sawm works upright. Turn your phone back.
+      </p>
     </div>
   )
 }

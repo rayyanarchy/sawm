@@ -1,3 +1,4 @@
+import '@fontsource/syne/latin-800.css'
 import type { Sawm, Settings, ThemePreference } from '../core'
 import { placeName } from './placeName'
 import { TitleWithBack } from './BackLink'
@@ -31,6 +32,7 @@ const DISPLAY_NAMES = { both: 'Gregorian & Hijri', gregorian: 'Gregorian', hijri
 /** Settings: a short list of sections, each on its own page. */
 export function SettingsScreen({ sawm, settings, path }: { sawm: Sawm; settings: Settings; path: string }) {
   if (path === '/settings/location') return <LocationPage sawm={sawm} settings={settings} />
+  if (path === '/settings/credits') return <CreditsPage />
   const section = SECTIONS.find(({ id }) => path === `/settings/${id}`)
   return section ? <SectionPage sawm={sawm} settings={settings} section={section} /> : <SettingsIndex sawm={sawm} settings={settings} />
 }
@@ -71,6 +73,7 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
         <h2 id="note-heading" className={s.heading}>
           A note from the developer
         </h2>
+        <p className={s.author}>Syed Rayyan Ahmed</p>
         <p>
           Sawm was made with love and care for everyone who observes fasting and loves it: a quiet companion for Suhoor,
           Iftar and the days in between. May it make your fasts a little easier.
@@ -79,24 +82,50 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
           Special thanks to <a href="https://github.com/Saad-SYEDK">Saad Syed Kaleemulla</a>, who helped shape Sawm at
           the very beginning.
         </p>
-        <p className={s.signed}>
-          <span className={s.signature} role="img" aria-label="Signed" />
-          Syed Rayyan Ahmed
-        </p>
+        <span className={s.signature} role="img" aria-label="Signed" />
       </section>
       <footer className={s.about}>
+        <span>v{__SAWM_RELEASE__}</span>
+        <span aria-hidden="true">·</span>
         <a href="https://github.com/rayyanarchy/sawm" className={s.repo} aria-label="Sawm on GitHub">
-          <Icon name="github" size={22} />
+          <Icon name="github" size={18} />
         </a>
-        <p>
-          Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
-          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Icons from{' '}
-          <a href="https://boxicons.com">Boxicons</a>.
-        </p>
+        <span aria-hidden="true">·</span>
+        <Link to="/settings/credits">Credits</Link>
+        <span aria-hidden="true">·</span>
+        <span>© Sawm 2026</span>
       </footer>
     </section>
   )
 }
+
+/** Who Sawm's data and type come from. */
+function CreditsPage() {
+  return (
+    <section className={s.settings}>
+      <TitleWithBack to="/settings" label="Settings">
+        <h1 className={s.title}>Credits</h1>
+      </TitleWithBack>
+      <div className={s.list}>
+        {CREDITS.map(({ name, href, what }) => (
+          <a key={name} href={href} className={s.row}>
+            <span className={s.rowText}>
+              <span>{name}</span>
+              <span className={s.rowNote}>{what}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+const CREDITS = [
+  { name: 'AlAdhan', href: 'https://aladhan.com', what: 'Suhoor and Iftar times, and Hijri dates.' },
+  { name: 'OpenStreetMap', href: 'https://www.openstreetmap.org/copyright', what: 'Places, © OpenStreetMap contributors.' },
+  { name: 'Photon by Komoot', href: 'https://photon.komoot.io', what: 'Place search, built on OpenStreetMap.' },
+  { name: 'Outfit and Syne', href: 'https://fonts.google.com', what: 'Typefaces, under the SIL Open Font License.' },
+]
 
 /** Where Sawm's times are for: the place in use, finding it again from the device, or searching for another. */
 function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {

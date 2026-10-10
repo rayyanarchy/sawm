@@ -76,10 +76,11 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
 
   return (
     <section className={s.calendar}>
+      <TitleWithBack to="/" label="Today">
+        <h1 className={s.title}>{title}</h1>
+      </TitleWithBack>
       <header className={s.header}>
-        <TitleWithBack to="/" label="Today">
-          <h1 className={s.title}>{title}</h1>
-        </TitleWithBack>
+        <p className={s.subtitle}>{subtitle}</p>
         <div className={s.arrows}>
           <button type="button" className={s.arrow} onClick={() => setIndex(index - 1)} disabled={index === 0} aria-label="Previous month">
             <Chevron direction="left" />
@@ -88,7 +89,6 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
             <Chevron direction="right" />
           </button>
         </div>
-        {subtitle && <p className={s.subtitle}>{subtitle}</p>}
       </header>
 
       {month ? (
