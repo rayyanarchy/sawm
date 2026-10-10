@@ -1,5 +1,6 @@
 import { useMemo, useState, useSyncExternalStore } from 'react'
 import type { CalendarMonth, Day, Sawm } from '../core'
+import { TitleWithBack } from './BackLink'
 import s from './CalendarScreen.module.css'
 import { clockText, firstDayOfWeek, fullDate, monthYear, weekdayNames } from './format'
 
@@ -76,7 +77,9 @@ export function CalendarScreen({ sawm }: { sawm: Sawm }) {
   return (
     <section className={s.calendar}>
       <header className={s.header}>
-        <h1 className={s.title}>{title}</h1>
+        <TitleWithBack to="/" label="Today">
+          <h1 className={s.title}>{title}</h1>
+        </TitleWithBack>
         <div className={s.arrows}>
           <button type="button" className={s.arrow} onClick={() => setIndex(index - 1)} disabled={index === 0} aria-label="Previous month">
             <Chevron direction="left" />

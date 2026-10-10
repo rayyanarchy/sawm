@@ -183,15 +183,14 @@
   color: var(--sky-bottom);
 }
 
-/* Today: the same pill, outlined in the sun's colour. */
-.day[aria-current='date']::before {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  inset: 8px 4px;
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1.5px var(--sun);
-  pointer-events: none;
+/* Today: its number in the sun's colour. */
+.day[aria-current='date'] .number {
+  color: var(--sun);
+  font-weight: 500;
+}
+
+.day[aria-current='date'][aria-selected='true'] .number {
+  color: var(--sun);
 }
 
 .legend {
@@ -224,8 +223,12 @@
   border: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
+.legendItem[data-kind='today'] {
+  color: var(--sun);
+}
+
 .legendItem[data-kind='today']::before {
-  border: 1.5px solid var(--sun);
+  display: none;
 }
 
 .details {

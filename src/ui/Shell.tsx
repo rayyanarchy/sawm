@@ -1,34 +1,15 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import type { Phase } from '../core'
+import { Icon } from './icons'
 import { Link } from './Link'
 import { usePath } from './router'
 import s from './Shell.module.css'
 
 /** The two places to go from Today, as icons at the top right. Each page leads back the way it came. */
 const PAGES = [
-  {
-    to: '/calendar',
-    label: 'Calendar',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-        <rect x="3" y="4.5" width="14" height="12.5" rx="3" />
-        <path d="M3 8.5h14M7 2.5v4M13 2.5v4" />
-      </svg>
-    ),
-  },
-  {
-    to: '/settings',
-    label: 'Settings',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-        {/* A cog: eight teeth (a dashed ring) round a rim, with a hole in the middle. */}
-        <circle cx="10" cy="10" r="6.9" strokeWidth="2" strokeDasharray="2.2 3.22" strokeLinecap="butt" />
-        <circle cx="10" cy="10" r="5.2" />
-        <circle cx="10" cy="10" r="1.9" />
-      </svg>
-    ),
-  },
-]
+  { to: '/calendar', label: 'Calendar', icon: 'calendar' },
+  { to: '/settings', label: 'Settings', icon: 'cog' },
+] as const
 
 interface ShellProps {
   /** Which sky to paint: the moment of the Saved Location's day, or neutral before there are times. */
@@ -36,7 +17,7 @@ interface ShellProps {
   theme: 'light' | 'dark'
   /** Hidden while there's nowhere to go yet, such as during setup. */
   showNav?: boolean
-  /** The start of the header row, level with the navigation: the place on Today, a way back elsewhere. */
+  /** The start of the header row, level with the navigation: the date and place, on Today. */
   header?: ReactNode
   children: ReactNode
 }
@@ -68,7 +49,7 @@ export function Shell({ sky, theme, showNav = true, header, children }: ShellPro
           <nav className={s.nav} aria-label="Main">
             {PAGES.map(({ to, label, icon }) => (
               <Link key={to} to={to} className={s.link} aria-label={label} aria-current={path.startsWith(to) ? 'page' : undefined}>
-                {icon}
+                <Icon name={icon} size={21} />
               </Link>
             ))}
           </nav>

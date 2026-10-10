@@ -1,12 +1,12 @@
-.place {
-  justify-self: start;
+.date {
   font-size: 16px;
   font-weight: 500;
   color: var(--text);
-  text-decoration: none;
 }
 
-.date {
+.place {
+  justify-self: start;
   font-size: 14px;
   color: var(--soft);
+  text-decoration: none;
 }

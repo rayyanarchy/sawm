@@ -1,5 +1,7 @@
 import type { Sawm, Settings, ThemePreference } from '../core'
 import { placeName } from './placeName'
+import { TitleWithBack } from './BackLink'
+import { Icon } from './icons'
 import { Link } from './Link'
 import s from './SettingsScreen.module.css'
 import { CalendarExportButton } from './CalendarExportButton'
@@ -44,14 +46,16 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
   }
   return (
     <section className={s.settings}>
-      <h1 className={s.title}>Settings</h1>
+      <TitleWithBack to="/" label="Today">
+        <h1 className={s.title}>Settings</h1>
+      </TitleWithBack>
       <nav className={s.list} aria-label="Settings">
         <Link to="/settings/location" className={s.entry}>
           <span className={s.entryText}>
             <span>Location</span>
             <span className={s.entrySummary}>{settings.savedLocation ? placeName(settings.savedLocation) : 'Not set'}</span>
           </span>
-          <span className={s.chevron} aria-hidden="true">›</span>
+          <Icon name="chevronRight" className={s.chevron} />
         </Link>
         {SECTIONS.map(({ id, label }) => (
           <Link key={id} to={`/settings/${id}`} className={s.entry}>
@@ -59,7 +63,7 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
               <span>{label}</span>
               <span className={s.entrySummary}>{summaries[id]}</span>
             </span>
-            <span className={s.chevron} aria-hidden="true">›</span>
+            <Icon name="chevronRight" className={s.chevron} />
           </Link>
         ))}
       </nav>
@@ -72,15 +76,24 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
           Iftar and the days in between. May it make your fasts a little easier.
         </p>
         <p>
-          Special thanks to Saad Syed Kaleemulla (<a href="https://github.com/Saad-SYEDK">@Saad-SYEDK</a>), who helped
-          shape Sawm at the very beginning.
+          Special thanks to <a href="https://github.com/Saad-SYEDK">Saad Syed Kaleemulla</a>, who helped shape Sawm at
+          the very beginning.
         </p>
-        <span className={s.signature} role="img" aria-label="Rayyan" />
+        <p className={s.signed}>
+          <span className={s.signature} role="img" aria-label="Signed" />
+          Syed Rayyan Ahmed
+        </p>
       </section>
-      <p className={s.about}>
-        Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
-        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
-      </p>
+      <footer className={s.about}>
+        <a href="https://github.com/rayyanarchy/sawm" className={s.repo} aria-label="Sawm on GitHub">
+          <Icon name="github" size={22} />
+        </a>
+        <p>
+          Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
+          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Icons from{' '}
+          <a href="https://boxicons.com">Boxicons</a>.
+        </p>
+      </footer>
     </section>
   )
 }
@@ -91,7 +104,9 @@ function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
   const saved = settings.savedLocation
   return (
     <section className={s.settings}>
-      <h1 className={s.title}>Location</h1>
+      <TitleWithBack to="/settings" label="Settings">
+        <h1 className={s.title}>Location</h1>
+      </TitleWithBack>
       <div className={s.list}>
         <div className={s.row}>
           <span className={s.rowText}>
@@ -120,7 +135,9 @@ function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
 function SectionPage({ sawm, settings, section }: { sawm: Sawm; settings: Settings; section: { id: Section; label: string } }) {
   return (
     <section className={s.settings}>
-      <h1 className={s.title}>{section.label}</h1>
+      <TitleWithBack to="/settings" label="Settings">
+        <h1 className={s.title}>{section.label}</h1>
+      </TitleWithBack>
       {section.id === 'reminders' && <RemindersSection sawm={sawm} settings={settings} />}
       {section.id === 'fasts' && (
         <div className={s.list}>
@@ -138,8 +155,6 @@ function RemindersSection({ sawm, settings }: { sawm: Sawm; settings: Settings }
     <>
       <div className={s.list}>
         <ReminderControls sawm={sawm} settings={settings} />
-      </div>
-      <div className={s.list}>
         <div className={s.row}>
           <span className={s.rowText}>
             <span>Calendar Export</span>
@@ -252,9 +267,9 @@ function AppearanceSection({ sawm, settings }: { sawm: Sawm; settings: Settings 
         />
       </div>
       <div className={s.group}>
-        <h2 className={s.heading}>Calendar dates</h2>
+        <h2 className={s.heading}>Dates, on Today and in the Calendar</h2>
         <Segmented
-          label="Calendar dates"
+          label="Dates"
           value={settings.calendarDisplay}
           choices={[
             { value: 'gregorian', label: 'Gregorian' },
