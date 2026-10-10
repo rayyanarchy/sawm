@@ -66,12 +66,6 @@ export type Today =
       status: 'ready'
       location: SavedLocation
       phase: Phase
-      /**
-       * How high the sun stands at the Saved Location, as Sawm draws it: 0 on the horizon at Suhoor's end and at
-       * Iftar, 1 midway between, and below the horizon at night down to -1, reached two hours after Iftar and left
-       * two hours before Suhoor. The sky's light follows it.
-       */
-      sunAltitude: number
       /** The day the screen is about: today until today's Iftar, then tomorrow. */
       focus: Day & { isTomorrow: boolean }
       state: 'before-suhoor' | 'fasting' | 'not-fasting'
@@ -460,7 +454,6 @@ export async function createSawm(device: Device): Promise<Sawm> {
     if (!focus) return { status: 'unavailable', location }
 
     const phase: Phase = now < suhoorToday ? 'predawn' : now < iftarToday ? 'day' : 'night'
-    const sunAltitude = sunAltitudeAt(now, suhoorToday, iftarToday)
     const fastComplete = isTomorrow && today.plan.status === 'planned' ? { label: today.plan.label } : undefined
 
     let nextFast: NextFast | null = null
@@ -476,7 +469,6 @@ export async function createSawm(device: Device): Promise<Sawm> {
       status: 'ready' as const,
       location,
       phase,
-      sunAltitude,
       focus: { ...focus, isTomorrow },
       nextFast,
       ...(fastComplete ? { fastComplete } : {}),
@@ -901,20 +893,6 @@ export async function createSawm(device: Device): Promise<Sawm> {
       }
     },
   }
-}
-
-/** Two hours for the sky to darken fully after Iftar, and to begin lightening before Suhoor. */
-const TWILIGHT = 2 * 3_600_000
-
-/** See `sunAltitude` on Today. Rounded to hundredths, so it changes the screen only every few minutes. */
-function sunAltitudeAt(now: number, suhoor: number, iftar: number): number {
-  const altitude =
-    now < suhoor
-      ? -Math.sin((Math.PI / 2) * Math.min(1, (suhoor - now) / TWILIGHT))
-      : now < iftar
-        ? Math.sin((Math.PI * (now - suhoor)) / (iftar - suhoor))
-        : -Math.sin((Math.PI / 2) * Math.min(1, (now - iftar) / TWILIGHT))
-  return Math.round(altitude * 100) / 100 || 0
 }
 
 function roundUpToMinute(ms: number) {

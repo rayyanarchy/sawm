@@ -57,11 +57,10 @@ export function App({ sawm }: { sawm: Sawm }) {
   }
 
   const sky = today.status === 'ready' ? today.phase : 'neutral'
-  const sunAltitude = today.status === 'ready' ? today.sunAltitude : undefined
 
   if (!settings.setup.fasts) {
     return (
-      <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} showNav={false}>
+      <Shell sky={sky} theme={theme} showNav={false}>
         <FastsSetup sawm={sawm} settings={settings} />
       </Shell>
     )
@@ -69,14 +68,14 @@ export function App({ sawm }: { sawm: Sawm }) {
 
   if (!settings.setup.reminders) {
     return (
-      <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} showNav={false}>
+      <Shell sky={sky} theme={theme} showNav={false}>
         <RemindersSetup sawm={sawm} />
       </Shell>
     )
   }
 
   return (
-    <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} header={<PlaceLine today={today} />}>
+    <Shell sky={sky} theme={theme} header={<PlaceLine today={today} />}>
       <Suspense fallback={null}>
       {path.startsWith('/settings') ? (
         <SettingsScreen sawm={sawm} settings={settings} path={path} />

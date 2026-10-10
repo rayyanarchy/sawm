@@ -170,7 +170,6 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
           )}
           {state === 'fasting' && <span className={s.sun} style={sun} />}
           {phase === 'predawn' && <span className={s.dawn} />}
-          {today.sunAltitude < 0 && <span className={s.moon} style={{ opacity: -today.sunAltitude }} aria-hidden="true" />}
         </div>
         <div className={s.line} />
         <dl className={s.ends}>
