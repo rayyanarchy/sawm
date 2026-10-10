@@ -281,3 +281,42 @@
   font-size: 13px;
   color: var(--soft);
 }
+
+/* A phone on its side: the countdown on the left, the horizon and times on the right. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .today {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    column-gap: 40px;
+  }
+
+  .center {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    padding: 0;
+  }
+
+  .horizon {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .next {
+    grid-column: 2;
+    grid-row: 2;
+    padding-top: 12px;
+  }
+
+  .count {
+    font-size: clamp(64px, 28vh, 150px);
+  }
+
+  .word {
+    font-size: clamp(44px, 18vh, 110px);
+  }
+
+  .arcBox {
+    height: clamp(60px, 24vh, 130px);
+  }
+}

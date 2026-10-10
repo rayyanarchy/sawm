@@ -60,31 +60,47 @@ export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Set
       )}
       {reminders.on && (
         <>
-          <Switch label="Suhoor Reminder" checked={reminders.suhoor.on} onChange={(on) => void sawm.setReminder('suhoor', { on })} />
-          {reminders.suhoor.on && (
-            <Lead label="Before Suhoor ends" value={reminders.suhoor.minutesBefore} step={5} max={120} onChange={(minutesBefore) => void sawm.setReminder('suhoor', { minutesBefore })} />
-          )}
-          <Switch label="Iftar Reminder" checked={reminders.iftar.on} onChange={(on) => void sawm.setReminder('iftar', { on })} />
-          {reminders.iftar.on && (
-            <Lead label="Before Iftar" value={reminders.iftar.minutesBefore} step={5} max={30} onChange={(minutesBefore) => void sawm.setReminder('iftar', { minutesBefore })} />
-          )}
+          <Switch
+            label="Suhoor Reminder"
+            description={reminders.suhoor.on ? leadText(reminders.suhoor.minutesBefore, 'Suhoor ends') : undefined}
+            checked={reminders.suhoor.on}
+            onChange={(on) => void sawm.setReminder('suhoor', { on })}
+            details={
+              reminders.suhoor.on && (
+                <Lead label="Before Suhoor ends" value={reminders.suhoor.minutesBefore} step={5} max={120} onChange={(minutesBefore) => void sawm.setReminder('suhoor', { minutesBefore })} />
+              )
+            }
+          />
+          <Switch
+            label="Iftar Reminder"
+            description={reminders.iftar.on ? leadText(reminders.iftar.minutesBefore, 'Iftar') : undefined}
+            checked={reminders.iftar.on}
+            onChange={(on) => void sawm.setReminder('iftar', { on })}
+            details={
+              reminders.iftar.on && (
+                <Lead label="Before Iftar" value={reminders.iftar.minutesBefore} step={5} max={30} onChange={(minutesBefore) => void sawm.setReminder('iftar', { minutesBefore })} />
+              )
+            }
+          />
           <Switch
             label="Night-before Reminder"
             description="The evening before a voluntary fast, to make your intention."
             checked={reminders.nightBefore.on}
             onChange={(on) => void sawm.setNightBefore({ on })}
+            details={
+              reminders.nightBefore.on && (
+                <label className={s.lead}>
+                  <span>At</span>
+                  <input
+                    type="time"
+                    className={s.time}
+                    value={reminders.nightBefore.time}
+                    onChange={(event) => event.target.value && void sawm.setNightBefore({ time: event.target.value })}
+                  />
+                </label>
+              )
+            }
           />
-          {reminders.nightBefore.on && (
-            <label className={s.lead}>
-              <span>At</span>
-              <input
-                type="time"
-                className={s.time}
-                value={reminders.nightBefore.time}
-                onChange={(event) => event.target.value && void sawm.setNightBefore({ time: event.target.value })}
-              />
-            </label>
-          )}
           <div className={s.lead}>
             <span>{tested === undefined ? 'Check Reminders arrive' : tested ? 'Sent. It should arrive in a moment.' : 'Couldn’t send one. Try again later.'}</span>
             <button
@@ -103,6 +119,9 @@ export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Set
     </div>
   )
 }
+
+/** "45 min before Suhoor ends", or "At Iftar". */
+const leadText = (minutes: number, event: string) => (minutes === 0 ? `At ${event}` : `${minutes} min before ${event}`)
 
 function Lead({ label, value, step, max, onChange }: { label: string; value: number; step: number; max: number; onChange: (value: number) => void }) {
   return (
