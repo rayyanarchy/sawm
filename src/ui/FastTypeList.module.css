@@ -15,7 +15,7 @@
 .segmented {
   display: inline-flex;
   padding: 3px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
 }
@@ -37,7 +37,7 @@
 
 .date {
   padding: 6px 10px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
   font-size: 15px;

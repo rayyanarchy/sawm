@@ -1,26 +1,9 @@
 .today {
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: 1fr auto auto;
   width: 100%;
   max-width: 1100px;
   justify-self: center;
-}
-
-.top {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  text-align: center;
-}
-
-@media (min-width: 900px) {
-  .today {
-    grid-template-rows: 1fr auto auto;
-  }
-
-  .top {
-    display: none;
-  }
 }
 
 .center {
@@ -74,7 +57,7 @@
 .choose {
   margin-top: 6px;
   padding: 11px 20px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
@@ -249,7 +232,7 @@
   gap: 12px;
   margin-bottom: 18px;
   padding: 18px 22px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: var(--radius);
   background: var(--surface);
   backdrop-filter: blur(10px);
@@ -269,7 +252,7 @@
 .checkAnswer {
   min-width: 92px;
   padding: 10px 20px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface-strong);
   font-size: 16px;

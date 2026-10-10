@@ -84,3 +84,16 @@ test('updates the Saved Location from the device, from Settings', async ({ page,
   await page.getByRole('button', { name: /Karachi\s*Sindh, Pakistan/ }).click()
   await expect(page.getByRole('list')).toHaveCount(0)
 })
+
+test('gets around from the header and back again', async ({ page }) => {
+  await setUp(page)
+  await page.getByRole('link', { name: 'Calendar' }).click()
+  await expect(page).toHaveURL(/\/calendar$/)
+  await page.getByRole('link', { name: 'Today' }).click()
+  await expect(page).toHaveURL(/\/$/)
+
+  await page.getByRole('link', { name: 'Settings' }).click()
+  await page.getByRole('link', { name: /^Times/ }).click()
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Settings' })).toBeVisible()
+})
