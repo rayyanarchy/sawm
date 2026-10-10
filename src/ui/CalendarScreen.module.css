@@ -1,4 +1,6 @@
 .calendar {
+  /* A fast's tint. Over a dark sky, a plain mix of the sun's colour turns brown, so dark mixes brighter. */
+  --fast: color-mix(in srgb, var(--sun) 24%, transparent);
   width: 100%;
   max-width: 1100px;
   justify-self: center;
@@ -101,7 +103,7 @@
 }
 
 .day[data-plan='planned'] .band {
-  background: color-mix(in srgb, var(--sun) 24%, transparent);
+  background: var(--fast);
 }
 
 .day[data-plan='skipped'] .band {
@@ -217,7 +219,7 @@
 }
 
 .legendItem[data-kind='planned']::before {
-  background: color-mix(in srgb, var(--sun) 24%, transparent);
+  background: var(--fast);
 }
 
 .legendItem[data-kind='skipped']::before {
@@ -358,4 +360,8 @@
   border-radius: 999px;
   background: var(--surface);
   font-size: 15px;
+}
+
+:global(:root[data-theme='dark']) .calendar {
+  --fast: linear-gradient(color-mix(in oklch, var(--sun) 46%, transparent), color-mix(in oklch, var(--sun) 22%, transparent));
 }

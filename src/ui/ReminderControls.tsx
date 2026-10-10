@@ -42,7 +42,7 @@ export function ReminderControls({ sawm, settings }: { sawm: Sawm; settings: Set
   return (
     <div className={s.controls}>
       <Switch
-        label="Reminders"
+        label="Send reminders"
         description="Notifications before Suhoor and at Iftar, even when Sawm is closed."
         checked={reminders.on}
         onChange={async (on) => {
