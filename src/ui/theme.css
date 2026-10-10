@@ -21,6 +21,17 @@
   --sky-top: #cddeea;
   --sky-bottom: #f6efe3;
 
+  /* The skies the sun's light moves between (see [data-live] below). */
+  --day-top: #c3dbef;
+  --day-bottom: #f7f0e2;
+  --twilight-top: #d9d3e8;
+  --twilight-bottom: #f5d5be;
+  --night-top: #c4c8da;
+  --night-bottom: #dfdde5;
+  --sun-high: #ee9d4f;
+  --sun-low: #e2774a;
+  --moon: #8a91aa;
+
   --gutter: 24px;
   --radius: 14px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -40,6 +51,16 @@
 
   --sky-top: #0e1824;
   --sky-bottom: #263240;
+
+  --day-top: #173350;
+  --day-bottom: #34475b;
+  --twilight-top: #171a33;
+  --twilight-bottom: #4b3138;
+  --night-top: #04060d;
+  --night-bottom: #121729;
+  --sun-high: #f3b06a;
+  --sun-low: #ec8a5e;
+  --moon: #f1e6cf;
 }
 
 /* Before Suhoor: lavender dawn, or deep night in the dark theme. */
@@ -74,6 +95,42 @@
 :root[data-theme='dark'] [data-sky='neutral'] {
   --sky-top: #101113;
   --sky-bottom: #1b1c1f;
+}
+
+/*
+ * With times, the sky follows the sun: night mixes into day as it rises, and twilight's warmth shows near the
+ * horizon. --lit, --night and --twilight (0 to 1) are set from the sun's altitude.
+ */
+@property --lit {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+@property --night {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+@property --twilight {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+:root [data-sky][data-live] {
+  --sky-top: color-mix(
+    in oklab,
+    var(--twilight-top) calc(var(--twilight) * 100%),
+    color-mix(in oklab, var(--day-top) calc(var(--lit) * 100%), var(--night-top))
+  );
+  --sky-bottom: color-mix(
+    in oklab,
+    var(--twilight-bottom) calc(var(--twilight) * 100%),
+    color-mix(in oklab, var(--day-bottom) calc(var(--lit) * 100%), var(--night-bottom))
+  );
+  /* A lower sun is redder. */
+  --sun: color-mix(in oklab, var(--sun-low) calc(var(--twilight) * 100%), var(--sun-high));
+  --glow: color-mix(in srgb, var(--sun) 40%, transparent);
 }
 
 html,
