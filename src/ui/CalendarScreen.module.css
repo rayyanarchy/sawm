@@ -1,6 +1,4 @@
 .calendar {
-  /* A fast's tint. Over a dark sky, a plain mix of the sun's colour turns brown, so dark mixes brighter. */
-  --fast: color-mix(in srgb, var(--sun) 24%, transparent);
   width: 100%;
   max-width: 1100px;
   justify-self: center;
@@ -42,7 +40,7 @@
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 50%;
   background: var(--surface);
   color: var(--text);
@@ -107,8 +105,8 @@
 }
 
 .day[data-plan='skipped'] .band {
-  border-top: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
-  border-bottom: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+  border-top: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
+  border-bottom: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
 .day[data-plan='planned']:not([data-joins-left]) .band,
@@ -119,7 +117,7 @@
 }
 
 .day[data-plan='skipped']:not([data-joins-left]) .band {
-  border-left: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+  border-left: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
 .day[data-plan='planned']:not([data-joins-right]) .band,
@@ -130,7 +128,7 @@
 }
 
 .day[data-plan='skipped']:not([data-joins-right]) .band {
-  border-right: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+  border-right: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
 .day::after {
@@ -223,7 +221,7 @@
 }
 
 .legendItem[data-kind='skipped']::before {
-  border: 1px dashed color-mix(in srgb, var(--sun) 70%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
 .legendItem[data-kind='today']::before {
@@ -234,7 +232,7 @@
   display: grid;
   gap: 6px;
   padding: 20px 22px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: var(--radius);
   background: var(--surface);
 }
@@ -262,7 +260,7 @@
   margin-right: 9px;
   vertical-align: middle;
   border-radius: 50%;
-  background: var(--sun);
+  background: var(--fast-green);
 }
 
 .times {
@@ -315,7 +313,7 @@
 
 .moveChoice {
   padding: 7px 12px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
   font-size: 14px;
@@ -334,7 +332,7 @@
 
 .action {
   padding: 9px 15px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
   font-size: 15px;
@@ -356,12 +354,8 @@
 
 .date {
   padding: 7px 10px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
   background: var(--surface);
   font-size: 15px;
-}
-
-:global(:root[data-theme='dark']) .calendar {
-  --fast: linear-gradient(color-mix(in oklch, var(--sun) 46%, transparent), color-mix(in oklch, var(--sun) 22%, transparent));
 }

@@ -3,6 +3,7 @@ import type { Sawm } from '../core'
 import { FastsSetup } from './FastsSetup'
 import { LocationSearch } from './LocationSearch'
 import { RemindersSetup } from './RemindersSetup'
+import { BackLink } from './BackLink'
 import { PlaceLine } from './PlaceLine'
 import { navigate, usePath } from './router'
 import { Shell } from './Shell'
@@ -57,11 +58,10 @@ export function App({ sawm }: { sawm: Sawm }) {
   }
 
   const sky = today.status === 'ready' ? today.phase : 'neutral'
-  const sunAltitude = today.status === 'ready' ? today.sunAltitude : undefined
 
   if (!settings.setup.fasts) {
     return (
-      <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} showNav={false}>
+      <Shell sky={sky} theme={theme} showNav={false}>
         <FastsSetup sawm={sawm} settings={settings} />
       </Shell>
     )
@@ -69,14 +69,14 @@ export function App({ sawm }: { sawm: Sawm }) {
 
   if (!settings.setup.reminders) {
     return (
-      <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} showNav={false}>
+      <Shell sky={sky} theme={theme} showNav={false}>
         <RemindersSetup sawm={sawm} />
       </Shell>
     )
   }
 
   return (
-    <Shell sky={sky} theme={theme} sunAltitude={sunAltitude} header={<PlaceLine today={today} />}>
+    <Shell sky={sky} theme={theme} header={headerFor(path, today)}>
       <Suspense fallback={null}>
       {path.startsWith('/settings') ? (
         <SettingsScreen sawm={sawm} settings={settings} path={path} />
@@ -88,4 +88,11 @@ export function App({ sawm }: { sawm: Sawm }) {
       </Suspense>
     </Shell>
   )
+}
+
+/** The start of the header: the place on Today; elsewhere, the way back. */
+function headerFor(path: string, today: Parameters<typeof PlaceLine>[0]['today']) {
+  if (path.startsWith('/settings/')) return <BackLink to="/settings">Settings</BackLink>
+  if (path.startsWith('/settings') || path.startsWith('/calendar')) return <BackLink to="/">Today</BackLink>
+  return <PlaceLine today={today} />
 }

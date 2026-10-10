@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createSawm, type Sawm } from '.'
+import { createSawm } from '.'
 import { createFakeDevice } from './testing/fakeDevice'
 
 describe('Saved Location', () => {
@@ -335,48 +335,6 @@ describe('Settings', () => {
     const restarted = await createSawm(fake.device)
 
     expect(restarted.settings().theme).toBe('dark')
-  })
-})
-
-describe('Sun altitude', () => {
-  const altitudeAt = async (sawm: Sawm, fake: ReturnType<typeof createFakeDevice>, at: number) => {
-    fake.setNow(new Date(at).toISOString())
-    sawm.tick()
-    const today = sawm.today()
-    if (today.status !== 'ready') throw new Error('not ready')
-    return today.sunAltitude
-  }
-
-  it('rises from the horizon at Suhoor, peaks midway to Iftar and sets at Iftar', async () => {
-    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
-    const day = sawm.day('2026-10-04')!
-    const suhoor = Date.parse(day.suhoor.at)
-    const iftar = Date.parse(day.iftar.at)
-
-    expect(await altitudeAt(sawm, fake, suhoor)).toBe(0)
-    expect(await altitudeAt(sawm, fake, (suhoor + iftar) / 2)).toBe(1)
-    expect(await altitudeAt(sawm, fake, iftar - 1)).toBeCloseTo(0, 1)
-  })
-
-  it('sinks below the horizon after Iftar and is lowest in the depth of the night', async () => {
-    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
-    const day = sawm.day('2026-10-04')!
-    const iftar = Date.parse(day.iftar.at)
-    const nextSuhoor = Date.parse(sawm.day('2026-10-05')!.suhoor.at)
-
-    const dusk = await altitudeAt(sawm, fake, iftar + 30 * 60_000)
-    expect(dusk).toBeLessThan(0)
-    expect(dusk).toBeGreaterThan(-1)
-    expect(await altitudeAt(sawm, fake, iftar + 4 * 3_600_000)).toBe(-1)
-    // Night comes back up before dawn.
-    expect(await altitudeAt(sawm, fake, nextSuhoor - 30 * 60_000)).toBeGreaterThan(-1)
-  })
-
-  it('follows the sun on days without a fast too', async () => {
-    const { sawm, fake } = await karachiAt('2026-10-04T06:00:00Z')
-    const day = sawm.day('2026-10-04')!
-    expect(day.plan.status).not.toBe('planned')
-    expect(await altitudeAt(sawm, fake, Date.parse('2026-10-04T06:00:00Z'))).toBeGreaterThan(0.9)
   })
 })
 

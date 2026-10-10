@@ -2,15 +2,14 @@
   position: fixed;
   z-index: 10;
   left: 50%;
-  /* At the top on a phone, so the horizon and times below stay in view. */
-  top: calc(env(safe-area-inset-top) + 8px);
+  bottom: max(env(safe-area-inset-bottom), 16px);
   translate: -50% 0;
   box-sizing: border-box;
   width: min(420px, calc(100% - 24px));
   display: grid;
   gap: 8px;
   padding: 12px 14px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 18px;
   background: var(--sky-top);
   box-shadow: 0 8px 30px rgb(0 0 0 / 0.12);
@@ -68,18 +67,11 @@
 
 .jump {
   padding: 5px 10px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 999px;
-  background: transparent;
+  background: var(--surface);
   font-size: 13px;
   cursor: pointer;
-}
-
-@media (min-width: 900px) {
-  .panel {
-    top: auto;
-    bottom: 20px;
-  }
 }
 
 .day {

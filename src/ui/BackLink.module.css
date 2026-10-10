@@ -1,0 +1,22 @@
+.back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: -4px;
+  font-size: 16px;
+  color: var(--soft);
+  text-decoration: none;
+}
+
+.back svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back:hover {
+  color: var(--text);
+}

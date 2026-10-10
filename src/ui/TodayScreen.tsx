@@ -1,7 +1,6 @@
 import type { Sawm, Today } from '../core'
 import { clockTime, dayMonth, inDays, weekday, zoneOffsetIfDifferent } from './format'
 import { Link } from './Link'
-import { PlaceLine } from './PlaceLine'
 import s from './TodayScreen.module.css'
 
 type Located = Exclude<Today, { status: 'no-location' }>
@@ -10,10 +9,6 @@ type Ready = Extract<Today, { status: 'ready' }>
 export function TodayScreen({ today, sawm }: { today: Located; sawm: Sawm }) {
   return (
     <section className={s.today}>
-      {/* On a wide screen this sits in the header beside the navigation instead. */}
-      <header className={s.top}>
-        <PlaceLine today={today} />
-      </header>
 
       {today.status === 'ready' ? (
         <ReadyToday today={today} sawm={sawm} />
@@ -170,7 +165,6 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
           )}
           {state === 'fasting' && <span className={s.sun} style={sun} />}
           {phase === 'predawn' && <span className={s.dawn} />}
-          {today.sunAltitude < 0 && <span className={s.moon} style={{ opacity: -today.sunAltitude }} aria-hidden="true" />}
         </div>
         <div className={s.line} />
         <dl className={s.ends}>

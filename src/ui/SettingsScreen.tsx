@@ -91,9 +91,6 @@ function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
   const saved = settings.savedLocation
   return (
     <section className={s.settings}>
-      <Link to="/settings" className={s.back}>
-        ‹ Settings
-      </Link>
       <h1 className={s.title}>Location</h1>
       <div className={s.list}>
         <div className={s.row}>
@@ -123,9 +120,6 @@ function LocationPage({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
 function SectionPage({ sawm, settings, section }: { sawm: Sawm; settings: Settings; section: { id: Section; label: string } }) {
   return (
     <section className={s.settings}>
-      <Link to="/settings" className={s.back}>
-        ‹ Settings
-      </Link>
       <h1 className={s.title}>{section.label}</h1>
       {section.id === 'reminders' && <RemindersSection sawm={sawm} settings={settings} />}
       {section.id === 'fasts' && (
