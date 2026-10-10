@@ -84,6 +84,8 @@ body {
 
 html {
   background: var(--sky-top);
+  /* An app, not a document: panning only, so a pinch doesn't zoom or shrink the whole screen. */
+  touch-action: pan-x pan-y;
 }
 
 body {
