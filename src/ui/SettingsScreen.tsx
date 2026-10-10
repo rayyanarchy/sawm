@@ -63,6 +63,20 @@ function SettingsIndex({ sawm, settings }: { sawm: Sawm; settings: Settings }) {
           </Link>
         ))}
       </nav>
+      <section className={s.note} aria-labelledby="note-heading">
+        <h2 id="note-heading" className={s.heading}>
+          A note from the developer
+        </h2>
+        <p>
+          Sawm was made with love and care for everyone who observes fasting and loves it: a quiet companion for Suhoor,
+          Iftar and the days in between. May it make your fasts a little easier.
+        </p>
+        <p>
+          Special thanks to Saad Syed Kaleemulla (<a href="https://github.com/Saad-SYEDK">@Saad-SYEDK</a>), who helped
+          shape Sawm at the very beginning.
+        </p>
+        <span className={s.signature} role="img" aria-label="Rayyan" />
+      </section>
       <p className={s.about}>
         Times and Hijri dates from <a href="https://aladhan.com">AlAdhan</a>. Places from{' '}
         <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.

@@ -204,3 +204,24 @@
   font-size: 14px;
   color: var(--soft);
 }
+
+.note {
+  display: grid;
+  gap: 12px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.note a {
+  color: inherit;
+}
+
+/* The developer's initial, drawn in the text colour so it suits either theme. */
+.signature {
+  width: 44px;
+  height: 49px;
+  background: var(--soft);
+  mask: url('/icons/rayyan-initial.png') center / contain no-repeat;
+  -webkit-mask: url('/icons/rayyan-initial.png') center / contain no-repeat;
+}
