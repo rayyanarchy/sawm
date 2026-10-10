@@ -29,6 +29,7 @@
 
 .track {
   flex: none;
+  display: block;
   position: relative;
   width: 46px;
   height: 28px;
@@ -49,11 +50,39 @@
   transition: translate 200ms var(--ease);
 }
 
-.row[aria-checked='true'] .track {
+.row[aria-checked='true'] .track,
+.toggle[aria-checked='true'] .track {
   background: var(--text);
 }
 
-.row[aria-checked='true'] .thumb {
+.row[aria-checked='true'] .thumb,
+.toggle[aria-checked='true'] .thumb {
   translate: 18px 0;
   background: var(--sky-bottom);
+}
+
+.disclose,
+.toggle {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.disclose {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.chevron {
+  margin-left: 6px;
+  vertical-align: -3px;
+  color: var(--soft);
+  transition: rotate 200ms var(--ease);
+}
+
+.group[data-open] .chevron {
+  rotate: 180deg;
 }

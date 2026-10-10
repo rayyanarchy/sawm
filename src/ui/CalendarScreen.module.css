@@ -183,15 +183,15 @@
   color: var(--sky-bottom);
 }
 
-/* Today: the same pill, outlined in the sun's colour. */
-.day[aria-current='date']::before {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  inset: 8px 4px;
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1.5px var(--sun);
-  pointer-events: none;
+/* Today: its number in the sun's colour. */
+.day[aria-current='date'] .number {
+  color: var(--sun-text);
+  font-weight: 500;
+}
+
+/* Selected, today reads like any selected day: the pill says enough. */
+.day[aria-current='date'][aria-selected='true'] .number {
+  color: var(--sky-bottom);
 }
 
 .legend {
@@ -224,8 +224,12 @@
   border: 1px dashed color-mix(in srgb, var(--fast-green) 75%, transparent);
 }
 
+.legendItem[data-kind='today'] {
+  color: var(--sun-text);
+}
+
 .legendItem[data-kind='today']::before {
-  border: 1.5px solid var(--sun);
+  display: none;
 }
 
 .details {
@@ -358,4 +362,33 @@
   border-radius: 999px;
   background: var(--surface);
   font-size: 15px;
+}
+
+/* A phone on its side: the month and the day's details side by side, with shorter rows. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .calendar {
+    padding-top: 0;
+  }
+
+  .title {
+    font-size: clamp(28px, 9vh, 44px);
+  }
+
+  .body {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: 24px;
+  }
+
+  .day {
+    height: 48px;
+  }
+
+  .band {
+    inset: 4px 0;
+  }
+
+  .day::after {
+    inset: 4px;
+  }
 }

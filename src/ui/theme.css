@@ -16,6 +16,8 @@
   --surface: rgb(255 255 255 / 0.55);
   --surface-strong: rgb(255 255 255 / 0.78);
   --sun: #ee9d4f;
+  /* The sun's colour for text, dark enough to read on a light sky. */
+  --sun-text: #8f4710;
   --glow: rgb(238 157 79 / 0.42);
   --focus: #1b2230;
   /* Planned fasts, in the Calendar: one green that sits well on both themes' skies. */
@@ -39,6 +41,7 @@
   --surface: rgb(255 255 255 / 0.08);
   --surface-strong: rgb(20 24 32 / 0.85);
   --sun: #f3b06a;
+  --sun-text: #f3b06a;
   --glow: rgb(243 176 106 / 0.32);
   --focus: #e9edf4;
 

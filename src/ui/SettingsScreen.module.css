@@ -183,7 +183,6 @@
 
 .chevron {
   flex: none;
-  font-size: 24px;
   color: var(--soft);
 }
 
@@ -216,4 +215,28 @@
   background: var(--soft);
   mask: url('/icons/rayyan-initial.png') center / contain no-repeat;
   -webkit-mask: url('/icons/rayyan-initial.png') center / contain no-repeat;
+}
+
+.signed {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--soft);
+}
+
+.about {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.repo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
 }
