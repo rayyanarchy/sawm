@@ -158,6 +158,14 @@ function ReadyToday({ today, sawm }: { today: Ready; sawm: Sawm }) {
           {fastingDay && (
             <svg className={s.arc} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               <path d="M 0 100 A 50 100 0 0 1 100 100" vectorEffect="non-scaling-stroke" />
+              {/* The day so far: a solid line from Suhoor to the sun, on the same ellipse the sun moves along. */}
+              {state === 'fasting' && progress > 0 && (
+                <path
+                  className={s.trail}
+                  d={`M 0 100 A 50 100 0 0 1 ${50 * (1 - Math.cos(angle))} ${100 - 100 * Math.sin(angle)}`}
+                  vectorEffect="non-scaling-stroke"
+                />
+              )}
             </svg>
           )}
           {state === 'fasting' && <span className={s.sun} style={sun} />}
